@@ -1,0 +1,22 @@
+{
+  "name": "ser401-redfish",
+  "version": "1.0.0",
+  "description": "Capstone for SER401",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrewbossie/SER401-Redfish.git"
+  },
+  "author": "SER401 Group 3",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andrewbossie/SER401-Redfish/issues"
+  },
+  "homepage": "https://github.com/andrewbossie/SER401-Redfish#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
