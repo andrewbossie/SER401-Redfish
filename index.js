@@ -1,11 +1,15 @@
 const express = require("express");
+const hbs = require("hbs");
 
 const app = express();
 
+app.set('view engine', 'hbs');
+
 app.get('/', (req, res) => {
-    res.sendFile("/index.html", {
-        root: __dirname
-    });
+   res.render('index.hbs', {
+       pageTitle: 'Redfish Telemetry Client',
+       currentYear: new Date().getFullYear()
+   });
 });
 
 app.listen(8080);
