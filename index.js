@@ -3,6 +3,7 @@ const hbs = require("hbs");
 
 const app = express();
 
+hbs.registerPartials(__dirname + '/views/partials');
 app.set('view engine', 'hbs');
 
 app.get('/', (req, res) => {
