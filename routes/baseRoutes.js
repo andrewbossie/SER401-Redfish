@@ -1,3 +1,6 @@
+const path = require('path');
+
+var appDirectory = path.dirname(require.main.filename);
 
 module.exports = (app) => {
 
@@ -5,6 +8,12 @@ module.exports = (app) => {
        res.render('index.hbs', {
            pageTitle: 'Redfish Telemetry Client',
            currentYear: new Date().getFullYear()
+       });
+    });
+    
+    app.get('/help', (req, res) => {
+       res.sendFile("/views/help.html", {
+           root: appDirectory
        });
     });
 }
