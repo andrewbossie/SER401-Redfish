@@ -13,6 +13,11 @@ const influx = new Influx.InfluxDB({
       measurement: "cpu",
       fields: { value: Influx.FieldType.FLOAT },
       tags: ["host"]
+    },
+    {
+      measurement: "cpu",
+      fields: { value: Influx.FieldType.FLOAT },
+      tags: ["host"]
     }
   ]
 });
