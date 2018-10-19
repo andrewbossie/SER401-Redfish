@@ -25,6 +25,16 @@ exports.writeDataTest = function() {
           measurement: "cpu",
           tags: { host: "serverA" },
           fields: { value: Math.random() * 100 }
+        },
+        {
+          measurement: "cpu",
+          tags: { host: "serverB" },
+          fields: { value: Math.random() * 75 }
+        },
+        {
+          measurement: "temp",
+          tags: { host: "serverA" },
+          fields: { value: Math.random() * 200 }
         }
       ],
       {
