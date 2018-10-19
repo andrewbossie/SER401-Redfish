@@ -42,7 +42,7 @@ exports.writeDataTest = function() {
         precision: "s"
       }
     )
-    .catch(error => {
+    .catch(err => {
       console.error(`Error writing data to Influx. ${err.stack}`);
     });
 };
