@@ -15,7 +15,7 @@ const influx = new Influx.InfluxDB({
       tags: ["host"]
     },
     {
-      measurement: "cpu",
+      measurement: "temp",
       fields: { value: Influx.FieldType.FLOAT },
       tags: ["host"]
     }
