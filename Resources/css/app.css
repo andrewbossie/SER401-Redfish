@@ -1,3 +1,18 @@
 h1{
     color: red;
 }
+
+.panelCell {
+	display: inline-block;
+	padding: 10px;
+}
+
+.panelFrame {
+	width: 700px;
+	height: 400px;
+}
+
+.labelContainer {
+	text-align: center;
+	font-size: 24px
+}
