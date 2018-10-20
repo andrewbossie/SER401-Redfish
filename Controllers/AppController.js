@@ -13,6 +13,11 @@ const influx = new Influx.InfluxDB({
       measurement: "cpu",
       fields: { value: Influx.FieldType.FLOAT },
       tags: ["host"]
+    },
+    {
+      measurement: "temp",
+      fields: { value: Influx.FieldType.FLOAT },
+      tags: ["host"]
     }
   ]
 });
@@ -25,6 +30,16 @@ exports.writeDataTest = function() {
           measurement: "cpu",
           tags: { host: "serverA" },
           fields: { value: Math.random() * 100 }
+        },
+        {
+          measurement: "cpu",
+          tags: { host: "serverB" },
+          fields: { value: Math.random() * 75 }
+        },
+        {
+          measurement: "temp",
+          tags: { host: "serverA" },
+          fields: { value: Math.random() * 200 }
         }
       ],
       {
@@ -32,7 +47,7 @@ exports.writeDataTest = function() {
         precision: "s"
       }
     )
-    .catch(error => {
+    .catch(err => {
       console.error(`Error writing data to Influx. ${err.stack}`);
     });
 };
