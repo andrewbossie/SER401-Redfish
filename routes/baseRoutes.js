@@ -12,19 +12,19 @@ module.exports = (app) => {
            currentYear: new Date().getFullYear(),
            panels: [
               {
-              	src: 'https://snapshot.raintank.io/dashboard-solo/snapshot/y7zwi2bZ7FcoTlB93WN7yWO4aMiz3pZb?from=1493369923321&to=1493377123321&panelId=4', 
+              	src: 'http://52.37.217.87:3000/d/uiNmWixmz/randomdata?refresh=5s&panelId=2&fullscreen&orgId=1', 
               	label: 'Static Grafana Panel 1'
               },
               {
-              	src: 'https://snapshot.raintank.io/dashboard-solo/snapshot/y7zwi2bZ7FcoTlB93WN7yWO4aMiz3pZb?from=1493369923321&to=1493377123321&panelId=4', 
-              	label: 'Static Grafana Panel 2'
+              	src: 'http://52.37.217.87:3000/d/uiNmWixmz/randomdata?refresh=5s&panelId=2&fullscreen&orgId=1', 
+          		label: 'Static Grafana Panel 2'
               },
               {
-              	src: 'https://snapshot.raintank.io/dashboard-solo/snapshot/y7zwi2bZ7FcoTlB93WN7yWO4aMiz3pZb?from=1493369923321&to=1493377123321&panelId=4', 
+              	src: 'http://52.37.217.87:3000/d/uiNmWixmz/randomdata?refresh=5s&panelId=2&fullscreen&orgId=1', 
               	label: 'Static Grafana Panel 3'
               },
               {
-              	src: 'https://snapshot.raintank.io/dashboard-solo/snapshot/y7zwi2bZ7FcoTlB93WN7yWO4aMiz3pZb?from=1493369923321&to=1493377123321&panelId=4', 
+              	src: 'http://52.37.217.87:3000/d/uiNmWixmz/randomdata?refresh=5s&panelId=2&fullscreen&orgId=1', 
               	label: 'Static Grafana Panel 4'
               }
            ]
