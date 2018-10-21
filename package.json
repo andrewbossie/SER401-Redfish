@@ -18,6 +18,9 @@
   "homepage": "https://github.com/andrewbossie/SER401-Redfish#readme",
   "dependencies": {
     "express": "^4.16.3",
+    "hbs": "^4.0.1",
+    "jquery": "^3.3.1",
+    "influx": "^5.0.7",
     "lodash": "^4.17.11",
     "request": "^2.88.0"
   },
