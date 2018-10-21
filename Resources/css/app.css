@@ -1,9 +1,26 @@
+body{
+    background-color: #212121;
+}
 h1{
-    color: red;
+    color: #D44A3A;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+}
+
+h2{
+    color: white;
+    font-family: 'Roboto', sans-serif;
+}
+
+.panelContainer{
+    font-family: 'Roboto', sans-serif;
+    color: #D8D9DA;
+    text-align: center;
 }
 
 .panelCell {
 	display: inline-block;
+    text-align: center;
 	padding: 10px;
 }
 
