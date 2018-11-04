@@ -4,10 +4,10 @@ const keys = require("../config/keys");
 const Influx = require("influx");
 
 const influx = new Influx.InfluxDB({
-  host: keys.influxHost,
-  database: "test",
-  username: keys.influxUserName,
-  password: keys.influxPassword,
+    host: keys.influxHost,
+    database: "test",
+    username: keys.influxUserName,
+    password: keys.influxPassword,
   schema: [
     {
       measurement: "cpu",
@@ -50,4 +50,17 @@ exports.writeDataTest = function() {
     .catch(err => {
       console.error(`Error writing data to Influx. ${err.stack}`);
     });
+};
+
+exports.getInfluxData = function(){
+    influx.query(
+        'SELECT * FROM cpu'
+    ).catch(err=>{
+        console.error(`Error retrieving data from Influx. ${err.stack}`);
+    }).then(results=> {
+        return results
+        // console.log(results);
+        // response.status(200).json(results)
+    });
+
 };

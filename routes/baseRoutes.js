@@ -1,12 +1,13 @@
 const express = require("express");
 const path = require("path");
+const app_controller = require("../Controllers/AppController");
 
 module.exports = app => {
   app.use(express.static("./Resources"));
 
   app.get("/", (req, res) => {
     res.render("index.hbs", {
-      pageTitle: "Redfish Telemetry Client",
+      pageTitle: "Redfish Telemetry Client (Grafana)",
       currentYear: new Date().getFullYear(),
       panels: [
         {
@@ -32,4 +33,12 @@ module.exports = app => {
       ]
     });
   });
+  app.get('/charts', (req, res) =>{
+    v = app_controller.getInfluxData();
+    console.log(v);
+    res.render("chart.hbs", {
+        pageTitle: "Redfish Telemetry Client (Js)",
+        values: v
+    });
+  })
 };
