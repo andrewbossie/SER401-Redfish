@@ -1,4 +1,40 @@
 const keys = require("../config/keys");
+const request = require("request");
+
+// Get CPU data
+
+let metrics = {
+  cpuUtil: {}
+};
+
+let updateCPUUtil = () => {
+  request(
+    {
+      url:
+        "http://localhost:8000/redfish/v1/TelemetryService/MetricReports/CPUMetrics",
+      json: true
+    },
+    (error, response, body) => {
+      if (error) {
+        callback("Unable to connect to server.");
+      } else {
+        console.log(body.MetricValues);
+        if (body.MetricValues) {
+          for (var i = 0; i < body.MetricValues.length; i++) {
+            if (body.MetricValues[i].MemberID == "CPUPercentUtil") {
+              // This timestamp needs to be converted before going to Influx.
+              metrics.cpuUtil.timestamp = body.MetricValues[i].TimeStamp;
+              metrics.cpuUtil.metric = body.MetricValues[i].MetricValue;
+            }
+          }
+        }
+      }
+    }
+  );
+};
+
+// updateCPUUtil();
+setInterval(updateCPUUtil, 1000);
 
 // InfluxDB Connection
 const Influx = require("influx");
@@ -29,7 +65,8 @@ exports.writeDataTest = function() {
         {
           measurement: "cpu",
           tags: { host: "serverA" },
-          fields: { value: Math.random() * 100 }
+          fields: { value: metrics.cpuUtil.metric },
+          timestamp: metrics.cpuUtil.timestamp
         },
         {
           measurement: "cpu",
