@@ -1,10 +1,17 @@
 const keys = require("../config/keys");
 const request = require("request");
+const Influx = require("influx");
+
+const util = require("../Resources/js/util");
 
 // Get CPU data
 
 let metrics = {
-  cpuUtil: {}
+  cpuUtil: {
+    date: null,
+    timestamp: null,
+    metric: null
+  }
 };
 
 let updateCPUUtil = () => {
@@ -16,14 +23,19 @@ let updateCPUUtil = () => {
     },
     (error, response, body) => {
       if (error) {
-        callback("Unable to connect to server.");
+        console.log("Unable to connect to server.");
       } else {
         console.log(body.MetricValues);
         if (body.MetricValues) {
           for (var i = 0; i < body.MetricValues.length; i++) {
             if (body.MetricValues[i].MemberID == "CPUPercentUtil") {
-              // This timestamp needs to be converted before going to Influx.
-              metrics.cpuUtil.timestamp = body.MetricValues[i].TimeStamp;
+              let date = new Date(
+                util.convertToIsoDate(body.MetricValues[i].TimeStamp)
+              );
+              // TODO: Simulate incrementing dates. Influx won't duplicate
+              // entries with matching timestamps, so as it stands, only
+              // a single entry is entered.
+              metrics.cpuUtil.timestamp = Influx.toNanoDate(date);
               metrics.cpuUtil.metric = body.MetricValues[i].MetricValue;
             }
           }
@@ -33,11 +45,9 @@ let updateCPUUtil = () => {
   );
 };
 
-// updateCPUUtil();
 setInterval(updateCPUUtil, 1000);
 
 // InfluxDB Connection
-const Influx = require("influx");
 
 const influx = new Influx.InfluxDB({
   host: keys.influxHost,
@@ -88,3 +98,11 @@ exports.writeDataTest = function() {
       console.error(`Error writing data to Influx. ${err.stack}`);
     });
 };
+
+/*
+* Note: Redfish API Specification DateTime values are in ISO 8601 "extended"
+*  format: ex. "2017-11-23T17:17:42-0600"
+*
+*   Current RedishMockupServer metric reports contain format
+*     "20161108T142504-0500"
+*/
