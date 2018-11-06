@@ -25,26 +25,28 @@ let updateCPUUtil = () => {
       if (error) {
         console.log("Unable to connect to server.");
       } else {
-        console.log(body.MetricValues);
         if (body.MetricValues) {
           for (var i = 0; i < body.MetricValues.length; i++) {
             if (body.MetricValues[i].MemberID == "CPUPercentUtil") {
-              let date = new Date(
+                let date = new Date(
                 util.convertToIsoDate(body.MetricValues[i].TimeStamp)
               );
-              // TODO: Simulate incrementing dates. Influx won't duplicate
-              // entries with matching timestamps, so as it stands, only
-              // a single entry is entered.
+                d2 = new Date();
+                now = d2.getSeconds();
+                date.setMinutes(date.getMinutes() + now);
+                console.log(now);
+                console.log(date);
               metrics.cpuUtil.timestamp = Influx.toNanoDate(date);
               metrics.cpuUtil.metric = body.MetricValues[i].MetricValue;
             }
+              increment = increment + 1;
           }
         }
       }
     }
   );
 };
-
+var increment = 1;
 setInterval(updateCPUUtil, 1000);
 
 // InfluxDB Connection
