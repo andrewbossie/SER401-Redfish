@@ -16,7 +16,7 @@ test("Returns 2016-11-08T14:25:04-0500", () => {
 
 // Invalid input
 test("Throws Invalid timestamp format!", () => {
-  expect(util.convertToIsoDate("201611408T14:25:04-0500")).toThrow(
-    "Invalid timestamp format!"
-  );
+  expect(() => {
+    util.convertToIsoDate("201611408T14:25:04-0500");
+  }).toThrow("Invalid timestamp format!");
 });
