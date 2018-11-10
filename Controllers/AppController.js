@@ -39,14 +39,14 @@ let updateCPUUtil = () => {
               metrics.cpuUtil.timestamp = Influx.toNanoDate(date);
               metrics.cpuUtil.metric = body.MetricValues[i].MetricValue;
             }
-              increment = increment + 1;
+              // increment = increment + 1;
           }
         }
       }
     }
   );
 };
-var increment = 1;
+// var increment = 1;
 setInterval(updateCPUUtil, 1000);
 
 // InfluxDB Connection
@@ -101,18 +101,53 @@ exports.writeDataTest = function() {
     });
 };
 
-exports.getInfluxData = function(){
+exports.getPanels = function(req, res){
+    res.render("index.hbs", {
+        pageTitle: "Redfish Telemetry Client (Grafana)",
+        currentYear: new Date().getFullYear(),
+        panels: [
+            {
+                src:
+                    "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB",
+                label: "Static Grafana Panel 1"
+            },
+            {
+                src:
+                    "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA",
+                label: "Static Grafana Panel 2"
+            },
+            {
+                src:
+                    "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6",
+                label: "Static Grafana Panel 3"
+            },
+            {
+                src:
+                    "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB",
+                label: "Static Grafana Panel 4"
+            }
+        ]
+    });
+}
+
+exports.getInfluxData = function(req, res){
     influx.query(
         'SELECT * FROM cpu'
     ).catch(err=>{
         console.error(`Error retrieving data from Influx. ${err.stack}`);
     }).then(results=> {
-        return results
         // console.log(results);
-        // response.status(200).json(results)
-    });
+        var values = [];
+        for(var i = 0; i < results.length; i++){
+            values[i] = results[i]['value'];
+        }
 
-};
+        res.render("chart.hbs", {
+            pageTitle: "Redfish Telemetry Client (Js)",
+            values: values,
+        });
+    });
+}
 /*
 * Note: Redfish API Specification DateTime values are in ISO 8601 "extended"
 *  format: ex. "2017-11-23T17:17:42-0600"
