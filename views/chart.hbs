@@ -4,12 +4,95 @@
         <meta charset="UTF-8">
             <link rel="stylesheet" href="/css/app.css">
             <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
         <title>Redfish Telemetry Client</title>
     </head>
     <body>
         <h1 class="text">{{pageTitle}}</h1>
         <div class="separator" ></div>
-        <p>{{values}}</p>
+        <div class="cpu_panel">
+            <canvas id="cpu_Chart" width="200" height="200"></canvas>
+        </div>
+        <div class="temp_panel">
+            <canvas id="temp_Chart" width="200" height="200"></canvas>
+        </div>
     </body>
+    <script>
+        var ctx = document.getElementById("cpu_Chart").getContext('2d');
+        var cpu_Chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["{{cpu_time.[1]}}","{{cpu_time.[2]}}","{{cpu_time.[3]}}","{{cpu_time.[4]}}","{{cpu_time.[5]}}","{{cpu_time.[6]}}"],
+                datasets: [{
+                    label: 'CPU %',
+                    data: ["{{cpu.[1]}}","{{cpu.[2]}}","{{cpu.[3]}}","{{cpu.[4]}}","{{cpu.[5]}}","{{cpu.[6]}}"],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'CPU Usage Based on Timestamp'
+                },
+                scales: {
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Usage (%)'
+                        },
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
 
+        var ttx = document.getElementById("temp_Chart").getContext('2d');
+        var temp_Chart = new Chart(ttx, {
+            type: 'line',
+            data: {
+                labels: ["{{temp_time.[1]}}","{{temp_time.[2]}}","{{temp_time.[3]}}","{{temp_time.[4]}}","{{temp_time.[5]}}","{{temp_time.[6]}}"],
+                datasets: [{
+                    label: 'Temperature',
+                    data: ["{{temp.[1]}}","{{temp.[2]}}","{{temp.[3]}}","{{temp.[4]}}","{{temp.[5]}}","{{temp.[6]}}"],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    fill: false
+                    }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'CPU Temperature Based on Timestamp'
+                },
+                scales: {
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Temperature (C)'
+                        },
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
 </html>
