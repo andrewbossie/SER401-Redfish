@@ -10,7 +10,11 @@ if (process.argv.indexOf("-c") != -1) {
    if (process.argv[process.argv.indexOf("-c") + 1] != -1) {
       var configFile = "./" + process.argv[process.argv.indexOf("-c") + 1];
       console.log("Using config file: " + configFile);
-      config = require(configFile);
+      try {
+         config = require(configFile);
+      } catch (e) {
+         console.log("Error opening " + configFile + ": " + e);
+      }
    }
 }
 
