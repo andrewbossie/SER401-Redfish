@@ -14,7 +14,7 @@ let metrics = {
 };
 
 // Update influx from API
-let updateCPUUtil = () => {
+exports.updateCPUUtil = () => {
   request(
     {
       url:
@@ -47,7 +47,6 @@ let updateCPUUtil = () => {
   );
 };
 // var increment = 1;
-// setInterval(updateCPUUtil, 1000);
 
 // InfluxDB Connection
 const influx = new Influx.InfluxDB({
@@ -55,6 +54,7 @@ const influx = new Influx.InfluxDB({
     database: "test",
     username: keys.influxUserName,
     password: keys.influxPassword,
+
   schema: [
     {
       measurement: "cpu",
@@ -80,11 +80,11 @@ exports.writeDataTest = function() {
           fields: { value: metrics.cpuUtil.metric },
           timestamp: metrics.cpuUtil.timestamp
         },
-        {
-          measurement: "cpu",
-          tags: { host: "serverB" },
-          fields: { value: Math.random() * 75 }
-        },
+        // {
+        //   measurement: "cpu",
+        //   tags: { host: "serverB" },
+        //   fields: { value: Math.random() * 75 }
+        // },
         {
           measurement: "temp",
           tags: { host: "serverA" },
