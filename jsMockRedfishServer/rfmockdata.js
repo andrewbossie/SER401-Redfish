@@ -3,8 +3,20 @@
 var util = require('util');
 var fs = require('fs');
 
-var config = require('./config');
+var config;
 var PFuncs = require('./PatternFuncs');
+
+if (process.argv.indexOf("-c") != -1) {
+   if (process.argv[process.argv.indexOf("-c") + 1] != -1) {
+      var configFile = "./" + process.argv[process.argv.indexOf("-c") + 1];
+      console.log("Using config file: " + configFile);
+      config = require(configFile);
+   }
+}
+
+if (!config) {
+   config = require('./config');
+}
 
 var patternTimers = [];
 
