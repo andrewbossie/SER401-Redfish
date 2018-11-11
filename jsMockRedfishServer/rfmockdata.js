@@ -22,6 +22,21 @@ if (!config) {
    config = require('./config');
 }
 
+if (process.argv.indexOf("-s") != 1) {
+   startServer(config.RedFishData.path);
+}
+
+function startServer(redfishPath) {
+   var express = require('express');
+   var app = express();
+
+   app.use('/redfish', express.static(redfishPath, {index: "index.json"}));
+
+   app.listen(8001);
+
+   console.log("Server started on port 8001");
+}
+
 var patternTimers = [];
 
 config.MockupData.MockupPatterns.forEach(function(mockup, index) {
