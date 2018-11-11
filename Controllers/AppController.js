@@ -5,7 +5,6 @@ const Influx = require("influx");
 const util = require("../Resources/js/util");
 
 // Get CPU data
-
 let metrics = {
   cpuUtil: {
     date: null,
@@ -14,6 +13,7 @@ let metrics = {
   }
 };
 
+// Update influx from API
 let updateCPUUtil = () => {
   request(
     {
@@ -47,10 +47,9 @@ let updateCPUUtil = () => {
   );
 };
 // var increment = 1;
-setInterval(updateCPUUtil, 1000);
+// setInterval(updateCPUUtil, 1000);
 
 // InfluxDB Connection
-
 const influx = new Influx.InfluxDB({
     host: keys.influxHost,
     database: "test",
@@ -70,6 +69,7 @@ const influx = new Influx.InfluxDB({
   ]
 });
 
+// Random test data (DEPRECATED)
 exports.writeDataTest = function() {
   influx
     .writePoints(
@@ -101,6 +101,7 @@ exports.writeDataTest = function() {
     });
 };
 
+// Render Static Panels in Grafana
 exports.getPanels = function(req, res){
     res.render("index.hbs", {
         pageTitle: "Redfish Telemetry Client (Grafana)",
@@ -128,26 +129,53 @@ exports.getPanels = function(req, res){
             }
         ]
     });
-}
+};
 
+
+// Grab Influx Data. Can we do this without nesting?
 exports.getInfluxData = function(req, res){
+
+    var cpu = [];
+    var temp = [];
+    var cpu_time = [];
+    var temp_time = [];
+
+    // Get CPU Metrics
     influx.query(
         'SELECT * FROM cpu'
     ).catch(err=>{
         console.error(`Error retrieving data from Influx. ${err.stack}`);
     }).then(results=> {
         // console.log(results);
-        var values = [];
         for(var i = 0; i < results.length; i++){
-            values[i] = results[i]['value'];
+            cpu_time[i] = results[i]['time'];
+            cpu[i] = results[i]['value'];
         }
 
-        res.render("chart.hbs", {
-            pageTitle: "Redfish Telemetry Client (Js)",
-            values: values,
+
+        // Get Temp Metrics
+        influx.query(
+            'SELECT * FROM temp'
+        ).catch(err=>{
+            console.error(`Error retrieving data from Influx. ${err.stack}`);
+        }).then(results=> {
+            for(var i = 0; i < results.length; i++){
+                temp_time[i] = results[i]['time'];
+                temp[i] = results[i]['value'];
+            }
+
+            res.render("chart.hbs", {
+                pageTitle: "Redfish Telemetry Client (Js)",
+                cpu: cpu,
+                temp: temp,
+                cpu_time: cpu_time,
+                temp_time: temp_time
+            });
+
         });
     });
-}
+
+};
 /*
 * Note: Redfish API Specification DateTime values are in ISO 8601 "extended"
 *  format: ex. "2017-11-23T17:17:42-0600"
