@@ -3,8 +3,39 @@
 var util = require('util');
 var fs = require('fs');
 
-var config = require('./config');
+var config;
 var PFuncs = require('./PatternFuncs');
+
+if (process.argv.indexOf("-c") != -1) {
+   if (process.argv[process.argv.indexOf("-c") + 1] != -1) {
+      var configFile = "./" + process.argv[process.argv.indexOf("-c") + 1];
+      console.log("Using config file: " + configFile);
+      try {
+         config = require(configFile);
+      } catch (e) {
+         console.log("Error opening " + configFile + ": " + e);
+      }
+   }
+}
+
+if (!config) {
+   config = require('./config');
+}
+
+if (process.argv.indexOf("-s") != 1) {
+   startServer(config.RedFishData.path);
+}
+
+function startServer(redfishPath) {
+   var express = require('express');
+   var app = express();
+
+   app.use('/redfish', express.static(redfishPath, {index: "index.json"}));
+
+   app.listen(8001);
+
+   console.log("Server started on port 8001");
+}
 
 var patternTimers = [];
 
