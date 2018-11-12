@@ -18,7 +18,7 @@ exports.updateCPUUtil = () => {
   request(
     {
       url:
-        "http://localhost:8000/redfish/v1/TelemetryService/MetricReports/CPUMetrics",
+        "http://localhost:8080/redfish/v1/TelemetryService/MetricReports/CPUMetrics",
       json: true
     },
     (error, response, body) => {
@@ -127,6 +127,16 @@ exports.getPanels = function(req, res) {
         src:
           "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB",
         label: "Static Grafana Panel 4"
+      },
+      {
+        src:
+          "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1",
+        label: "TestDash Custom Panel 1 (New Plugin)"
+      },
+      {
+        src:
+          "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1",
+        label: "TestDash Custom Panel 2 (New Plugin)"
       }
     ]
   });
