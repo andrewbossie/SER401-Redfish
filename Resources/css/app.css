@@ -45,6 +45,11 @@ h1{
 	font-weight: 400;
 }
 
+#break{
+	display: inline-block;
+	width: 15%;
+}
+
 
 /* Graph JS */
 .temp_panel{
