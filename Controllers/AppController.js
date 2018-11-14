@@ -149,39 +149,38 @@ exports.getInfluxData = function(req, res) {
   var temp_time = [];
 
   // Get CPU Metrics
-  influx
-    .query("SELECT * FROM cpu")
-    .catch(err => {
-      console.error(`Error retrieving data from Influx. ${err.stack}`);
-    })
-    .then(results => {
-      // console.log(results);
-      for (var i = 0; i < results.length; i++) {
-        cpu_time[i] = results[i]["time"];
-        cpu[i] = results[i]["value"];
+  let getCPUData = influx
+                    .query("SELECT * FROM cpu")
+                    .catch(err => {
+                      console.error(`Error retrieving data from Influx. ${err.stack}`);
+                    });
+
+  let getTempData = influx
+                    .query("SELECT * FROM temp")
+                    .catch(err => {
+                      console.error(`Error retrieving data from Influx. ${err.stack}`);
+                    });
+
+  // Promise.all allows us to wait for all calls to resolve. This way, we don't need to nest callbacks
+  Promise.all([getCPUData, getTempData]).then(results => {
+      for (var i = 0; i < results[0].length; i++) {
+        cpu_time[i] = results[0][i]["time"];
+        cpu[i] = results[0][i]["value"];
       }
 
-      // Get Temp Metrics
-      influx
-        .query("SELECT * FROM temp")
-        .catch(err => {
-          console.error(`Error retrieving data from Influx. ${err.stack}`);
-        })
-        .then(results => {
-          for (var i = 0; i < results.length; i++) {
-            temp_time[i] = results[i]["time"];
-            temp[i] = results[i]["value"];
-          }
+      for (var i = 0; i < results[1].length; i++) {
+        temp_time[i] = results[1][i]["time"];
+        temp[i] = results[1][i]["value"];
+      }
 
-          res.render("chart.hbs", {
-            pageTitle: "Redfish Telemetry Client (Js)",
-            cpu: cpu,
-            temp: temp,
-            cpu_time: cpu_time,
-            temp_time: temp_time
-          });
-        });
-    });
+      res.render("chart.hbs", {
+        pageTitle: "Redfish Telemetry Client (Js)",
+        cpu: cpu,
+        temp: temp,
+        cpu_time: cpu_time,
+        temp_time: temp_time
+      });
+  })
 };
 /*
 * Note: Redfish API Specification DateTime values are in ISO 8601 "extended"
