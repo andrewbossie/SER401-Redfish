@@ -17,6 +17,8 @@ let convertToIsoDate = simDate => {
       isoDate += dateCharacters[i];
     }
     return isoDate;
+  } else if (/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(simDate)) {
+    return simDate;
   } else {
     throw "Invalid timestamp format!";
   }
