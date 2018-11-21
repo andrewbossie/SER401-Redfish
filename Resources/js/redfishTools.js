@@ -14,7 +14,12 @@ let getMetric = (metricValues, metric, tray) => {
       timeAndMetric.push(metricValues[i].MetricValue);
     }
   }
-  return timeAndMetric;
+
+  if (timeAndMetric.length !== 2 || isNaN(parseInt(timeAndMetric[1]))) {
+    throw "Could not get requested metric!";
+  } else {
+    return timeAndMetric;
+  }
 };
 
 let mockupMetricReport = {
