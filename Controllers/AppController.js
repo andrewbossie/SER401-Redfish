@@ -13,6 +13,21 @@ let metrics = {
   }
 };
 
+let getMetric = (metricValues, metric, tray) => {
+  let timeAndMetric = [];
+  for (var i = 0; i < metricValues.length; i++) {
+    if (
+      tray &&
+      metricValues[i].MetricProperty.includes(`Tray_${tray}`) &&
+      metricValues[i].MemberID === metric
+    ) {
+      timeAndMetric.push(metricValues[i].TimeStamp);
+      timeAndMetric.push(metricValues[i].MetricValue);
+    }
+  }
+  return timeAndMetric;
+};
+
 // Update influx from API
 exports.updateCPUUtil = () => {
   request(
@@ -37,14 +52,12 @@ exports.updateCPUUtil = () => {
               metrics.cpuUtil.timestamp = Influx.toNanoDate(date);
               metrics.cpuUtil.metric = body.MetricValues[i].MetricValue;
             }
-            // increment = increment + 1;
           }
         }
       }
     }
   );
 };
-// var increment = 1;
 
 // InfluxDB Connection
 const influx = new Influx.InfluxDB({
@@ -52,7 +65,6 @@ const influx = new Influx.InfluxDB({
   database: "test",
   username: keys.influxUserName,
   password: keys.influxPassword,
-
 
   schema: [
     {
@@ -105,7 +117,7 @@ exports.writeDataTest = function() {
 exports.getPanels = function(req, res) {
   res.render("index.hbs", {
     pageTitle: "Redfish Telemetry Client (Grafana)",
-    currentYear: new Date().getFullYear(),
+    currentYear: new Date().getFullYear()
     // panels: [
     //   {
     //     src:
@@ -149,38 +161,34 @@ exports.getInfluxData = function(req, res) {
   var temp_time = [];
 
   // Get CPU Metrics
-  let getCPUData = influx
-                    .query("SELECT * FROM cpu")
-                    .catch(err => {
-                      console.error(`Error retrieving data from Influx. ${err.stack}`);
-                    });
+  let getCPUData = influx.query("SELECT * FROM cpu").catch(err => {
+    console.error(`Error retrieving data from Influx. ${err.stack}`);
+  });
 
-  let getTempData = influx
-                    .query("SELECT * FROM temp")
-                    .catch(err => {
-                      console.error(`Error retrieving data from Influx. ${err.stack}`);
-                    });
+  let getTempData = influx.query("SELECT * FROM temp").catch(err => {
+    console.error(`Error retrieving data from Influx. ${err.stack}`);
+  });
 
   // Promise.all allows us to wait for all calls to resolve. This way, we don't need to nest callbacks
   Promise.all([getCPUData, getTempData]).then(results => {
-      for (var i = 0; i < results[0].length; i++) {
-        cpu_time[i] = results[0][i]["time"];
-        cpu[i] = results[0][i]["value"];
-      }
+    for (var i = 0; i < results[0].length; i++) {
+      cpu_time[i] = results[0][i]["time"];
+      cpu[i] = results[0][i]["value"];
+    }
 
-      for (var i = 0; i < results[1].length; i++) {
-        temp_time[i] = results[1][i]["time"];
-        temp[i] = results[1][i]["value"];
-      }
+    for (var i = 0; i < results[1].length; i++) {
+      temp_time[i] = results[1][i]["time"];
+      temp[i] = results[1][i]["value"];
+    }
 
-      res.render("chart.hbs", {
-        pageTitle: "Redfish Telemetry Client (Js)",
-        cpu: cpu,
-        temp: temp,
-        cpu_time: cpu_time,
-        temp_time: temp_time
-      });
-  })
+    res.render("chart.hbs", {
+      pageTitle: "Redfish Telemetry Client (Js)",
+      cpu: cpu,
+      temp: temp,
+      cpu_time: cpu_time,
+      temp_time: temp_time
+    });
+  });
 };
 /*
 * Note: Redfish API Specification DateTime values are in ISO 8601 "extended"
