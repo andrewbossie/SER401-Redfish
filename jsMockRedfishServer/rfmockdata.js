@@ -18,6 +18,13 @@ if (process.argv.indexOf("-c") != -1) {
    }
 }
 
+//push to file switch
+if (process.argv.indexOf("-f") != -1) {
+   if (process.argv[process.argv.indexOf("-f") + 1] != -1) {
+      //write data to file
+   }
+}
+
 if (!config) {
    config = require('./config');
 }
