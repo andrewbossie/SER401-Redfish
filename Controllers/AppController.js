@@ -13,21 +13,6 @@ let metrics = {
   }
 };
 
-let getMetric = (metricValues, metric, tray) => {
-  let timeAndMetric = [];
-  for (var i = 0; i < metricValues.length; i++) {
-    if (
-      tray &&
-      metricValues[i].MetricProperty.includes(`Tray_${tray}`) &&
-      metricValues[i].MemberID === metric
-    ) {
-      timeAndMetric.push(metricValues[i].TimeStamp);
-      timeAndMetric.push(metricValues[i].MetricValue);
-    }
-  }
-  return timeAndMetric;
-};
-
 // Update influx from API
 exports.updateCPUUtil = () => {
   request(
