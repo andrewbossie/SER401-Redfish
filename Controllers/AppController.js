@@ -3,6 +3,7 @@ const request = require("request");
 const Influx = require("influx");
 
 const util = require("../Resources/js/util");
+const rTools = require("../Resources/js/redfishTools");
 
 // Get CPU data
 let metrics = {
@@ -26,18 +27,17 @@ exports.updateCPUUtil = () => {
         console.log("Unable to connect to server.");
       } else {
         if (body.MetricValues) {
-          for (var i = 0; i < body.MetricValues.length; i++) {
-            if (body.MetricValues[i].MemberID === "CPUPercentUtil") {
-              let date = new Date(
-                util.convertToIsoDate(body.MetricValues[i].TimeStamp)
-              );
-              d2 = new Date();
-              now = d2.getSeconds();
-              date.setMinutes(date.getMinutes() + now);
-              metrics.cpuUtil.timestamp = Influx.toNanoDate(date);
-              metrics.cpuUtil.metric = body.MetricValues[i].MetricValue;
-            }
-          }
+          let cpuUtil = rTools.getMetric(
+            body.MetricValues,
+            "CPUPercentUtil",
+            1
+          );
+          let date = new Date(util.convertToIsoDate(cpuUtil[0]));
+          d2 = new Date();
+          now = d2.getSeconds();
+          date.setMinutes(date.getMinutes() + now);
+          metrics.cpuUtil.timestamp = Influx.toNanoDate(date);
+          metrics.cpuUtil.metric = cpuUtil[1];
         }
       }
     }

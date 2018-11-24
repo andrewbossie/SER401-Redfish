@@ -4,18 +4,22 @@
 */
 let getMetric = (metricValues, metric, tray) => {
   let timeAndMetric = [];
+  let count = 0;
   for (var i = 0; i < metricValues.length; i++) {
     if (
       tray &&
       metricValues[i].MetricProperty.includes(`Tray_${tray}`) &&
-      metricValues[i].MemberID === metric
+      metricValues[i].MemberID === metric &&
+      count < 1
     ) {
       timeAndMetric.push(metricValues[i].TimeStamp);
       timeAndMetric.push(metricValues[i].MetricValue);
+      count++;
     }
   }
 
   if (timeAndMetric.length !== 2 || isNaN(parseInt(timeAndMetric[1]))) {
+    console.log(timeAndMetric);
     throw "Could not get requested metric!";
   } else {
     return timeAndMetric;
