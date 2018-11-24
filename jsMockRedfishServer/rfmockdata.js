@@ -5,6 +5,7 @@ var fs = require('fs');
 
 var config;
 var PFuncs = require('./PatternFuncs');
+var mode = "";
 
 if (process.argv.indexOf("-c") != -1) {
    if (process.argv[process.argv.indexOf("-c") + 1] != -1) {
@@ -22,6 +23,7 @@ if (process.argv.indexOf("-c") != -1) {
 if (process.argv.indexOf("-f") != -1) {
    if (process.argv[process.argv.indexOf("-f") + 1] != -1) {
       //write data to file
+	  mode = "file";
    }
 }
 
@@ -29,7 +31,7 @@ if (!config) {
    config = require('./config');
 }
 
-if (process.argv.indexOf("-s") != 1) {
+if (process.argv.indexOf("-s") != 1 && process.argv.indexOf("-f") == -1) {
    startServer(config.RedFishData.path);
 }
 
@@ -46,52 +48,105 @@ function startServer(redfishPath) {
 
 var patternTimers = [];
 
-config.MockupData.MockupPatterns.forEach(function(mockup, index) {
-   var p = new PFuncs();
+//for live data
+if (mode != "file"){
+	config.MockupData.MockupPatterns.forEach(function(mockup, index) {
+	   var p = new PFuncs();
 
-   if (!typeof p[mockup.pattern]) {
-      console.log("Pattern '" + mockup.pattern + "' not implemented! Skipping " + mockup.name + ".");
-      return;
-   }
+	   if (!typeof p[mockup.pattern]) {
+		  console.log("Pattern '" + mockup.pattern + "' not implemented! Skipping " + mockup.name + ".");
+		  return;
+	   }
 
-   if (!patternTimers[index])
-      patternTimers[index] = {};
+	   if (!patternTimers[index])
+		  patternTimers[index] = {};
 
-   if (mockup.min) { p.min = mockup.min; }
-   if (mockup.max) { p.max = mockup.max; }
-   if (mockup.step) { p.step = mockup.step; }
+	   if (mockup.min) { p.min = mockup.min; }
+	   if (mockup.max) { p.max = mockup.max; }
+	   if (mockup.step) { p.step = mockup.step; }
 
-   patternTimers[index].pfuncs = p;
+	   patternTimers[index].pfuncs = p;
 
-   patternTimers[index].timer = setInterval(function() {
-      var isoDTG = new Date().toISOString();
+	   patternTimers[index].timer = setInterval(function() {
+		  var isoDTG = new Date().toISOString();
 
-      var currJSON = JSON.parse(fs.readFileSync(config.RedFishData.path + mockup.path + "index.json", 'utf-8'));
+		  var currJSON = JSON.parse(fs.readFileSync(config.RedFishData.path + mockup.path + "index.json", 'utf-8'));
 
-      var templateJSON = JSON.stringify(mockup.MetricValueTemplate);
+		  var templateJSON = JSON.stringify(mockup.MetricValueTemplate);
 
-      templateJSON = templateJSON.replace(/#value/g,
-         patternTimers[index].pfuncs[mockup.pattern]()
-      );
-      templateJSON = templateJSON.replace(/#timestamp/g, isoDTG);
+		  templateJSON = templateJSON.replace(/#value/g,
+			 patternTimers[index].pfuncs[mockup.pattern]()
+		  );
+		  templateJSON = templateJSON.replace(/#timestamp/g, isoDTG);
 
-      var template = JSON.parse(templateJSON);
+		  var template = JSON.parse(templateJSON);
 
-      var tmpMVs = currJSON.MetricValues.filter(function(mval) {
-         return (mval.MemberID !== template.MemberID) ||
-            (mval.MetricProperty !== template.MetricProperty);
-      });
+		  var tmpMVs = currJSON.MetricValues.filter(function(mval) {
+			 return (mval.MemberID !== template.MemberID) ||
+				(mval.MetricProperty !== template.MetricProperty);
+		  });
 
-      currJSON.MetricValues = tmpMVs;
+		  currJSON.MetricValues = tmpMVs;
 
-      currJSON.MetricValues.push(template);
+		  currJSON.MetricValues.push(template);
 
-      console.log(isoDTG + ": " + mockup.name + "(" + patternTimers[index].pfuncs.value + ")");
+		  console.log(isoDTG + ": " + mockup.name + "(" + patternTimers[index].pfuncs.value + ")");
 
-      fs.writeFileSync(config.RedFishData.path + mockup.path + "index.json", JSON.stringify(currJSON, null, "\t"), 'utf-8', function(err) {
-         if (err) {
-            return console.log(err);
-         }
-      });
-   }, mockup.timedelay * 1000);
-});
+		  fs.writeFileSync(config.RedFishData.path + mockup.path + "index.json", JSON.stringify(currJSON, null, "\t"), 'utf-8', function(err) {
+			 if (err) {
+				return console.log(err);
+			 }
+		  });
+	   }, mockup.timedelay * 1000);
+	});
+}
+
+//for saving data to files
+if (mode == "file"){
+	config.MockupData.MockupPatterns.forEach(function(mockup, index) {
+	   var p = new PFuncs();
+
+	   if (!typeof p[mockup.pattern]) {
+		  console.log("Pattern '" + mockup.pattern + "' not implemented! Skipping " + mockup.name + ".");
+		  return;
+	   }
+
+	   if (!patternTimers[index])
+		  patternTimers[index] = {};
+
+	   if (mockup.min) { p.min = mockup.min; }
+	   if (mockup.max) { p.max = mockup.max; }
+	   if (mockup.step) { p.step = mockup.step; }
+
+	   patternTimers[index].pfuncs = p;
+
+
+	  var isoDTG = new Date().toISOString();
+	  var currJSON = JSON.parse(fs.readFileSync(config.RedFishData.path + mockup.path + "index.json", 'utf-8'));
+	  var templateJSON = JSON.stringify(mockup.MetricValueTemplate);
+	  
+	  templateJSON = templateJSON.replace(/#value/g,
+		 patternTimers[index].pfuncs[mockup.pattern]()
+	  );
+	  templateJSON = templateJSON.replace(/#timestamp/g, isoDTG);
+
+	  var template = JSON.parse(templateJSON);
+
+	  var tmpMVs = currJSON.MetricValues.filter(function(mval) {
+		 return (mval.MemberID !== template.MemberID) ||
+			(mval.MetricProperty !== template.MetricProperty);
+	  });
+
+	  currJSON.MetricValues = tmpMVs;
+	  currJSON.MetricValues.push(template);
+
+	  //console.log(isoDTG + ": " + mockup.name + "(" + patternTimers[index].pfuncs.value + ")");
+
+	  fs.writeFileSync(config.RedFishData.path + mockup.path + "index.json", JSON.stringify(currJSON, null, "\t"), 'utf-8', function(err) {
+		 if (err) {
+			return console.log(err);
+		 }
+	  });
+
+	});
+}
