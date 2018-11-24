@@ -14,6 +14,13 @@ test("Returns 2016-11-08T14:25:04-0500", () => {
   );
 });
 
+// Valid input, no conversion
+test("Returns 2016-11-08T14:25:04.437Z", () => {
+  expect(util.convertToIsoDate("2016-11-08T14:25:04.437Z")).toBe(
+    "2016-11-08T14:25:04.437Z"
+  );
+});
+
 // Invalid input
 test("Throws Invalid timestamp format!", () => {
   expect(() => {
