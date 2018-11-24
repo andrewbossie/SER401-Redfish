@@ -6,5 +6,4 @@ module.exports = app => {
   app.use(express.static("./Resources"));
 
   app.get("/", app_controller.getPanels);
-  app.get('/charts', app_controller.getInfluxData);
 };
