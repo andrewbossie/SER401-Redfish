@@ -2,27 +2,36 @@
 * Retrieves a given metric from a given tray (if tray is applicable)
 * and returns the metric in [timestamp, metric] format.
 */
-let getMetric = (metricValues, metric, tray) => {
-  let timeAndMetric = [];
-  let count = 0;
+let getMetric = (metricValues, metric, tray, num) => {
+  let data = {
+    MemberID: "",
+    MetricValue: "",
+    TimeStamp: "",
+    num: 0
+  };
+
   for (var i = 0; i < metricValues.length; i++) {
     if (
       tray &&
       metricValues[i].MetricProperty.includes(`Tray_${tray}`) &&
       metricValues[i].MemberID === metric &&
-      count < 1
+      metricValues[i].MetricProperty.includes(`/${num}/`)
     ) {
-      timeAndMetric.push(metricValues[i].TimeStamp);
-      timeAndMetric.push(metricValues[i].MetricValue);
-      count++;
+      data.MemberID = metric;
+      data.MetricValue = metricValues[i].MetricValue;
+      data.TimeStamp = metricValues[i].TimeStamp;
+      data.num = num;
+      // timeAndMetric.push(metricValues[i].TimeStamp);
+      // timeAndMetric.push(metricValues[i].MetricValue);
+      // timeAndMetric.push(metricValues[i].MemberID);
     }
   }
 
-  if (timeAndMetric.length !== 2 || isNaN(parseInt(timeAndMetric[1]))) {
-    console.log(timeAndMetric);
+  if (data.memberID == "" || isNaN(parseInt(data.MetricValue))) {
+    console.log(data);
     throw "Could not get requested metric!";
   } else {
-    return timeAndMetric;
+    return data;
   }
 };
 
