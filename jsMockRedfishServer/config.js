@@ -3,7 +3,7 @@ var config = {
     // Path to the redfish directory that will be served.
     // This should be a copy of the original directory since
     // the data will be modified.
-    path: "../../DCSimTools/Redfish-Mockup-Server/redfish"
+    path: "../../../DCSimTools/Redfish-Mockup-Server/redfish"
   },
   MockupData: {
     // This is an array of all of the MetricIDs to be modified
