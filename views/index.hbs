@@ -39,97 +39,124 @@
             $("#add").click(
                     function (e) {
                         e.preventDefault();
-                        $('ul.dropdown').slideToggle("meduim");
+                        $('ul.dropdown').slideToggle("medium");
                     }
             );
 
-            $('.panel_select').on('change', function () {
-                var value = $('option:selected', this).val();
+            $('.dropdown').on('click', function () {
+                updatePanel(this);
+            });
+
+            let updatePanel = panelElement => {
+                var value = $('option:selected', panelElement).val();
                 console.log(value);
-                var location = $(this).attr('id');
+                var location = $(panelElement).attr('id');
                 console.log(location);
                 var url = '';
                 var label = '';
 
+                var panel1URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB";
+                var panel2URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA";
+                var panel3URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6";
+                var panel4URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB";
+                var panel5URL = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1";
+                var panel6URL = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1";
+                var panel1Label = "Static Grafana Panel 1";
+                var panel2Label = "Static Grafana Panel 2";
+                var panel3Label = "Static Grafana Panel 3";
+                var panel4Label = "Static Grafana Panel 4";
+                var panel5Label = "TestDash Custom Panel 1 (New Plugin)";
+                var panel6Label = "TestDash Custom Panel 2 (New Plugin)";
+
                 switch (value) {
                     case 'panel1':
-                        url = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB";
-                        label = "Static Grafana Panel 1";
+                        url = panel1URL;
+                        label = panel1Label;
                         break;
 
                     case 'panel2':
-                        url = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA";
-                        label = "Static Grafana Panel 2";
+                        url = panel2URL;
+                        label = panel2Label;
                         break;
 
                     case 'panel3':
-                        url = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6";
-                        label = "Static Grafana Panel 3";
+                        url = panel3URL;
+                        label = panel3Label;
                         break;
 
                     case 'panel4':
-                        url = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB";
-                        label = "Static Grafana Panel 4";
+                        url = panel4URL
+                        label = panel4Label;
                         break;
 
                     case 'panel5':
-                        url = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1";
-                        label = "TestDash Custom Panel 1 (New Plugin)";
+                        url = panel5URL;
+                        label = panel5Label;
                         break;
 
                     case 'panel6':
-                        url = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1";
-                        label = "TestDash Custom Panel 2 (New Plugin)";
+                        url = panel6URL;
+                        label = panel6Label;
                         break;
-                        
+
                     case 'showAll':
-                        let urls = ["http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB",
-                            "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA",
-                            "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6",
-                            "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB",
-                            "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1",
-                            "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1"
+                        let urls = [
+                            panel1URL,
+                            panel2URL,
+                            panel3URL,
+                            panel4URL,
+                            panel5URL,
+                            panel6URL
                         ];
 
-                        let labels = ["Static Grafana Panel 1",
-                            "Static Grafana Panel 2",
-                            "Static Grafana Panel 3",
-                            "Static Grafana Panel 4",
-                            "TestDash Custom Panel 1 (New Plugin)",
-                            "TestDash Custom Panel 2 (New Plugin)"
-                        ]
+                        let labels = [
+                            panel1Label,
+                            panel2Label,
+                            panel3Label,
+                            panel4Label,
+                            panel5Label,
+                            panel6Label
+                        ];
 
                         let html = "<table class=\"panelTable\">";
 
                         for (var index in urls) {
                             html += "<td class=\"panelCell\">"
-                            html +=     "<iframe src=\"" + urls[index] +  "\" class=\"panelFrame\" frameborder=\"0\"></iframe>"
-                            html +=     "<div class=\"labelContainer text\">"
-                            html +=         "<span>"
-                            html +=             "<h2>" + labels[index] + "</h2>"
-                            html +=         "</span>"
-                            html +=     "</div>"
-                            html += "</td>"   
+                            html += "<iframe src=\"" + urls[index] + "\" class=\"panelFrame\" frameborder=\"0\"></iframe>"
+                            html += "<div class=\"labelContainer text\">"
+                            html += "<span>"
+                            html += "<h2>" + labels[index] + "</h2>"
+                            html += "</span>"
+                            html += "</div>"
+                            html += "</td>"
                         }
 
                         html += "</table>"
 
 
-                        $('#panel_area_'+ location + '').empty();
-                        $('#panel_area_'+ location + '').html(html);
-                        $('#label_area_'+ location + '').empty();
+                        $('#panel_area_' + location + '').empty();
+                        $('#panel_area_' + location + '').html(html);
+                        $('#label_area_' + location + '').empty();
                         return;
 
                 }
 
-                $('#panel_area_'+ location + '').empty();
-                $('#panel_area_'+ location + '').html("<iframe src='"+url+"' class='panelFrame' frameborder='0'></iframe>");
-                $('#label_area_'+ location + '').empty();
-                $('#label_area_'+ location + '').html("<h3>"+label+"</h3>");
+                $('#panel_area_' + location + '').empty();
+                $('#panel_area_' + location + '').html("<iframe src='" + url + "' class='panelFrame' frameborder='0'></iframe>");
+                $('#label_area_' + location + '').empty();
+                $('#label_area_' + location + '').html("<h3 class=\"text\">" + label + "</h3>");
 
-            });
+            };
+
+            // let updatePanels = () => {
+            //     let panelSelectIds = ["1", "2"];
+            //     for (var id in panelSelectIds) {
+            //         updatePanel(document.getElementById(panelSelectIds[id]));
+            //     }
+            // };
+            //
+            // updatePanels();
         });
 
-    </script>
-    
+        </script>
 </html>
