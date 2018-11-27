@@ -9,10 +9,13 @@
         <title>Redfish Telemetry Client</title>
     </head>
     <body>
+    <div>
         <h1 class="text">{{pageTitle}}</h1>
-        <div class="separator" />
-        <br />
-        <div style="display: inline-block;">
+        <div class="separator" ></div>
+    </div>
+
+        <!-- Sidebar -->
+        <div class="sidenav">
             <h4><i class="fas fa-plus"></i><a href="#" id="add" style="text-decoration: none;"> &nbsp;Add a panel...</a></h4>
             <ul class="dropdown">
                 <li value="panel1">Panel 1</li>
@@ -23,11 +26,15 @@
                 <li value="panel6">Panel 6</li>
                 <li value="showAll">Show All</li>
             </ul>
-            <br />
-            <br />
-            <div id="panel_area_1"></div>
-            <div id="label_area_1" style="text-align: center;"><h3></h3></div>
         </div>
+
+        <!-- Main Content -->
+        <div class="main_container">
+            <div id="panel_area"></div>
+            <div id="label_area" style="text-align: center;"></div>
+        </div>
+
+        <!-- Footer -->
         <div class="footer">
             {{> footer}}
         </div>
@@ -35,23 +42,23 @@
     <script>
         $(document).ready(function () {
             var count = 0;
+            var displayed = [];
 
             $("#add").click(
-                    function (e) {
-                        e.preventDefault();
-                        $('ul.dropdown').slideToggle("medium");
-                    }
+                function (e) {
+                    e.preventDefault();
+                    $('ul.dropdown').slideToggle("medium");
+                }
             );
 
-            $('.dropdown').on('click', function () {
+            $('.dropdown li').on('click', function () {
+                $('ul.dropdown').slideToggle("medium");
                 updatePanel(this);
             });
 
             let updatePanel = panelElement => {
-                var value = $('option:selected', panelElement).val();
-                console.log(value);
-                var location = $(panelElement).attr('id');
-                console.log(location);
+                var value = $(panelElement).index();
+                // console.log(value);
                 var url = '';
                 var label = '';
 
@@ -69,37 +76,37 @@
                 var panel6Label = "TestDash Custom Panel 2 (New Plugin)";
 
                 switch (value) {
-                    case 'panel1':
+                    case 0:
                         url = panel1URL;
                         label = panel1Label;
                         break;
 
-                    case 'panel2':
+                    case 1:
                         url = panel2URL;
                         label = panel2Label;
                         break;
 
-                    case 'panel3':
+                    case 2:
                         url = panel3URL;
                         label = panel3Label;
                         break;
 
-                    case 'panel4':
-                        url = panel4URL
+                    case 3:
+                        url = panel4URL;
                         label = panel4Label;
                         break;
 
-                    case 'panel5':
+                    case 4:
                         url = panel5URL;
                         label = panel5Label;
                         break;
 
-                    case 'panel6':
+                    case 5:
                         url = panel6URL;
                         label = panel6Label;
                         break;
 
-                    case 'showAll':
+                    case 6:
                         let urls = [
                             panel1URL,
                             panel2URL,
@@ -121,32 +128,45 @@
                         let html = "<table class=\"panelTable\">";
 
                         for (var index in urls) {
-                            html += "<td class=\"panelCell\">"
-                            html += "<iframe src=\"" + urls[index] + "\" class=\"panelFrame\" frameborder=\"0\"></iframe>"
-                            html += "<div class=\"labelContainer text\">"
-                            html += "<span>"
-                            html += "<h2>" + labels[index] + "</h2>"
-                            html += "</span>"
-                            html += "</div>"
+                            html += "<td class=\"panelCell\">";
+                            html += "<iframe src=\"" + urls[index] + "\" class=\"panelFrame\" frameborder=\"0\"></iframe>";
+                            html += "<div class=\"labelContainer text\">";
+                            html += "<span>";
+                            html += "<h2>" + labels[index] + "</h2>";
+                            html += "</span>";
+                            html += "</div>";
                             html += "</td>"
                         }
 
-                        html += "</table>"
+                        html += "</table>";
 
 
-                        $('#panel_area_' + location + '').empty();
-                        $('#panel_area_' + location + '').html(html);
-                        $('#label_area_' + location + '').empty();
+                        $('.main_container').empty();
+                        $('.main_container').html(html);
+                        $('.main_container').empty();
                         return;
 
                 }
 
-                $('#panel_area_' + location + '').empty();
-                $('#panel_area_' + location + '').html("<iframe src='" + url + "' class='panelFrame' frameborder='0'></iframe>");
-                $('#label_area_' + location + '').empty();
-                $('#label_area_' + location + '').html("<h3 class=\"text\">" + label + "</h3>");
-
+                if($.inArray(value, displayed) !== -1) {
+                    alert("Panel already added!!");
+                } else{
+                    displayed.push(value);
+                    let html = "<div class=panel_area_'" + value + "'><iframe src='" + url + "' class='panelFrame' frameborder='0'></iframe>";
+                    html += "<h3 class='text'>" + label + "</h3><i class='fa fa-trash del' aria-hidden='true' id='" + value + "'></i></div>";
+                    $('.main_container').append(html);
+                }
             };
+
+            $('.del').on('click', function(){
+                console.log(this.id);
+               delete_panel(this.id);
+            });
+
+
+            function delete_panel(index) {
+                $( ".panel_area_" + index + "").remove();
+            }
 
             // let updatePanels = () => {
             //     let panelSelectIds = ["1", "2"];

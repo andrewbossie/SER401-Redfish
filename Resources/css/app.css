@@ -8,10 +8,18 @@ h1{
 	font-family: 'Roboto', sans-serif;
 }
 
+h4{
+	font-family: 'Roboto', sans-serif;
+}
+
 a {color:#212121;}      /* unvisited link */
 a:visited {color:#212121;}  /* visited link */
 a:hover {color:#212121;}  /* mouse over link */
 a:active {color:#212121;}
+
+p{
+	font-family: 'Roboto', sans-serif;
+}
 
 
 /* Index JS (Grafana) */
@@ -70,7 +78,8 @@ a:active {color:#212121;}
 .dropdown {
 	margin-top: -10px;
 	display:none;
-	width:150px;
+	width:100px;
+	font-family: 'Roboto', sans-serif;
 	/*border: 1px solid #1c1c1c;*/
 	/*border-radius: 3px;*/
 }
@@ -78,10 +87,12 @@ a:active {color:#212121;}
 .dropdown li {
 	/*background-color:  #212121;*/
 	/*color: #F3F3F3;*/
+	font-family: 'Roboto', sans-serif;
 	color: #212121;
 	text-decoration:none;
 	display:block;
 	list-style-position: inside;
+	cursor: pointer;
 }
 
 /*.dropdown li a {*/
@@ -93,4 +104,25 @@ a:active {color:#212121;}
 .dropdown li:hover {
 	font-weight:bold;
 	color: red;
+}
+
+.sidenav{
+	height:100%;
+	top: 11%;
+	left: 10px;
+	z-index:1;
+	overflow-x: hidden;
+	width: 150px;
+	position: fixed;
+}
+
+.main_container{
+	margin-left: 150px;
+	/*padding: 0px 10px;*/
+	padding-top: 10px;
+	display: inline-block;
+}
+
+.del{
+	cursor: pointer;
 }
