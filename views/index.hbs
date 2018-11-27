@@ -10,6 +10,24 @@
     <body>
         <h1 class="text">{{pageTitle}}</h1>
         <script>
+            let isThemeDark = true;
+            let themeURLParam = "";
+
+            setThemeString = () => {
+                themeURLParam = isThemeDark ? "&theme=dark" : "&theme=light";
+            }
+
+            let updateTheme = isDark => {
+                isThemeDark = isDark;
+                if (isDark == false) {
+                    document.body.classList.add("themeLight");
+                } else {
+                    document.body.classList = [];
+                }
+                setThemeString();
+                updatePanels();
+            }
+
             let updatePanel = panelElement => {
                 var value = $('option:selected', panelElement).val();
                 console.log(value);
@@ -18,12 +36,12 @@
                 var url = '';
                 var label = '';
 
-                var panel1URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB";
-                var panel2URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA";
-                var panel3URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6";
-                var panel4URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB";
-                var panel5URL = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1";
-                var panel6URL = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1";
+                var panel1URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB" + themeURLParam;
+                var panel2URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA" + themeURLParam;
+                var panel3URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6" + themeURLParam;
+                var panel4URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB" + themeURLParam;
+                var panel5URL = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1" + themeURLParam;
+                var panel6URL = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1" + themeURLParam;
                 var panel1Label = "Static Grafana Panel 1";
                 var panel2Label = "Static Grafana Panel 2";
                 var panel3Label = "Static Grafana Panel 3";
@@ -125,6 +143,10 @@
                 });
         });
         </script>
+        <form>
+          <input type="radio" name="theme" value="dark" checked="checked" onclick="updateTheme(true /*isDark*/)"><span class="text">Dark Panels</span>
+          <input type="radio" name="theme" value="light" onclick="updateTheme(false /*isDark*/)"><span class="text">Light Panels</span>
+        </form>
         <div class="separator" />
         <br />
         <div style="display: inline-block;">
