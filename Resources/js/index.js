@@ -14,18 +14,36 @@ $(document).ready(function () {
         updatePanel(this);
     });
 
+    let isThemeDark = true;
+    let themeURLParam = "";
+
+    setThemeString = () => {
+        themeURLParam = isThemeDark ? "&theme=dark" : "&theme=light";
+    };
+
+    let updateTheme = isDark => {
+        isThemeDark = isDark;
+        if (isDark == false) {
+            document.body.classList.add("themeLight");
+        } else {
+            document.body.classList = [];
+        }
+        setThemeString();
+        updatePanels();
+    };
+
     let updatePanel = panelElement => {
         var value = $(panelElement).index();
         // console.log(value);
         var url = '';
         var label = '';
 
-        var panel1URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB";
-        var panel2URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA";
-        var panel3URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6";
-        var panel4URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB";
-        var panel5URL = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1";
-        var panel6URL = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1";
+        var panel1URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB" + themeURLParam;
+        var panel2URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA" + themeURLParam;
+        var panel3URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6" + themeURLParam;
+        var panel4URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB" + themeURLParam;
+        var panel5URL = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1" + themeURLParam;
+        var panel6URL = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1" + themeURLParam;
         var panel1Label = "Static Grafana Panel 1";
         var panel2Label = "Static Grafana Panel 2";
         var panel3Label = "Static Grafana Panel 3";
@@ -125,12 +143,12 @@ $(document).ready(function () {
         $( ".panel_area_" + index + "").remove();
     }
 
-    // let updatePanels = () => {
-    //     let panelSelectIds = ["1", "2"];
-    //     for (var id in panelSelectIds) {
-    //         updatePanel(document.getElementById(panelSelectIds[id]));
-    //     }
-    // };
-    //
+    let updatePanels = () => {
+        let panelSelectIds = ["1", "2"];
+        for (var id in panelSelectIds) {
+            updatePanel(document.getElementById(panelSelectIds[id]));
+        }
+    };
+
     // updatePanels();
 });

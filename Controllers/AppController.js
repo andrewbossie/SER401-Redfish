@@ -7,11 +7,31 @@ const rTools = require("../Resources/js/redfishTools");
 
 // Get CPU data
 let metrics = {
-  cpuUtil: {
+  cpuUtil_1: {
+    date: null,
+    timestamp: null,
+    metric: null
+  },
+  cpuUtil_2: {
+    date: null,
+    timestamp: null,
+    metric: null
+  },
+  cpuUtil_3: {
     date: null,
     timestamp: null,
     metric: null
   }
+};
+
+let updateMetric = (target, newMetric) => {
+  let date = new Date(util.convertToIsoDate(newMetric.TimeStamp));
+  d2 = new Date();
+  now = d2.getSeconds();
+  date.setMinutes(date.getMinutes() + now);
+
+  target.timestamp = Influx.toNanoDate(date);
+  target.metric = newMetric.MetricValue;
 };
 
 // Update influx from API
@@ -27,17 +47,28 @@ exports.updateCPUUtil = () => {
         console.log("Unable to connect to server.");
       } else {
         if (body.MetricValues) {
-          let cpuUtil = rTools.getMetric(
+          let cpuUtil_1 = rTools.getMetric(
             body.MetricValues,
             "CPUPercentUtil",
+            1,
             1
           );
-          let date = new Date(util.convertToIsoDate(cpuUtil[0]));
-          d2 = new Date();
-          now = d2.getSeconds();
-          date.setMinutes(date.getMinutes() + now);
-          metrics.cpuUtil.timestamp = Influx.toNanoDate(date);
-          metrics.cpuUtil.metric = cpuUtil[1];
+          let cpuUtil_2 = rTools.getMetric(
+            body.MetricValues,
+            "CPUPercentUtil",
+            1,
+            2
+          );
+          let cpuUtil_3 = rTools.getMetric(
+            body.MetricValues,
+            "CPUPercentUtil",
+            1,
+            3
+          );
+
+          updateMetric(metrics.cpuUtil_1, cpuUtil_1);
+          updateMetric(metrics.cpuUtil_2, cpuUtil_2);
+          updateMetric(metrics.cpuUtil_3, cpuUtil_3);
         }
       }
     }
@@ -58,9 +89,9 @@ const influx = new Influx.InfluxDB({
 
   schema: [
     {
-      measurement: "cpu",
+      measurement: "CPUPercentUtil",
       fields: { value: Influx.FieldType.FLOAT },
-      tags: ["host"]
+      tags: ["host", "tray", "id"]
     },
     {
       measurement: "temp",
@@ -77,10 +108,22 @@ exports.writeDataTest = function() {
     .writePoints(
       [
         {
-          measurement: "cpu",
-          tags: { host: "serverA" },
-          fields: { value: metrics.cpuUtil.metric },
-          timestamp: metrics.cpuUtil.timestamp.getNanoTime()
+          measurement: "CPUPercentUtil",
+          tags: { host: "serverA", tray: 1, id: 1 },
+          fields: { value: metrics.cpuUtil_1.metric },
+          timestamp: metrics.cpuUtil_1.timestamp.getNanoTime()
+        },
+        {
+          measurement: "CPUPercentUtil",
+          tags: { host: "serverA", tray: 1, id: 2 },
+          fields: { value: metrics.cpuUtil_2.metric },
+          timestamp: metrics.cpuUtil_2.timestamp.getNanoTime()
+        },
+        {
+          measurement: "CPUPercentUtil",
+          tags: { host: "serverA", tray: 1, id: 3 },
+          fields: { value: metrics.cpuUtil_3.metric },
+          timestamp: metrics.cpuUtil_3.timestamp.getNanoTime()
         },
         {
           measurement: "cpu",
