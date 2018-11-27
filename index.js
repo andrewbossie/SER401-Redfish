@@ -4,8 +4,8 @@ const http = require("http");
 const baseRoutes = require("./routes/baseRoutes");
 var app_conroller = require("./Controllers/AppController");
 
-setInterval(app_conroller.updateCPUUtil, 1000);
-setInterval(app_conroller.writeDataTest, 5000);
+// setInterval(app_conroller.updateCPUUtil, 1000);
+// setInterval(app_conroller.writeDataTest, 5000);
 
 const app = express();
 hbs.registerPartials(__dirname + "/views/partials");

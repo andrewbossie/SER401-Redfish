@@ -1,4 +1,4 @@
-const keys = require("../config/keys");
+// const keys = require("../config/keys");
 const request = require("request");
 const Influx = require("influx");
 
@@ -46,10 +46,15 @@ exports.updateCPUUtil = () => {
 
 // InfluxDB Connection
 const influx = new Influx.InfluxDB({
-  host: keys.influxHost,
-  database: "test",
-  username: keys.influxUserName,
-  password: keys.influxPassword,
+  // host: keys.influxHost,
+  // database: "test",
+  // username: keys.influxUserName,
+  // password: keys.influxPassword,
+
+    host: "localhost",
+    database: "test",
+    username: "admin",
+    password: "Andrewia1",
 
   schema: [
     {
