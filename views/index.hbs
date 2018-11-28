@@ -40,9 +40,9 @@
         </div>
 
         <!-- Footer -->
-        <div class="footer">
-            {{> footer}}
-        </div>
+        <!--<div class="footer">-->
+            <!--{{> footer}}-->
+        <!--</div>-->
     </body>
     <script>
             var count = 0;
@@ -178,7 +178,9 @@
                 if($.inArray(value, displayed) !== -1) {
                     alert("Panel already added!!");
                 } else{
+                    console.log(value);
                     displayed.push(value);
+                    console.log(displayed);
                     let html = "<td class=\"panelCell\"><div id='panel_area_" + value + "'><iframe src='" + url + "' class='panelFrame' frameborder='0'></iframe>";
                     html += "<br /><i class='fa fa-trash del' aria-hidden='true' id='" + value + "'></i><h2 class='text'>" + label + "</h2></div>";
                     $('.main_container').append(html);
@@ -193,12 +195,12 @@
 
             let updatePanels = () => {
                 var tmp = displayed;
-                console.log(displayed);
+                // console.log(displayed);
                 displayed = [];
                 $('.main_container').empty();
-                console.log(tmp);
-                for (var id in tmp) {
-                    updatePanel(id);
+                // console.log(tmp);
+                for(var i = 0; i < tmp.length; i++) {
+                    updatePanel(tmp[i]);
                 }
             };
     </script>
