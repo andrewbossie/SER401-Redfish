@@ -8,11 +8,35 @@ h1{
 	font-family: 'Roboto', sans-serif;
 }
 
+h4{
+	font-family: 'Roboto', sans-serif;
+}
+
+a {color:#212121;}      /* unvisited link */
+a:visited {color:#212121;}  /* visited link */
+a:hover {color:#212121;}  /* mouse over link */
+a:active {color:#212121;}
+
+p{
+	font-family: 'Roboto', sans-serif;
+}
+
+
 /* Index JS (Grafana) */
 .separator {
 	width: 100%;
 	height: 3px;
 	background-color: #212121
+}
+
+.footer {
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	/*width: 100%;*/
+	background-color: #F3F3F3;
+	color: #212121;
+	text-align: center;
 }
 
 .panelTable {
@@ -51,17 +75,54 @@ h1{
 }
 
 
-/* Graph JS */
-.temp_panel{
-	width:600px;
-	height:600px;
-	float:right;
-	margin-right: 100px;
+.dropdown {
+	margin-top: -10px;
+	display:none;
+	width:100px;
+	font-family: 'Roboto', sans-serif;
+	/*border: 1px solid #1c1c1c;*/
+	/*border-radius: 3px;*/
 }
 
-.cpu_panel{
-	width: 600px;
-	height:600px;
-	float:left;
-	margin-left: 100px;
+.dropdown li {
+	/*background-color:  #212121;*/
+	/*color: #F3F3F3;*/
+	font-family: 'Roboto', sans-serif;
+	color: #212121;
+	text-decoration:none;
+	display:block;
+	list-style-position: inside;
+	cursor: pointer;
+}
+
+/*.dropdown li a {*/
+	/*color: #F3F3F3;*/
+	/*text-decoration:none;*/
+	/*display:block;*/
+/*}*/
+
+.dropdown li:hover {
+	font-weight:bold;
+	color: red;
+}
+
+.sidenav{
+	height:100%;
+	top: 14%;
+	left: 10px;
+	z-index:1;
+	overflow-x: hidden;
+	width: 150px;
+	position: fixed;
+}
+
+.main_container{
+	margin-left: 150px;
+	/*padding: 0px 10px;*/
+	padding-top: 10px;
+	display: inline-block;
+}
+
+.del{
+	cursor: pointer;
 }

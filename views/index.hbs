@@ -5,19 +5,69 @@
             <link rel="stylesheet" href="/css/app.css">
             <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="../Resources/js/index.js"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
         <title>Redfish Telemetry Client</title>
     </head>
     <body>
+    <div>
         <h1 class="text">{{pageTitle}}</h1>
-        <script>
+        <form>
+            <input type="radio" name="theme" value="dark" checked="checked" onclick="updateTheme(true /*isDark*/);"><span class="text">Dark Panels</span>
+            <input type="radio" name="theme" value="light" onclick="updateTheme(false /*isDark*/);"><span class="text">Light Panels</span>
+        </form>
+        <div class="separator" ></div>
+    </div>
+
+        <!-- Sidebar -->
+        <div class="sidenav">
+            <h4><i class="fas fa-plus"></i><a href="#" id="add" style="text-decoration: none;"> &nbsp;Add a panel...</a></h4>
+            <ul class="dropdown">
+                <li value="panel1">Panel 1</li>
+                <li value="panel2">Panel 2</li>
+                <li value="panel3">Panel 3</li>
+                <li value="panel4">Panel 4</li>
+                <li value="panel5">Panel 5</li>
+                <li value="panel6">Panel 6</li>
+                <li value="showAll">Show All</li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div>
+            <table class="main_container">
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <!--<div class="footer">-->
+            <!--{{> footer}}-->
+        <!--</div>-->
+    </body>
+    <script>
+            var count = 0;
+            var displayed = [];
+
+            $("#add").click(
+                    function (e) {
+                        e.preventDefault();
+                        $('ul.dropdown').slideToggle("medium");
+                    }
+            );
+
+            $('.dropdown li').on('click', function () {
+                $('ul.dropdown').slideToggle("medium");
+                updatePanel(this);
+            });
+
             let isThemeDark = true;
             let themeURLParam = "";
 
             setThemeString = () => {
                 themeURLParam = isThemeDark ? "&theme=dark" : "&theme=light";
-            }
+            };
 
-            let updateTheme = isDark => {
+            function updateTheme(isDark){
                 isThemeDark = isDark;
                 if (isDark == false) {
                     document.body.classList.add("themeLight");
@@ -29,10 +79,12 @@
             }
 
             let updatePanel = panelElement => {
-                var value = $('option:selected', panelElement).val();
-                console.log(value);
-                var location = $(panelElement).attr('id');
-                console.log(location);
+                var value;
+                if(panelElement.type === ''){
+                    value = $(panelElement).index();
+                } else{
+                    value = parseInt(panelElement, 10);
+                }
                 var url = '';
                 var label = '';
 
@@ -50,37 +102,37 @@
                 var panel6Label = "TestDash Custom Panel 2 (New Plugin)";
 
                 switch (value) {
-                    case 'panel1':
+                    case 0:
                         url = panel1URL;
                         label = panel1Label;
                         break;
 
-                    case 'panel2':
+                    case 1:
                         url = panel2URL;
                         label = panel2Label;
                         break;
 
-                    case 'panel3':
+                    case 2:
                         url = panel3URL;
                         label = panel3Label;
                         break;
 
-                    case 'panel4':
-                        url = panel4URL
+                    case 3:
+                        url = panel4URL;
                         label = panel4Label;
                         break;
 
-                    case 'panel5':
+                    case 4:
                         url = panel5URL;
                         label = panel5Label;
                         break;
 
-                    case 'panel6':
+                    case 5:
                         url = panel6URL;
                         label = panel6Label;
                         break;
-                        
-                    case 'showAll':
+
+                    case 6:
                         let urls = [
                             panel1URL,
                             panel2URL,
@@ -99,89 +151,57 @@
                             panel6Label
                         ];
 
-                        let html = "<table class=\"panelTable\">";
+                        // let html = "<table class=\"panelTable\">";
+                            let html = "";
 
                         for (var index in urls) {
-                            html += "<td class=\"panelCell\">"
-                            html +=     "<iframe src=\"" + urls[index] +  "\" class=\"panelFrame\" frameborder=\"0\"></iframe>"
-                            html +=     "<div class=\"labelContainer text\">"
-                            html +=         "<span>"
-                            html +=             "<h2>" + labels[index] + "</h2>"
-                            html +=         "</span>"
-                            html +=     "</div>"
-                            html += "</td>"   
+                            html += "<td class=\"panelCell\">";
+                            html += "<div id='panel_area_" + index + "'><iframe src=\"" + urls[index] + "\" class=\"panelFrame\" frameborder=\"0\"></iframe>";
+                            html += "<div class=\"labelContainer text\">";
+                            html += "<span>";
+                            html += "<i class='fa fa-trash del' aria-hidden='true' id='" + index + "'></i>";
+                            html += "<h2>" + labels[index] + "</h2>";
+                            html += "</span>";
+                            html += "</div>";
+                            html += "</td>"
                         }
 
-                        html += "</table>"
+                        // html += "</table>";
 
 
-                        $('#panel_area_'+ location + '').empty();
-                        $('#panel_area_'+ location + '').html(html);
-                        $('#label_area_'+ location + '').empty();
+                        $('.main_container').empty();
+                        $('.main_container').html(html);
                         return;
 
                 }
 
-                $('#panel_area_'+ location + '').empty();
-                $('#panel_area_'+ location + '').html("<iframe src='"+url+"' class='panelFrame' frameborder='0'></iframe>");
-                $('#label_area_'+ location + '').empty();
-                $('#label_area_'+ location + '').html("<h3 class=\"text\">"+label+"</h3>");
+                if($.inArray(value, displayed) !== -1) {
+                    alert("Panel already added!!");
+                } else{
+                    console.log(value);
+                    displayed.push(value);
+                    console.log(displayed);
+                    let html = "<td class=\"panelCell\"><div id='panel_area_" + value + "'><iframe src='" + url + "' class='panelFrame' frameborder='0'></iframe>";
+                    html += "<br /><i class='fa fa-trash del' aria-hidden='true' id='" + value + "'></i><h2 class='text'>" + label + "</h2></div>";
+                    $('.main_container').append(html);
+                }
+            };
 
-            }
+            $('body').on('click', '.del', function(){
+                var index = displayed.indexOf(this.id);
+                displayed.splice(index, 1);
+                $( "#panel_area_" + this.id).remove();
+            });
 
             let updatePanels = () => {
-                let panelSelectIds = ["1", "2"];
-                for (var id in panelSelectIds) {
-                    updatePanel(document.getElementById(panelSelectIds[id]));
+                var tmp = displayed;
+                // console.log(displayed);
+                displayed = [];
+                $('.main_container').empty();
+                // console.log(tmp);
+                for(var i = 0; i < tmp.length; i++) {
+                    updatePanel(tmp[i]);
                 }
-            }
-
-            $(document).ready(function () {
-                updatePanels();
-                $('.panel_select').on('change', function () {
-                   updatePanel(this);
-                });
-        });
-        </script>
-        <form>
-          <input type="radio" name="theme" value="dark" checked="checked" onclick="updateTheme(true /*isDark*/)"><span class="text">Dark Panels</span>
-          <input type="radio" name="theme" value="light" onclick="updateTheme(false /*isDark*/)"><span class="text">Light Panels</span>
-        </form>
-        <div class="separator" />
-        <br />
-        <div style="display: inline-block;">
-            <select class="panel_select" id="1">
-                <!--<option selected>Select a panel...</option>-->
-                <option value="panel1" selected>Panel 1</option>
-                <option value="panel2">Panel 2</option>
-                <option value="panel3">Panel 3</option>
-                <option value="panel4">Panel 4</option>
-                <option value="panel5">Panel 5</option>
-                <option value="panel6">Panel 6</option>
-                <option value="showAll">Show All</option>
-            </select>
-            <br />
-            <br />
-            <div id="panel_area_1"></div>
-            <div id="label_area_1" style="text-align: center;"></div>
-        </div>
-        <div id="break"></div>
-        <div style="display: inline-block;">
-            <select class="panel_select" id="2">
-                <!--<option selected>Select a panel...</option>-->
-                <option value="panel1">Panel 1</option>
-                <option value="panel2" selected>Panel 2</option>
-                <option value="panel3">Panel 3</option>
-                <option value="panel4">Panel 4</option>
-                <option value="panel5">Panel 5</option>
-                <option value="panel6">Panel 6</option>
-                <option value="showAll">Show All</option>
-            </select>
-            <br />
-            <br />
-            <div id="panel_area_2"></div>
-            <div id="label_area_2" style="text-align: center;"></div>
-        </div>
-        {{> footer}}
-    </body>    
+            };
+    </script>
 </html>
