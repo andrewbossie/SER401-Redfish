@@ -21,9 +21,6 @@ let getMetric = (metricValues, metric, tray, num) => {
       data.MetricValue = metricValues[i].MetricValue;
       data.TimeStamp = metricValues[i].TimeStamp;
       data.num = num;
-      // timeAndMetric.push(metricValues[i].TimeStamp);
-      // timeAndMetric.push(metricValues[i].MetricValue);
-      // timeAndMetric.push(metricValues[i].MemberID);
     }
   }
 
