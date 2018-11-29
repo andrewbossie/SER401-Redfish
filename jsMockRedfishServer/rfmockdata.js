@@ -58,6 +58,7 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
 
    patternTimers[index].timer = setInterval(function() {
       var isoDTG = new Date().toISOString();
+      isoDTG = isoDTG.replace(/\..*$/, '-0500');
 
       var currJSON = JSON.parse(fs.readFileSync(config.RedFishData.path + mockup.path + "index.json", 'utf-8'));
 
