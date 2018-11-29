@@ -144,7 +144,7 @@ exports.writeDataTest = function() {
 // Render Static Panels in Grafana
 exports.getPanels = function(req, res) {
   res.render("index.hbs", {
-    pageTitle: "Redfish Telemetry Client (Grafana)",
+    pageTitle: "Redfish Telemetry Client",
     currentYear: new Date().getFullYear()
   });
 };
