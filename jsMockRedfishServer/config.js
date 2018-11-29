@@ -18,7 +18,11 @@ var config = {
             // .5 would be 500 miliseconds). Keep in mind that for each
             // iteration the json file in the redfish directory is fully
             // read and then written back out.
-            "timedelay": 2,
+			
+			//NOTE: If using -f switch to generate data for the event sequencer, only 
+			//whole seconds (i.e. an integer for timedelay) are supported.
+			//Attempting to use partial seconds will likely result in severely malformed data
+            "timedelay": 3,
             // The pattern in the PatternFuncs.js file. Currently, these
             // are:
             //
@@ -60,11 +64,11 @@ var config = {
          {
             "name": "Pingpong CPU(2) Percent",
             "path": "/v1/TelemetryService/MetricReports/CPUMetrics/",
-            "timedelay": 3,
-            "pattern": "pingpong",
+            "timedelay": 5,
+            "pattern": "fullrand",
             "min": 70,
             "max": 80,
-            "step": 3,
+            "step": 1,
             "MetricValueTemplate": {
 	       "MemberID": "CPUPercentUtil",
 	       "MetricValue": "#value",
@@ -75,7 +79,7 @@ var config = {
          {
             "name": "Random CPU(3) Percent",
             "path": "/v1/TelemetryService/MetricReports/CPUMetrics/",
-            "timedelay": 5,
+            "timedelay": 10,
             "pattern": "fullrand",
             "min": 45,
             "max": 90,

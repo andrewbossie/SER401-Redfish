@@ -107,35 +107,41 @@ if (mode == "file"){
 	//todo: comments, optimize, add timer
 	var isoDTG = Date.now() //.toISOString();
 	
-	var iterations = 60 * 60 * 1000;	//1 hour in ms
+	var iterations = 60 * 60;	//1 hour in seconds
 	var str = "#\n";
 	fs.writeFileSync("data.csv",str); //empty file if it already exists
 	console.log("Generating... ");
 	
-	var lineNum = 1;
-	var p = new PFuncs();
-	for (var i = 0; i <= iterations; i++){
+	//var lineNum = 1;
+	
+	for (var i = 1; i <= iterations; i++){
+		
 		var line = "";
 		config.MockupData.MockupPatterns.forEach(function(mockup, index) {
-			if(i % (mockup.timedelay*1000) == 0){
+				//console.log(index);
 				var currJSON = JSON.parse(fs.readFileSync(config.RedFishData.path + mockup.path + "index.json", 'utf-8'));
 				
-				if (!patternTimers[index])
+				
+				
+				if (patternTimers[index] == undefined)
 				  patternTimers[index] = {};
 
-				if (mockup.min) { p.min = mockup.min; }
-				if (mockup.max) { p.max = mockup.max; }
-				if (mockup.step) { p.step = mockup.step; }
-
-				patternTimers[index].pfuncs = p;
-
+				if(patternTimers[index].pfuncs == undefined){
+					var p = new PFuncs();
+					if (mockup.min) { p.min = mockup.min; }
+					if (mockup.max) { p.max = mockup.max; }
+					if (mockup.step) { p.step = mockup.step; }
+					patternTimers[index].pfuncs = p;
+				}
+			
 				//console.log(i);
 				var templateJSON = JSON.stringify(mockup.MetricValueTemplate);
 				
 				templateJSON = templateJSON.replace(/#value/g,
 					patternTimers[index].pfuncs[mockup.pattern]()
 				);
-				templateJSON = templateJSON.replace(/#timestamp/g, new Date(isoDTG + i).toISOString());
+				//console.log(index + ": " + patternTimers[index].pfuncs[mockup.pattern]());
+				templateJSON = templateJSON.replace(/#timestamp/g, new Date(isoDTG + i*1000).toISOString());
 
 				var template = JSON.parse(templateJSON);
 
@@ -149,7 +155,7 @@ if (mode == "file"){
 				
 				
 				
-				
+			if(i % (mockup.timedelay) == 0){
 				line += (currJSON.Name + ",");
 				line += (template.MemberID + ",");
 				line += (template.MetricValue + ",");
@@ -163,12 +169,12 @@ if (mode == "file"){
 			
 		});
 		if (line != ""){
-			str += (lineNum + ",");
+			str += (i + ",");
 			str += ("Metric,");
 			
 			str += line;
 			str += "\n";
-			lineNum++;
+			//lineNum++;
 		}
 		
 	
