@@ -1,207 +1,241 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-            <link rel="stylesheet" href="/css/app.css">
-            <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-        <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="../Resources/js/index.js"></script>
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-        <title>Redfish Telemetry Client</title>
-    </head>
-    <body>
-    <div>
-        <h1 class="text">{{pageTitle}}</h1>
-        <form>
-            <input type="radio" name="theme" value="dark" checked="checked" onclick="updateTheme(true /*isDark*/);"><span class="text">Dark Panels</span>
-            <input type="radio" name="theme" value="light" onclick="updateTheme(false /*isDark*/);"><span class="text">Light Panels</span>
-        </form>
-        <div class="separator" ></div>
-    </div>
 
-        <!-- Sidebar -->
-        <div class="sidenav">
-            <h4><i class="fas fa-plus"></i><a href="#" id="add" style="text-decoration: none;"> &nbsp;Add a panel...</a></h4>
-            <ul class="dropdown">
-                <li value="panel1">Panel 1</li>
-                <li value="panel2">Panel 2</li>
-                <li value="panel3">Panel 3</li>
-                <li value="panel4">Panel 4</li>
-                <li value="panel5">Panel 5</li>
-                <li value="panel6">Panel 6</li>
-                <li value="showAll">Show All</li>
-            </ul>
-        </div>
+<head>
+   <meta charset="UTF-8" />
+   <link rel="stylesheet" href="/css/app.css" />
+   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+   <script src="../Resources/js/index.js"></script>
+   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+      crossorigin="anonymous" />
+   <title>Redfish Telemetry Client</title>
+</head>
 
-        <!-- Main Content -->
-        <div>
-            <table class="main_container">
-            </table>
-        </div>
+<body>
+   <div>
+      <h1 class="text">{{ pageTitle }}</h1>
+      <form>
+         <input type="radio" name="theme" value="dark" checked="checked" onclick="updateTheme(true /*isDark*/);" /><span
+            class="text">Dark Panels</span>
+         <input type="radio" name="theme" value="light" onclick="updateTheme(false /*isDark*/);" /><span class="text">Light
+            Panels</span>
+      </form>
+      <div class="separator"></div>
+   </div>
 
-        <!-- Footer -->
-        <!--<div class="footer">-->
-            <!--{{> footer}}-->
-        <!--</div>-->
-    </body>
-    <script>
-            var count = 0;
-            var displayed = [];
+   <!-- Sidebar -->
+   <div class="sidenav">
+      <h4>
+         <i class="fas fa-plus"></i><a href="#" id="add" style="text-decoration: none;">
+            &nbsp;Add a panel...</a>
+      </h4>
+      <ul class="dropdown">
+         <li value="panel1">Panel 1</li>
+         <li value="panel2">Panel 2</li>
+         <li value="panel3">Panel 3</li>
+         <li value="panel4">Panel 4</li>
+         <li value="panel5">Panel 5</li>
+         <li value="panel6">Panel 6</li>
+         <li value="showAll">Show All</li>
+      </ul>
+   </div>
 
-            $("#add").click(
-                    function (e) {
-                        e.preventDefault();
-                        $('ul.dropdown').slideToggle("medium");
-                    }
-            );
+   <!-- Main Content -->
+   <div>
+      <table class="main_container"></table>
+   </div>
 
-            $('.dropdown li').on('click', function () {
-                $('ul.dropdown').slideToggle("medium");
-                updatePanel(this);
-            });
+   <!-- Footer -->
+   <!-- <div class="footer"> -->
+   <!-- {{> footer}} -->
+   <!-- </div> -->
+</body>
+<script>
+   var count = 0;
+   var displayed = [];
 
-            let isThemeDark = true;
-            let themeURLParam = "";
+   $("#add").click(function (e) {
+      e.preventDefault();
+      $("ul.dropdown").slideToggle("medium");
+   });
 
-            setThemeString = () => {
-                themeURLParam = isThemeDark ? "&theme=dark" : "&theme=light";
-            };
+   $(".dropdown li").on("click", function () {
+      $("ul.dropdown").slideToggle("medium");
+      updatePanel(this);
+   });
 
-            function updateTheme(isDark){
-                isThemeDark = isDark;
-                if (isDark == false) {
-                    document.body.classList.add("themeLight");
-                } else {
-                    document.body.classList = [];
-                }
-                setThemeString();
-                updatePanels();
+   let isThemeDark = true;
+   let themeURLParam = "";
+
+   setThemeString = () => {
+      themeURLParam = isThemeDark ? "&theme=dark" : "&theme=light";
+   };
+
+   function updateTheme(isDark) {
+      isThemeDark = isDark;
+      if (isDark == false) {
+         document.body.classList.add("themeLight");
+      } else {
+         document.body.classList = [];
+      }
+      setThemeString();
+      updatePanels();
+   }
+
+   let updatePanel = panelElement => {
+      var value;
+      if (panelElement.type === "") {
+         value = $(panelElement).index();
+      } else {
+         value = parseInt(panelElement, 10);
+      }
+      var url = "";
+      var label = "";
+
+      var panel1URL =
+         "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB" +
+         themeURLParam;
+      var panel2URL =
+         "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA" +
+         themeURLParam;
+      var panel3URL =
+         "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6" +
+         themeURLParam;
+      var panel4URL =
+         "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB" +
+         themeURLParam;
+      var panel5URL =
+         "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1" +
+         themeURLParam;
+      var panel6URL =
+         "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1" +
+         themeURLParam;
+      var panel1Label = "Static Grafana Panel 1";
+      var panel2Label = "Static Grafana Panel 2";
+      var panel3Label = "Static Grafana Panel 3";
+      var panel4Label = "Static Grafana Panel 4";
+      var panel5Label = "TestDash Custom Panel 1 (New Plugin)";
+      var panel6Label = "TestDash Custom Panel 2 (New Plugin)";
+
+      switch (value) {
+         case 0:
+            url = panel1URL;
+            label = panel1Label;
+            break;
+
+         case 1:
+            url = panel2URL;
+            label = panel2Label;
+            break;
+
+         case 2:
+            url = panel3URL;
+            label = panel3Label;
+            break;
+
+         case 3:
+            url = panel4URL;
+            label = panel4Label;
+            break;
+
+         case 4:
+            url = panel5URL;
+            label = panel5Label;
+            break;
+
+         case 5:
+            url = panel6URL;
+            label = panel6Label;
+            break;
+
+         case 6:
+            let urls = [
+               panel1URL,
+               panel2URL,
+               panel3URL,
+               panel4URL,
+               panel5URL,
+               panel6URL
+            ];
+
+            let labels = [
+               panel1Label,
+               panel2Label,
+               panel3Label,
+               panel4Label,
+               panel5Label,
+               panel6Label
+            ];
+
+            // let html = "<table class=\"panelTable\">";
+            let html = "";
+
+            for (var index in urls) {
+               html += '<td class="panelCell">';
+               html +=
+                  "<div id='panel_area_" +
+                  index +
+                  "'><iframe src=\"" +
+                  urls[index] +
+                  '" class="panelFrame" frameborder="0"></iframe>';
+               html += '<div class="labelContainer text">';
+               html += "<span>";
+               html +=
+                  "<i class='fa fa-trash del' aria-hidden='true' id='" +
+                  index +
+                  "'></i>";
+               html += "<h2>" + labels[index] + "</h2>";
+               html += "</span>";
+               html += "</div>";
+               html += "</td>";
             }
 
-            let updatePanel = panelElement => {
-                var value;
-                if(panelElement.type === ''){
-                    value = $(panelElement).index();
-                } else{
-                    value = parseInt(panelElement, 10);
-                }
-                var url = '';
-                var label = '';
+            // html += "</table>";
 
-                var panel1URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB" + themeURLParam;
-                var panel2URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA" + themeURLParam;
-                var panel3URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6" + themeURLParam;
-                var panel4URL = "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB" + themeURLParam;
-                var panel5URL = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1" + themeURLParam;
-                var panel6URL = "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1" + themeURLParam;
-                var panel1Label = "Static Grafana Panel 1";
-                var panel2Label = "Static Grafana Panel 2";
-                var panel3Label = "Static Grafana Panel 3";
-                var panel4Label = "Static Grafana Panel 4";
-                var panel5Label = "TestDash Custom Panel 1 (New Plugin)";
-                var panel6Label = "TestDash Custom Panel 2 (New Plugin)";
+            $(".main_container").empty();
+            $(".main_container").html(html);
+            return;
+      }
 
-                switch (value) {
-                    case 0:
-                        url = panel1URL;
-                        label = panel1Label;
-                        break;
+      if ($.inArray(value, displayed) !== -1) {
+         alert("Panel already added!!");
+      } else {
+         console.log(value);
+         displayed.push(value);
+         console.log(displayed);
+         let html =
+            '<td class="panelCell"><div id=\'panel_area_' +
+            value +
+            "'><iframe src='" +
+            url +
+            "' class='panelFrame' frameborder='0'></iframe>";
+         html +=
+            "<br /><i class='fa fa-trash del' aria-hidden='true' id='" +
+            value +
+            "'></i><h2 class='text'>" +
+            label +
+            "</h2></div>";
+         $(".main_container").append(html);
+      }
+   };
 
-                    case 1:
-                        url = panel2URL;
-                        label = panel2Label;
-                        break;
+   $("body").on("click", ".del", function () {
+      var index = displayed.indexOf(this.id);
+      displayed.splice(index, 1);
+      $("#panel_area_" + this.id).remove();
+   });
 
-                    case 2:
-                        url = panel3URL;
-                        label = panel3Label;
-                        break;
+   let updatePanels = () => {
+      var tmp = displayed;
+      // console.log(displayed);
+      displayed = [];
+      $(".main_container").empty();
+      // console.log(tmp);
+      for (var i = 0; i < tmp.length; i++) {
+         updatePanel(tmp[i]);
+      }
+   };
+</script>
 
-                    case 3:
-                        url = panel4URL;
-                        label = panel4Label;
-                        break;
-
-                    case 4:
-                        url = panel5URL;
-                        label = panel5Label;
-                        break;
-
-                    case 5:
-                        url = panel6URL;
-                        label = panel6Label;
-                        break;
-
-                    case 6:
-                        let urls = [
-                            panel1URL,
-                            panel2URL,
-                            panel3URL,
-                            panel4URL,
-                            panel5URL,
-                            panel6URL
-                        ];
-
-                        let labels = [
-                            panel1Label,
-                            panel2Label,
-                            panel3Label,
-                            panel4Label,
-                            panel5Label,
-                            panel6Label
-                        ];
-
-                        // let html = "<table class=\"panelTable\">";
-                            let html = "";
-
-                        for (var index in urls) {
-                            html += "<td class=\"panelCell\">";
-                            html += "<div id='panel_area_" + index + "'><iframe src=\"" + urls[index] + "\" class=\"panelFrame\" frameborder=\"0\"></iframe>";
-                            html += "<div class=\"labelContainer text\">";
-                            html += "<span>";
-                            html += "<i class='fa fa-trash del' aria-hidden='true' id='" + index + "'></i>";
-                            html += "<h2>" + labels[index] + "</h2>";
-                            html += "</span>";
-                            html += "</div>";
-                            html += "</td>"
-                        }
-
-                        // html += "</table>";
-
-
-                        $('.main_container').empty();
-                        $('.main_container').html(html);
-                        return;
-
-                }
-
-                if($.inArray(value, displayed) !== -1) {
-                    alert("Panel already added!!");
-                } else{
-                    console.log(value);
-                    displayed.push(value);
-                    console.log(displayed);
-                    let html = "<td class=\"panelCell\"><div id='panel_area_" + value + "'><iframe src='" + url + "' class='panelFrame' frameborder='0'></iframe>";
-                    html += "<br /><i class='fa fa-trash del' aria-hidden='true' id='" + value + "'></i><h2 class='text'>" + label + "</h2></div>";
-                    $('.main_container').append(html);
-                }
-            };
-
-            $('body').on('click', '.del', function(){
-                var index = displayed.indexOf(this.id);
-                displayed.splice(index, 1);
-                $( "#panel_area_" + this.id).remove();
-            });
-
-            let updatePanels = () => {
-                var tmp = displayed;
-                // console.log(displayed);
-                displayed = [];
-                $('.main_container').empty();
-                // console.log(tmp);
-                for(var i = 0; i < tmp.length; i++) {
-                    updatePanel(tmp[i]);
-                }
-            };
-    </script>
 </html>
