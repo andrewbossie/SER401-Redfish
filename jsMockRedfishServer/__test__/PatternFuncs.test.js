@@ -1,11 +1,10 @@
-const PFuncs = require('../PatternFuncs');
-const util = require('util');
+const PFuncs = require("../PatternFuncs");
+const util = require("util");
 
-afterEach(() => {
-});
+afterEach(() => {});
 
-describe('Sawtooth behaviour', () => {
-   test('sawtooth wrap', () => {
+describe("Sawtooth behaviour", () => {
+   test("sawtooth wrap", () => {
       var pfuncs = new PFuncs();
 
       pfuncs.value = 99;
@@ -15,7 +14,7 @@ describe('Sawtooth behaviour', () => {
       expect(pfuncs.value).toBe(0);
    });
 
-   test('sawtooth wrap with positive step > 1', () => {
+   test("sawtooth wrap with positive step > 1", () => {
       var pfuncs = new PFuncs(0, 100, 4);
 
       pfuncs.value = 99;
@@ -24,7 +23,7 @@ describe('Sawtooth behaviour', () => {
       expect(pfuncs.value).toBe(2);
    });
 
-   test('sawtooth wrap with negative step < 1', () => {
+   test("sawtooth wrap with negative step < 1", () => {
       var pfuncs = new PFuncs(0, 100, -4);
 
       pfuncs.value = 3;
@@ -34,14 +33,14 @@ describe('Sawtooth behaviour', () => {
    });
 });
 
-//  min  max  step last len  lund ldef hdef hund 
+//  min  max  step last len  lund ldef hdef hund
 describe.each([
-   [40,   80, 1,   56,  41,  39,  40,   80,  81],
-   [40,   80, 3,   47,  41,  39,  40,   80,  81],
-   [-10,  10, 1,    3,  21, -11, -10,   10,  11],
-   [40,   80, -1,  65,  41,  39,  40,   80,  81],
+   [40, 80, 1, 56, 41, 39, 40, 80, 81],
+   [40, 80, 3, 47, 41, 39, 40, 80, 81],
+   [-10, 10, 1, 3, 21, -11, -10, 10, 11],
+   [40, 80, -1, 65, 41, 39, 40, 80, 81]
 ])(
-   '.sawtooth(min, max, step)',
+   ".sawtooth(min, max, step)",
    (min, max, step, last, len, lund, ldef, hdef, hund) => {
       test(`Min: ${min} Max: ${max} Step: ${step}`, () => {
          var pfuncs = new PFuncs(min, max, step);
@@ -49,10 +48,11 @@ describe.each([
 
          for (var loop = 0; loop < 1000; loop++) {
             var res = pfuncs.sawtooth();
-            if (!targets[res])
+            if (!targets[res]) {
                targets[res] = 1;
-            else
+            } else {
                targets[res]++;
+            }
          }
 
          expect(pfuncs.value).toBe(last);
@@ -62,11 +62,11 @@ describe.each([
          expect(targets[hdef]).toBeDefined();
          expect(targets[hund]).toBeUndefined();
       });
-   },
+   }
 );
 
-describe('Pingpong behaviour', () => {
-   test('pingpong wrap', () => {
+describe("Pingpong behaviour", () => {
+   test("pingpong wrap", () => {
       var pfuncs = new PFuncs();
 
       pfuncs.value = 99;
@@ -111,15 +111,15 @@ describe('Pingpong behaviour', () => {
    });
 });
 
-//  min  max  step last len  lund ldef hdef hund 
+//  min  max  step last len  lund ldef hdef hund
 describe.each([
-   [ 0,  100, 1,    0, 101,  -1,   0,  100, 101],
-   [40,   80, 1,   80,  41,  39,  40,   80,  81],
-   [40,   50, 3,   40,  11,  39,  40,   50,  51],
-   [-10,  10, 1,  -10,  21, -11, -10,   10,  11],
-   [40,   44, -1,  40,   5,  39,  40,   44,  45],
+   [0, 100, 1, 0, 101, -1, 0, 100, 101],
+   [40, 80, 1, 80, 41, 39, 40, 80, 81],
+   [40, 50, 3, 40, 11, 39, 40, 50, 51],
+   [-10, 10, 1, -10, 21, -11, -10, 10, 11],
+   [40, 44, -1, 40, 5, 39, 40, 44, 45]
 ])(
-   '.pingpong(min, max, step)',
+   ".pingpong(min, max, step)",
    (min, max, step, last, len, lund, ldef, hdef, hund) => {
       test(`Min: ${min} Max: ${max} Step: ${step}`, () => {
          var pfuncs = new PFuncs(min, max, step);
@@ -127,10 +127,11 @@ describe.each([
 
          for (var loop = 0; loop < 1000; loop++) {
             var res = pfuncs.pingpong();
-            if (!targets[res])
+            if (!targets[res]) {
                targets[res] = 1;
-            else
+            } else {
                targets[res]++;
+            }
          }
 
          expect(pfuncs.value).toBe(last);
@@ -140,20 +141,21 @@ describe.each([
          expect(targets[hdef]).toBeDefined();
          expect(targets[hund]).toBeUndefined();
       });
-   },
+   }
 );
 
-describe('Fullrand behaviour', () => {
-   test('All values hit', () => {
+describe("Fullrand behaviour", () => {
+   test("All values hit", () => {
       var pfuncs = new PFuncs(0, 100);
       var targets = {};
 
       for (var loop = 0; loop < 10000; loop++) {
          var res = pfuncs.fullrand();
-         if (!targets[res])
+         if (!targets[res]) {
             targets[res] = 1;
-         else
+         } else {
             targets[res]++;
+         }
       }
 
       expect(targets[-1]).toBeUndefined();
@@ -165,16 +167,17 @@ describe('Fullrand behaviour', () => {
       expect(targets[101]).toBeUndefined();
    });
 
-   test('Even distribution', () => {
+   test("Even distribution", () => {
       var pfuncs = new PFuncs(1, 6);
       var targets = {};
 
       for (var loop = 0; loop < 6000; loop++) {
          var res = pfuncs.fullrand();
-         if (!targets[res])
+         if (!targets[res]) {
             targets[res] = 1;
-         else
+         } else {
             targets[res]++;
+         }
       }
 
       for (var val = 1; val < 6; val++) {
@@ -184,18 +187,19 @@ describe('Fullrand behaviour', () => {
    });
 });
 
-describe('Steprand behaviour', () => {
-   test('All values hit', () => {
+describe("Steprand behaviour", () => {
+   test("All values hit", () => {
       var pfuncs = new PFuncs(0, 100, 5);
       var targets = {};
 
       for (var loop = 0; loop < 10000; loop++) {
          pfuncs.value = 50;
          var res = pfuncs.steprand();
-         if (!targets[res])
+         if (!targets[res]) {
             targets[res] = 1;
-         else
+         } else {
             targets[res]++;
+         }
       }
 
       expect(targets[44]).toBeUndefined();
@@ -207,17 +211,18 @@ describe('Steprand behaviour', () => {
       expect(targets[56]).toBeUndefined();
    });
 
-   test('Even distribution', () => {
+   test("Even distribution", () => {
       var pfuncs = new PFuncs(0, 100, 5);
       var targets = {};
 
       for (var loop = 0; loop < 10000; loop++) {
          pfuncs.value = 50;
          var res = pfuncs.steprand();
-         if (!targets[res])
+         if (!targets[res]) {
             targets[res] = 1;
-         else
+         } else {
             targets[res]++;
+         }
       }
 
       for (var val = 45; val < 55; val++) {
