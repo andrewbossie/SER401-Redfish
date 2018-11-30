@@ -1,31 +1,31 @@
 {
-  "name": "ser401-redfish",
-  "version": "1.0.0",
-  "description": "Capstone for SER401",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/andrewbossie/SER401-Redfish.git"
-  },
-  "author": "SER401 Group 3",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/andrewbossie/SER401-Redfish/issues"
-  },
-  "homepage": "https://github.com/andrewbossie/SER401-Redfish#readme",
-  "dependencies": {
-    "config": "^2.0.1",
-    "express": "^4.16.4",
-    "hbs": "^4.0.1",
-    "influx": "^5.0.7",
-    "jquery": "^3.3.1",
-    "lodash": "^4.17.11",
-    "request": "^2.88.0"
-  },
-  "devDependencies": {
-    "jest": "^23.6.0"
-  }
+   "name": "ser401-redfish",
+   "version": "1.0.0",
+   "description": "Capstone for SER401",
+   "main": "index.js",
+   "scripts": {
+      "test": "jest"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/andrewbossie/SER401-Redfish.git"
+   },
+   "author": "SER401 Group 3",
+   "license": "ISC",
+   "bugs": {
+      "url": "https://github.com/andrewbossie/SER401-Redfish/issues"
+   },
+   "homepage": "https://github.com/andrewbossie/SER401-Redfish#readme",
+   "dependencies": {
+      "config": "^2.0.1",
+      "express": "^4.16.4",
+      "hbs": "^4.0.1",
+      "influx": "^5.0.7",
+      "jquery": "^3.3.1",
+      "lodash": "^4.17.11",
+      "request": "^2.88.0"
+   },
+   "devDependencies": {
+      "jest": "^23.6.0"
+   }
 }
