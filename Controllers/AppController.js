@@ -38,7 +38,7 @@ exports.updateCPUUtil = () => {
   request(
     {
       url:
-        "http://localhost:8001/redfish/v1/TelemetryService/MetricReports/CPUMetrics",
+        "http://localhost:8000/redfish/v1/TelemetryService/MetricReports/CPUMetrics",
       json: true
     },
     (error, response, body) => {
@@ -145,6 +145,23 @@ exports.getPanels = function(req, res) {
     pageTitle: "Redfish Telemetry Client",
     currentYear: new Date().getFullYear()
   });
+};
+
+// Route handler for /metrics
+exports.getAvailableMetrics = function(req, res) {
+  request(
+    {
+      url: "http://localhost:8000/redfish/v1/TelemetryService/MetricReports",
+      json: true
+    },
+    (error, response, body) => {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(body.Members);
+      }
+    }
+  );
 };
 
 // Grab Influx Data. Can we do this without nesting?
