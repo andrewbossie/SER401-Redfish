@@ -6,4 +6,5 @@ module.exports = app => {
   app.use(express.static("./Resources"));
   app.get("/", app_controller.getPanels);
   app.get("/metrics", app_controller.getAvailableMetrics);
+  app.get("/metrics/:metric", app_controller.getMetric);
 };

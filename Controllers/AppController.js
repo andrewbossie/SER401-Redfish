@@ -164,6 +164,26 @@ exports.getAvailableMetrics = function(req, res) {
   );
 };
 
+// Route handler for /metrics/:metric
+exports.getMetric = function(req, res) {
+  let metric = req.params.metric;
+  console.log(metric);
+  request(
+    {
+      url: `http://localhost:8000/redfish/v1/TelemetryService/MetricReports/${metric}`,
+      json: true
+    },
+    (error, response, body) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log(body);
+        res.json(body);
+      }
+    }
+  );
+};
+
 // Grab Influx Data. Can we do this without nesting?
 exports.getInfluxData = function(req, res) {
   var cpu = [];
