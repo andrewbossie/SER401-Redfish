@@ -14,7 +14,9 @@
 
 <body>
    <div>
-      <div class="header"></div>
+      <div class="header">
+         <i class="fas fa-bars menuIcon"></i>
+      </div>
       <h1 class="text">{{ pageTitle }}</h1>
       <form>
          <input type="radio" name="theme" value="dark" checked="checked" onclick="updateTheme(true /*isDark*/);" /><span
@@ -64,6 +66,11 @@
    $(".dropdown li").on("click", function () {
       $("ul.dropdown").slideToggle("medium");
       updatePanel(this);
+   });
+
+   
+   $(".menuIcon").on("click", function () {
+      console.log('Menu Icon Clicked');
    });
 
    let isThemeDark = true;
