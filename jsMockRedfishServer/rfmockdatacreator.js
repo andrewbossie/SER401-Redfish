@@ -2,11 +2,11 @@
 
 var util = require("util");
 var fs = require("fs");
-
 var config;
 var PFuncs = require("./PatternFuncs");
-var mode = "";
+var iterations = 60*60*10; //default to 10 hours unless specified otherwise
 
+//-c switch to specify config file
 if (process.argv.indexOf("-c") != -1) {
    if (process.argv[process.argv.indexOf("-c") + 1] != -1) {
       var configFile = "./" + process.argv[process.argv.indexOf("-c") + 1];
@@ -17,24 +17,41 @@ if (process.argv.indexOf("-c") != -1) {
          console.log("Error opening " + configFile + ": " + e);
       }
    }
+   
+   //look for time switch
+   if (process.argv[process.argv.indexOf("-t") + 1] != -1) {
+      iterations = process.argv[process.argv.indexOf("-t") + 1]
+   }
 }
 
 if (!config) {
    config = require("./config");
 }
 
-var patternTimers = [];
 
+var patternTimers = [];
 var parsedPaths = [];
 var parsedTemplates = [];
 var isoDTG = Date.now();
-
-var iterations = 60 * 60; //1 hour in seconds TODO: make this variable 
 var str = "#\n";
-fs.writeFileSync("data.csv", str); //empty file if it already exists
-console.log("Generating... ");
+var gcd = 0;
 
-for (var i = 1; i <= iterations; i++) {
+console.log("Generating " + secondsToString(iterations) + " of data... ");
+fs.writeFileSync("data.csv", str); //empty file if it already exists
+
+
+
+//calculate GCD of iterations for iteration optimazation
+config.MockupData.MockupPatterns.forEach(function(mockup, index) {
+	if (gcd == 0)
+		gcd = mockup.timedelay;
+	else
+		gcd = getGCD(gcd,mockup.timedelay);
+});
+
+
+
+for (var i = 0; i <= iterations; i+=gcd) {
     var line = "";
     config.MockupData.MockupPatterns.forEach(function(mockup, index) {
         //only do anything if the current iteration is on the approriate time
@@ -109,3 +126,26 @@ for (var i = 1; i <= iterations; i++) {
 str += "0,END";
 fs.writeFileSync("data.csv", str);
 console.log("Completed in " + (Date.now() - isoDTG) + "ms");
+
+//find the greatest common denominator of 2 numbers
+function getGCD(a,b) {
+    if (b > a) {var temp = a; a = b; b = temp;}
+    while (true) {
+        if (b == 0) 
+			return a;
+        a %= b;
+        if (a == 0) 
+			return b;
+        b %= a;
+    }
+}
+
+//convert a number of seconds into a prettified string
+function secondsToString(s) {
+    var hours = Math.floor(s / 3600);
+    s -= hours*3600;
+    var minutes = Math.floor(s / 60);
+    s -= minutes*60;
+    return hours + " hours, " + minutes + " minutes, and " + s + " seconds";
+}
+
