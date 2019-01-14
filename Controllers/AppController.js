@@ -162,6 +162,7 @@ exports.getAvailableMetrics = function(req, res) {
       }
     }
   );
+  res.render("landing.hbs");
 };
 
 // Grab Influx Data. Can we do this without nesting?
