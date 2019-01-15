@@ -136,7 +136,7 @@ p {
    z-index: 1;
    overflow-x: hidden;
    width: 150px;
-   position: fixed;
+   position: relative;
 }
 
 .main_container {
@@ -147,4 +147,21 @@ p {
 
 .del {
    cursor: pointer;
+}
+
+.header {
+   height: 50px;
+   background-color: #212121;
+   position: relative
+}
+
+body {
+   margin: 0px
+}
+
+.menuIcon {
+   font-size: 24px;
+   padding: 12px;
+   color: #f3f3f3;
+   cursor: pointer
 }
