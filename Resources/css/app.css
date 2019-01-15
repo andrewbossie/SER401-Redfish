@@ -152,16 +152,26 @@ p {
 .header {
    height: 50px;
    background-color: #212121;
-   position: relative
+   position: relative;
+   z-index: 20;
 }
 
 body {
-   margin: 0px
+   margin: 0px;
 }
 
 .menuIcon {
    font-size: 24px;
    padding: 12px;
    color: #f3f3f3;
-   cursor: pointer
+   cursor: pointer;
+   z-index: 30;
+}
+
+#menuSurface {
+   height: 100%;
+   width: 300px;
+   background-color: #a1a1a1;
+   position: fixed;
+   z-index: 10;
 }
