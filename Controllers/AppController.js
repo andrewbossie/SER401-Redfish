@@ -148,6 +148,7 @@ exports.getPanels = function(req, res) {
 };
 
 // Route handler for /metrics
+// This will return a JSON array of URIs to each available metric report.
 exports.getAvailableMetrics = function(req, res) {
   request(
     {
@@ -158,7 +159,13 @@ exports.getAvailableMetrics = function(req, res) {
       if (error) {
         console.log(error);
       } else {
-        res.json(body.Members);
+        let metrics = [];
+        for (var i = 0; i < body.Members.length; i++) {
+          let uri = body.Members[i]["@odata.id"];
+          // metrics.push(uri.split("/")[uri.split("/").length - 1]);
+          metrics.push(uri);
+        }
+        res.json(metrics);
       }
     }
   );
