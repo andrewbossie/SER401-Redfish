@@ -40,11 +40,8 @@ var gcd = 0;
 var oldPerc = 0;
 var percLen = 50;
 var stream = fs.createWriteStream("data.csv");
-stream.write(str);
+stream.write("");
 console.log("Generating " + secondsToString(iterations) + " of data... ");
-//fs.writeFileSync("data.csv", ""); //empty file if it already exists
-
-
 
 //calculate GCD of iterations for iteration optimazation
 config.MockupData.MockupPatterns.forEach(function(mockup, index) {
