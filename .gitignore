@@ -4,3 +4,4 @@ node_modules/
 .idea
 .swp
 config/
+jsMockRedfishServer/data.csv
