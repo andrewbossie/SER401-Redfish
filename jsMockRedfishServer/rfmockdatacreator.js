@@ -17,8 +17,10 @@ if (process.argv.indexOf("-c") != -1) {
          console.log("Error opening " + configFile + ": " + e);
       }
    }
-   
-   //look for time switch
+}
+
+//look for -t time switch
+if (process.argv.indexOf("-t") != -1) {
    if (process.argv[process.argv.indexOf("-t") + 1] != -1) {
       iterations = process.argv[process.argv.indexOf("-t") + 1]
    }
@@ -35,7 +37,8 @@ var parsedTemplates = [];
 var isoDTG = Date.now();
 var str = "#\n";
 var gcd = 0;
-
+var oldPerc = 0;
+var percLen = 50;
 console.log("Generating " + secondsToString(iterations) + " of data... ");
 fs.writeFileSync("data.csv", str); //empty file if it already exists
 
@@ -52,6 +55,25 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
 
 
 for (var i = 0; i <= iterations; i+=gcd) {
+	
+	let newPerc = Math.floor(i / iterations * 100)
+	if ( newPerc > oldPerc){
+		oldPerc = newPerc;
+		process.stdout.cursorTo(0);
+		let percStr = "["
+		for(var x = 0; x  < Math.floor(newPerc / 100 * percLen); x++){
+			percStr += "█";
+		}
+		
+		for(var x = Math.floor(newPerc / 100 * percLen); x < percLen; x++){
+			percStr += " ";
+		}
+		percStr += "]";
+		percStr += (newPerc + "%");
+		
+		process.stdout.write(percStr);
+	}
+	
     var line = "";
     config.MockupData.MockupPatterns.forEach(function(mockup, index) {
         //only do anything if the current iteration is on the approriate time
@@ -125,7 +147,7 @@ for (var i = 0; i <= iterations; i+=gcd) {
 }
 str += "0,END";
 fs.writeFileSync("data.csv", str);
-console.log("Completed in " + (Date.now() - isoDTG) + "ms");
+console.log("\nCompleted in " + (Date.now() - isoDTG) + "ms");
 
 //find the greatest common denominator of 2 numbers
 function getGCD(a,b) {
