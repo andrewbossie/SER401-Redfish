@@ -1,4 +1,4 @@
-const keys = require("../config/keys");
+// const keys = require("../config/keys");
 const request = require("request");
 const Influx = require("influx");
 const util = require("../Resources/js/util");
@@ -76,10 +76,15 @@ exports.updateCPUUtil = () => {
 
 // InfluxDB Connection
 const influx = new Influx.InfluxDB({
-  host: keys.influxHost,
+  host: "127.0.0.1",
   database: "test",
-  username: keys.influxUserName,
-  password: keys.influxPassword,
+  username: "admin",
+  password: "Andrewia1",
+
+    // host: keys.influxHost,
+    // database: "test",
+    // username: keys.influxUserName,
+    // password: keys.influxPassword,
 
   schema: [
     {
@@ -158,11 +163,14 @@ exports.getAvailableMetrics = function(req, res) {
       if (error) {
         console.log(error);
       } else {
-        res.json(body.Members);
+        var metrics = res.json(body.Members);
+          res.render("landing.hbs", {
+              pageTitle: "Redfish Telemetry Client",
+              metrics: metrics
+          });
       }
     }
   );
-  res.render("landing.hbs");
 };
 
 // Grab Influx Data. Can we do this without nesting?
@@ -194,7 +202,7 @@ exports.getInfluxData = function(req, res) {
     }
 
     res.render("chart.hbs", {
-      pageTitle: "Redfish Telemetry Client (Js)",
+      pageTitle: "Redfish Telemetry Client",
       cpu: cpu,
       temp: temp,
       cpu_time: cpu_time,
