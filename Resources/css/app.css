@@ -171,7 +171,16 @@ body {
 #menuSurface {
    height: 100%;
    width: 300px;
-   background-color: #a1a1a1;
-   position: fixed;
+   background-color: #cbddf8;
+   position: absolute;
    z-index: 10;
+   animation-name: menuAnimation;
+   animation-duration: 0.5s;
+   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes menuAnimation {
+   from {left: -300px}
+   to {left: 0px}
+}
 }
