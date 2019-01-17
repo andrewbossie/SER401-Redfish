@@ -39,10 +39,9 @@ var str = "#\n";
 var gcd = 0;
 var oldPerc = 0;
 var percLen = 50;
+var stream = fs.createWriteStream("data.csv");
+stream.write("");
 console.log("Generating " + secondsToString(iterations) + " of data... ");
-fs.writeFileSync("data.csv", str); //empty file if it already exists
-
-
 
 //calculate GCD of iterations for iteration optimazation
 config.MockupData.MockupPatterns.forEach(function(mockup, index) {
@@ -53,7 +52,7 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
 });
 
 
-
+(async() => {
 for (var i = 0; i <= iterations; i+=gcd) {
 	
 	let newPerc = Math.floor(i / iterations * 100)
@@ -139,15 +138,31 @@ for (var i = 0; i <= iterations; i+=gcd) {
     if (line != "") {
         str += i + ",";
         str += "Metric,";
-
         str += line;
         str += "\n";
-        //lineNum++;
     }
+	
+	//write to stream periodically to prevent memory overflow
+	if (str.length > 1000000){
+		var res = write(stream, str);
+		if(res instanceof Promise)
+			await res;
+		str = "";
+	}
+	
 }
+
+//wrap up
 str += "0,END";
-fs.writeFileSync("data.csv", str);
+stream.write(str);
 console.log("\nCompleted in " + (Date.now() - isoDTG) + "ms");
+})();
+
+
+
+///////////////
+// FUNCTIONS //
+///////////////
 
 //find the greatest common denominator of 2 numbers
 function getGCD(a,b) {
@@ -169,5 +184,16 @@ function secondsToString(s) {
     var minutes = Math.floor(s / 60);
     s -= minutes*60;
     return hours + " hours, " + minutes + " minutes, and " + s + " seconds";
+}
+
+
+
+//write data to stream
+function write(stream, data) {
+	//await stream drain to prevent overflow
+    if(!stream.write(data)){
+        return new Promise(resolve => stream.once('drain', resolve));	
+	}
+    return;
 }
 
