@@ -1,10 +1,10 @@
 const express = require("express");
 const path = require("path");
-const app_controller = require("../Controllers/AppController");
+const routes_controller = require("../Controllers/RoutesController");
 
 module.exports = app => {
   app.use(express.static("./Resources"));
-  app.get("/", app_controller.getPanels);
-  app.get("/metrics", app_controller.getAvailableMetrics);
-  app.get("/metrics/:metric", app_controller.getMetric);
+  app.get("/", routes_controller.getPanels);
+  app.get("/metrics", routes_controller.getAvailableMetrics);
+  app.get("/metrics/:metric", routes_controller.getMetric);
 };
