@@ -139,31 +139,6 @@ exports.writeDataTest = function() {
     });
 };
 
-// Render Static Panels in Grafana
-exports.getPanels = function(req, res) {
-  res.render("index.hbs", {
-    pageTitle: "Redfish Telemetry Client",
-    currentYear: new Date().getFullYear()
-  });
-};
-
-// Route handler for /metrics
-exports.getAvailableMetrics = function(req, res) {
-  request(
-    {
-      url: "http://localhost:8000/redfish/v1/TelemetryService/MetricReports",
-      json: true
-    },
-    (error, response, body) => {
-      if (error) {
-        console.log(error);
-      } else {
-        res.json(body.Members);
-      }
-    }
-  );
-};
-
 // Grab Influx Data. Can we do this without nesting?
 exports.getInfluxData = function(req, res) {
   var cpu = [];
