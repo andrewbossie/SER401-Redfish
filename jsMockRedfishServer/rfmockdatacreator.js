@@ -5,6 +5,7 @@ var fs = require("fs");
 var config;
 var PFuncs = require("./PatternFuncs");
 var iterations = 60*60*10; //default to 10 hours unless specified otherwise
+var outputPath = "output.csv"; //default. override with -o switch
 
 //-c switch to specify config file
 if (process.argv.indexOf("-c") != -1) {
@@ -26,6 +27,13 @@ if (process.argv.indexOf("-t") != -1) {
    }
 }
 
+//look for -o time switch
+if (process.argv.indexOf("-o") != -1) {
+   if (process.argv[process.argv.indexOf("-o") + 1] != -1) {
+      outputPath = process.argv[process.argv.indexOf("-o") + 1]
+   }
+}
+
 if (!config) {
    config = require("./config");
 }
@@ -39,7 +47,7 @@ var str = "#\n";
 var gcd = 0;
 var oldPerc = 0;
 var percLen = 50;
-var stream = fs.createWriteStream("data.csv");
+var stream = fs.createWriteStream(outputPath);
 stream.write("");
 console.log("Generating " + secondsToString(iterations) + " of data... ");
 
@@ -156,6 +164,7 @@ for (var i = 0; i <= iterations; i+=gcd) {
 str += "0,END";
 stream.write(str);
 console.log("\nCompleted in " + (Date.now() - isoDTG) + "ms");
+
 })();
 
 
