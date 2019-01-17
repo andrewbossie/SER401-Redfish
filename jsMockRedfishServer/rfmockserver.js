@@ -6,6 +6,8 @@ var fs = require("fs");
 var config;
 var PFuncs = require("./PatternFuncs");
 
+var dirty = [];
+
 if (process.argv.indexOf("-c") != -1) {
    if (process.argv[process.argv.indexOf("-c") + 1] != -1) {
       var configFile = "./" + process.argv[process.argv.indexOf("-c") + 1];
@@ -22,7 +24,7 @@ if (!config) {
    config = require("./config");
 }
 
-if (process.argv.indexOf("-s") != 1 && process.argv.indexOf("-f") == -1) {
+if (process.argv.indexOf("-s")) {
    startServer(config.RedFishData.path);
 }
 
@@ -71,12 +73,18 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
      var isoDTG = new Date().toISOString();
      isoDTG = isoDTG.replace(/\..*$/, "-0500");
 
-     var currJSON = JSON.parse(
-        fs.readFileSync(
-           config.RedFishData.path + mockup.path + "index.json",
-           "utf-8"
-        )
-     );
+     var currFile = mockup.path + "index.json";
+     if (!(currFile in dirty)) {
+        console.log(config.RedFishData.path + currFile + " not foud in dirty cache.");
+        dirty[currFile] = JSON.parse(
+           fs.readFileSync(
+              config.RedFishData.path + currFile,
+              "utf-8"
+           )
+        );
+     } else {
+        console.log(currFile + " foud in dirty cache.");
+     }
 
      var templateJSON = JSON.stringify(mockup.MetricValueTemplate);
 
@@ -88,16 +96,16 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
 
      var template = JSON.parse(templateJSON);
 
-     var tmpMVs = currJSON.MetricValues.filter(function(mval) {
+     var tmpMVs = dirty[currFile].MetricValues.filter(function(mval) {
         return (
            mval.MemberID !== template.MemberID ||
            mval.MetricProperty !== template.MetricProperty
         );
      });
 
-     currJSON.MetricValues = tmpMVs;
+     dirty[currFile].MetricValues = tmpMVs;
 
-     currJSON.MetricValues.push(template);
+     dirty[currFile].MetricValues.push(template);
 
      console.log(
         isoDTG +
@@ -107,16 +115,45 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
            patternTimers[index].pfuncs.value +
            ")"
      );
-
-     fs.writeFileSync(
-        config.RedFishData.path + mockup.path + "index.json",
-        JSON.stringify(currJSON, null, "\t"),
-        "utf-8",
-        function(err) {
-           if (err) {
-              return console.log(err);
-           }
-        }
-     );
   }, mockup.timedelay * 1000);
 });
+
+var writeDirtyFilesTimer = setInterval(function() {
+   var promises = [];
+
+   console.log("In the dirty files timer");
+   console.log("Dirty files: " + Object.keys(dirty));
+
+   if (Object.keys(dirty).length == 0) {
+      return;
+   }
+
+   Object.keys(dirty).forEach(function(fileName) {
+      console.log("Adding " + fileName);
+
+      promises.push(
+         new Promise((resolve, reject) => {
+            console.log("Writing out " + fileName);
+            fs.writeFileSync(
+               config.RedFishData.path + fileName,
+               JSON.stringify(dirty[fileName], null, "\t"),
+               "utf-8",
+               function(err) {
+                  if (err) {
+                     return console.log(err);
+                  }
+               }
+            );
+            console.log(fileName + " written.");
+         })
+      )}
+   );
+
+   Promise.all(promises)
+   .then(() => {
+      dirty = [];
+   })
+   .catch((err) => {
+      console.log(err);
+   });
+}, 1000);
