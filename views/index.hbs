@@ -73,7 +73,7 @@
    
    $(".menuIcon").on("click", function () {
       menuOpened = !menuOpened;
-      let menuHtml = menuOpened ? "<div id='menuSurface'></div>" : "";
+      let menuHtml = menuOpened ? "<div id='menuSurface'></div><div id='overlay' onclick='onMenuClick()'></div>" : "";
       document.getElementById('menuContainer').innerHTML = menuHtml;
    });
 
