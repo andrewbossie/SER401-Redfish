@@ -89,7 +89,21 @@ var config = {
           TimeStamp: "#timestamp",
           MetricProperty: "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/3/CPUUtil"
         }
-      }
+      },
+		{
+        name: "Random Memory Util",
+        path: "/v1/TelemetryService/MetricReports/MemoryMetrics/",
+        timedelay: 1,
+        pattern: "fullrand",
+        min: 45,
+        max: 90,
+        MetricValueTemplate: {
+          MemberID: "MemoryPercentUtil",
+          MetricValue: "#value",
+          TimeStamp: "#timestamp",
+          MetricProperty: "/redfish/v1/Chassis/Tray_1/Memory/MemoryControl/1/MemoryUtil"
+        }
+	  }
     ]
   }
 };
