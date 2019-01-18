@@ -17,7 +17,8 @@ exports.getPanels = function(req, res) {
 exports.getAvailableMetrics = function(req, res) {
   request(
     {
-      url: "http://localhost:8000/redfish/v1/TelemetryService/MetricReports",
+      url:
+        "http://localhost:8000/redfish/v1/TelemetryService/MetricReportDefinitions",
       json: true
     },
     (error, response, body) => {
@@ -32,8 +33,8 @@ exports.getAvailableMetrics = function(req, res) {
         let metrics = [];
         for (var i = 0; i < body.Members.length; i++) {
           let uri = body.Members[i]["@odata.id"];
-          // metrics.push(uri.split("/")[uri.split("/").length - 1]);
-          metrics.push(uri);
+          metrics.push(uri.split("/")[uri.split("/").length - 1]);
+          // metrics.push(uri);
         }
         res.json(metrics);
       }
@@ -49,7 +50,7 @@ exports.getMetric = function(req, res) {
   console.log(typeof metric);
   request(
     {
-      url: `http://localhost:8000/redfish/v1/TelemetryService/MetricReports/${metric}`,
+      url: `http://localhost:8000/redfish/v1/TelemetryService/MetricReportDefinitions/${metric}`,
       json: true
     },
     (error, response, body) => {
