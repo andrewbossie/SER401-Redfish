@@ -77,7 +77,7 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
      if (!(currFile in dirty)) {
         console.log(config.RedFishData.path + currFile + " not foud in dirty cache.");
         dirty[currFile] = JSON.parse(
-           fs.readFileSync(
+           fs.readFileAsync(
               config.RedFishData.path + currFile,
               "utf-8"
            )
@@ -134,7 +134,7 @@ var writeDirtyFilesTimer = setInterval(function() {
       promises.push(
          new Promise((resolve, reject) => {
             console.log("Writing out " + fileName);
-            fs.writeFileSync(
+            fs.writeFileAsync(
                config.RedFishData.path + fileName,
                JSON.stringify(dirty[fileName], null, "\t"),
                "utf-8",
