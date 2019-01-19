@@ -1,4 +1,4 @@
-// const keys = require("../config/keys");
+const keys = require("../config/keys");
 const request = require("request");
 const Influx = require("influx");
 const util = require("../Resources/js/util");
@@ -76,15 +76,11 @@ exports.updateCPUUtil = () => {
 
 // InfluxDB Connection
 const influx = new Influx.InfluxDB({
-  host: "127.0.0.1",
-  database: "test",
-  username: "admin",
-  password: "Andrewia1",
 
-    // host: keys.influxHost,
-    // database: "test",
-    // username: keys.influxUserName,
-    // password: keys.influxPassword,
+    host: keys.influxHost,
+    database: "test",
+    username: keys.influxUserName,
+    password: keys.influxPassword,
 
   schema: [
     {
@@ -142,35 +138,6 @@ exports.writeDataTest = function() {
     .catch(err => {
       console.error(`Error writing data to Influx. ${err.stack}`);
     });
-};
-
-// Render Static Panels in Grafana
-exports.getPanels = function(req, res) {
-  res.render("index.hbs", {
-    pageTitle: "Redfish Telemetry Client",
-    currentYear: new Date().getFullYear()
-  });
-};
-
-// Route handler for /metrics
-exports.getAvailableMetrics = function(req, res) {
-  request(
-    {
-      url: "http://localhost:8000/redfish/v1/TelemetryService/MetricReports",
-      json: true
-    },
-    (error, response, body) => {
-      if (error) {
-        console.log(error);
-      } else {
-        var metrics = res.json(body.Members);
-          res.render("landing.hbs", {
-              pageTitle: "Redfish Telemetry Client",
-              metrics: metrics
-          });
-      }
-    }
-  );
 };
 
 // Grab Influx Data. Can we do this without nesting?

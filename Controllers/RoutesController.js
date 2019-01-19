@@ -36,7 +36,11 @@ exports.getAvailableMetrics = function(req, res) {
           metrics.push(uri.split("/")[uri.split("/").length - 1]);
           // metrics.push(uri);
         }
-        res.json(metrics);
+        // res.json(metrics);
+          res.render("landing.hbs", {
+              pageTitle: "Redfish Telemetry Client",
+              metrics: metrics
+          });
       }
     }
   );
