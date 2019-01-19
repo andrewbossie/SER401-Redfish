@@ -5,6 +5,7 @@ var fs = require("fs");
 var config;
 var PFuncs = require("./PatternFuncs");
 var iterations = 60*60*10; //default to 10 hours unless specified otherwise
+var outputPath = "output.csv"; //default. override with -o switch
 
 //-c switch to specify config file
 if (process.argv.indexOf("-c") != -1) {
@@ -17,10 +18,19 @@ if (process.argv.indexOf("-c") != -1) {
          console.log("Error opening " + configFile + ": " + e);
       }
    }
-   
-   //look for time switch
+}
+
+//look for -t time switch
+if (process.argv.indexOf("-t") != -1) {
    if (process.argv[process.argv.indexOf("-t") + 1] != -1) {
       iterations = process.argv[process.argv.indexOf("-t") + 1]
+   }
+}
+
+//look for -o time switch
+if (process.argv.indexOf("-o") != -1) {
+   if (process.argv[process.argv.indexOf("-o") + 1] != -1) {
+      outputPath = process.argv[process.argv.indexOf("-o") + 1]
    }
 }
 
@@ -35,11 +45,11 @@ var parsedTemplates = [];
 var isoDTG = Date.now();
 var str = "#\n";
 var gcd = 0;
-
+var oldPerc = 0;
+var percLen = 50;
+var stream = fs.createWriteStream(outputPath);
+stream.write("");
 console.log("Generating " + secondsToString(iterations) + " of data... ");
-fs.writeFileSync("data.csv", str); //empty file if it already exists
-
-
 
 //calculate GCD of iterations for iteration optimazation
 config.MockupData.MockupPatterns.forEach(function(mockup, index) {
@@ -50,8 +60,27 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
 });
 
 
-
+(async() => {
 for (var i = 0; i <= iterations; i+=gcd) {
+	
+	let newPerc = Math.floor(i / iterations * 100)
+	if ( newPerc > oldPerc){
+		oldPerc = newPerc;
+		process.stdout.cursorTo(0);
+		let percStr = "["
+		for(var x = 0; x  < Math.floor(newPerc / 100 * percLen); x++){
+			percStr += "█";
+		}
+		
+		for(var x = Math.floor(newPerc / 100 * percLen); x < percLen; x++){
+			percStr += " ";
+		}
+		percStr += "]";
+		percStr += (newPerc + "%");
+		
+		process.stdout.write(percStr);
+	}
+	
     var line = "";
     config.MockupData.MockupPatterns.forEach(function(mockup, index) {
         //only do anything if the current iteration is on the approriate time
@@ -117,15 +146,32 @@ for (var i = 0; i <= iterations; i+=gcd) {
     if (line != "") {
         str += i + ",";
         str += "Metric,";
-
         str += line;
         str += "\n";
-        //lineNum++;
     }
+	
+	//write to stream periodically to prevent memory overflow
+	if (str.length > 1000000){
+		var res = write(stream, str);
+		if(res instanceof Promise)
+			await res;
+		str = "";
+	}
+	
 }
+
+//wrap up
 str += "0,END";
-fs.writeFileSync("data.csv", str);
-console.log("Completed in " + (Date.now() - isoDTG) + "ms");
+stream.write(str);
+console.log("\nCompleted in " + (Date.now() - isoDTG) + "ms");
+
+})();
+
+
+
+///////////////
+// FUNCTIONS //
+///////////////
 
 //find the greatest common denominator of 2 numbers
 function getGCD(a,b) {
@@ -147,5 +193,16 @@ function secondsToString(s) {
     var minutes = Math.floor(s / 60);
     s -= minutes*60;
     return hours + " hours, " + minutes + " minutes, and " + s + " seconds";
+}
+
+
+
+//write data to stream
+function write(stream, data) {
+	//await stream drain to prevent overflow
+    if(!stream.write(data)){
+        return new Promise(resolve => stream.once('drain', resolve));	
+	}
+    return;
 }
 

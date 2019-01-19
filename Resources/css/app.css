@@ -152,16 +152,50 @@ p {
 .header {
    height: 50px;
    background-color: #212121;
-   position: relative
+   position: relative;
+   z-index: 20;
 }
 
 body {
-   margin: 0px
+   margin: 0px;
 }
 
 .menuIcon {
    font-size: 24px;
    padding: 12px;
    color: #f3f3f3;
-   cursor: pointer
+   cursor: pointer;
+   z-index: 30;
+}
+
+#menuSurface {
+   height: 100%;
+   width: 300px;
+   background-color: #cbddf8;
+   position: absolute;
+   z-index: 10;
+   animation-name: menuAnimation;
+   animation-duration: 0.5s;
+   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes menuAnimation {
+   from {left: -300px}
+   to {left: 0px}
+}
+
+#overlay {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   background: white;
+   opacity: 0.35;
+   animation-name: overlayAnimation;
+   animation-duration: 0.5s;
+   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes overlayAnimation {
+   from {opacity: 0}
+   to {opacity: 0.35;}
 }
