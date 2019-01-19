@@ -183,4 +183,19 @@ body {
    from {left: -300px}
    to {left: 0px}
 }
+
+#overlay {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   background: white;
+   opacity: 0.35;
+   animation-name: overlayAnimation;
+   animation-duration: 0.5s;
+   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes overlayAnimation {
+   from {opacity: 0}
+   to {opacity: 0.35;}
 }
