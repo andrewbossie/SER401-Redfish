@@ -70,12 +70,13 @@
       updatePanel(this);
    });
 
-   
-   $(".menuIcon").on("click", function () {
+   let onMenuClick = () => {
       menuOpened = !menuOpened;
       let menuHtml = menuOpened ? "<div id='menuSurface'></div><div id='overlay' onclick='onMenuClick()'></div>" : "";
       document.getElementById('menuContainer').innerHTML = menuHtml;
-   });
+   }
+
+   $(".menuIcon").on("click", onMenuClick);
 
    let isThemeDark = true;
    let themeURLParam = "";
