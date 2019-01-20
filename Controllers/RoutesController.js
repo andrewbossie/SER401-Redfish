@@ -57,7 +57,8 @@ exports.getMetric = function(req, res) {
       if (!body) {
         res.status(404);
         res.json({
-          error: "Metric does not exist"
+          error: "Metric does not exist",
+          metric: metric
         });
       } else if (error) {
         console.log(error);
