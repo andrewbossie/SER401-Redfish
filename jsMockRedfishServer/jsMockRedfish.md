@@ -31,9 +31,70 @@ $ node jsmockdatacreator \[-c \<config file\>\] \[-t\] \[-o\]
 
 # `config.js`
 
-This is the main config file for the set of scripts.
+This is the main config file for the set of scripts. It is in JSON format in one large `config variable`.
+
+## General format
 
 ```json
+var config = {
+  RedFishData: {
+    path: "../../redfish"
+  },
+  MockupData: {
+    MockupPatterns: [
+    ]
+  }
+};
+
+module.exports = config;
+```
+
+This is the main layout of the `jsMockServer` config file. Important bits:
+
+1. `path:` The path to the top level `redfish` used as inputs to the scripts. This includes the initial `/redfish` portion of the path, so the the variable should resolve as `__path__/v1/…`.
+1. `MockupPatterns:` A collection of patterns (described below) for use in the `jsMockServer` scripts. These will all be run in tandem on the same timeline.
+1. `module.exports = config;` This is necessary in order for the main script to pull in the config file as a variable.
+
+## Mockup Pattern JSON
+
+```JSON
+{
+  name: "Sawtooth CPU(1) Percent",
+  path: "/v1/TelemetryService/MetricReports/CPUMetrics/",
+  timedelay: 3,
+  pattern: "sawtooth",
+  MetricValueTemplate: {
+    MemberID: "CPUPercentUtil",
+    MetricValue: "#value",
+    TimeStamp: "#timestamp",
+    MetricProperty: "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/1/CPUUtil"
+  }
+},
+```
+
+This is a sample pattern to use in the `MockupPatterns` array. Each one of these is a mockup pattern for a telemetry variable.
+
+1. `name:` For identification purposes only, this is a name for this specific pattern.
+1. `path:` The path in the RedFish API relative to the general `__path__` above for this specific telemetry pattern.
+1. `timedelay:` The time in seconds between each new random number generated in the pattern.
+1. `pattern:` Which specific pattern (discussed below) to use for this mockup.
+1. `MetricValueTemplate:` The template for the specific metric for this mockup, generally pulled from a current `index.json` file in a `TelemetryService` directory. This will be used exactly as shown in the template except for two substitutions:
+  1. `#value` will be replaced with the mockup value created by the script
+  1. `#timestamp` will be replaced with the current timestamp in the script
+1. There may be other variables needed within the pattern. These will be described within their pattern type.
+
+## Patterns
+
+The pattern in the `PatternFuncs.js` file. Currently, these are:
+
+1. 'sawtooth' goes from min: to max: in step: increments and then wraps back to min:
+1. 'pingpong' goes from min: to max: and then reverses and goes back to min: in step: increments
+1. 'fullrand' a random value between min: and max:
+1. 'steprand' a random value no greater than step: away from the current value. For instance, if step is 5 and the current value is 50, the next value could be any integer between 45 and 55.
+
+
+
+
 var config = {
   RedFishData: {
     path: "../../redfish"
