@@ -87,14 +87,25 @@ This is a sample pattern to use in the `MockupPatterns` array. Each one of these
 
 The pattern in the `PatternFuncs.js` file. Currently, these are:
 
-1. 'sawtooth' goes from min: to max: in step: increments and then wraps back to min:
-1. 'pingpong' goes from min: to max: and then reverses and goes back to min: in step: increments
-1. 'fullrand' a random value between min: and max:
-1. 'steprand' a random value no greater than step: away from the current value. For instance, if step is 5 and the current value is 50, the next value could be any integer between 45 and 55.
+1. 'sawtooth' goes from `min` to `max` in `step:` increments and then wraps back to `min:`. Note that it still keeps the `step:` increment when it wraps, and it includes both the `min:` and `max:` number, so if the current value is 99, with the default `min:` and `max:` values and a `step:` of 5, the next value would be 3 (100, 0, 1, 2, 3).
+  * `min:` defaults to 0
+  * `max:` defaults to 100
+  * `step:` defaults to 1
+1. 'pingpong' goes from `min` to `max` and then reverses and goes back to `min` in `step` increments. This keeps the `step:` interval similarly to the `sawtooth` pattern, in that if the value going up is 98 and the `step:` is 5, the next value will be 97 (99, 100, 99, 98, 97).
+  * `min:` defaults to 0
+  * `max:` defaults to 100
+  * `step:` defaults to 1
+1. 'fullrand' a random value between `min:` and `max:`, inclusive.
+  * `min:` defaults to 0
+  * `max:` defaults to 100
+1. 'steprand' a random value between `min:` and `max:` no greater than `step:` away from the current value. For instance, if `step:` is 5 and the current value is 50, the next value could be any integer between 45 and 55. This wraps similarly to the `sawtooth` pattern above.
+  * `min:` defaults to 0
+  * `max:` defaults to 100
+  * `step:` defaults to 1
 
+# Full sample config
 
-
-
+```JSON
 var config = {
   RedFishData: {
     path: "../../redfish"
