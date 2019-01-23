@@ -4,13 +4,28 @@
 
 <head>
     <meta charset="UTF-8" />
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="../Resources/js/index.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+          crossorigin="anonymous" />
     <title>Redfish Telemetry Client</title>
 </head>
 <body>
-    <h1>{{ pageTitle }}</h1><a href="/">(testing) proceed to graphs page</a>
+    <div>
+        <h1 class="text">{{ pageTitle }}</h1>
+        <div class="separator"></div>
+    </div>
+    <!--<h1>{{ pageTitle }}</h1><a href="/">(testing) proceed to graphs page</a>-->
     <br />
     <br />
     <h2>Please select your metrics...</h2>
-    <p>{{ metrics }}</p>
+    <ul class="list">
+        {{#each metrics }}
+            <li>{{ this }}</li>
+        {{/each}}
+    </ul>
 </body>
 </html>
