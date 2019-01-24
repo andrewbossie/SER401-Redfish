@@ -2,8 +2,8 @@
 
 var util = require("util");
 var fs = require("fs");
-var config;
 var PFuncs = require("./PatternFuncs");
+var config;
 var iterations = 60*60*10; //default to 10 hours unless specified otherwise
 var outputPath = "output.csv"; //default. override with -o switch
 
@@ -34,19 +34,20 @@ if (process.argv.indexOf("-o") != -1) {
    }
 }
 
+//import config 
 if (!config) {
    config = require("./config");
 }
 
 
 var patternTimers = [];
-var parsedPaths = [];
-var parsedTemplates = [];
+var parsedPaths = [];		//cached json template paths
+var parsedTemplates = [];	//cached json templates
 var isoDTG = Date.now();
 var str = "#\n";
 var gcd = 0;
 var oldPerc = 0;
-var percLen = 50;
+var percLen = 50;			//the length, in characters, of the percentage loading bar
 var stream = fs.createWriteStream(outputPath);
 stream.write("");
 console.log("Generating " + secondsToString(iterations) + " of data... ");
@@ -63,6 +64,7 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
 (async() => {
 for (var i = 0; i <= iterations; i+=gcd) {
 	
+	//draw the percent loading bar
 	let newPerc = Math.floor(i / iterations * 100)
 	if ( newPerc > oldPerc){
 		oldPerc = newPerc;
@@ -81,7 +83,10 @@ for (var i = 0; i <= iterations; i+=gcd) {
 		process.stdout.write(percStr);
 	}
 	
+	//start with a fresh line
     var line = "";
+	
+	//iterate over mockup patterns defined in configuration file
     config.MockupData.MockupPatterns.forEach(function(mockup, index) {
         //only do anything if the current iteration is on the approriate time
         if (i % mockup.timedelay == 0) {
@@ -118,19 +123,22 @@ for (var i = 0; i <= iterations; i+=gcd) {
                 patternTimers[index].pfuncs = p;
             }
 
-
+			//parse JSON to string for replacement
             var templateJSON = JSON.stringify(mockup.MetricValueTemplate);
 
+			//replace value string
             templateJSON = templateJSON.replace(
             /#value/g,
             patternTimers[index].pfuncs[mockup.pattern]()
             );
 
+			//replace timestamp string
             templateJSON = templateJSON.replace(
             /#timestamp/g,
             new Date(isoDTG + i * 1000).toISOString().replace(/\..*$/, "-0500")
             );
 
+			//parse back to object
             var template = JSON.parse(templateJSON);
             
             //build csv record
