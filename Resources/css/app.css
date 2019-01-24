@@ -209,8 +209,14 @@ body {
 
 .menuLink {
    display: block;
-   padding: 0px 0px 20px 10px;
+   padding: 0px 0px 0px 10px;
    font-size: 20px;
    font-family: "Roboto", sans-serif;
    font-weight: 400;
+}
+
+.menuSeparator {
+   height: 1px;
+   margin: 15px 20px;
+   background-color: #75aafa 
 }
