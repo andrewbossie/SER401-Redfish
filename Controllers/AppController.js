@@ -76,10 +76,11 @@ exports.updateCPUUtil = () => {
 
 // InfluxDB Connection
 const influx = new Influx.InfluxDB({
-  host: keys.influxHost,
-  database: "test",
-  username: keys.influxUserName,
-  password: keys.influxPassword,
+
+    host: keys.influxHost,
+    database: "test",
+    username: keys.influxUserName,
+    password: keys.influxPassword,
 
   schema: [
     {
@@ -168,7 +169,7 @@ exports.getInfluxData = function(req, res) {
     }
 
     res.render("chart.hbs", {
-      pageTitle: "Redfish Telemetry Client (Js)",
+      pageTitle: "Redfish Telemetry Client",
       cpu: cpu,
       temp: temp,
       cpu_time: cpu_time,

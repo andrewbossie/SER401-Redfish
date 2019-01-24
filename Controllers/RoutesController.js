@@ -18,7 +18,7 @@ exports.getAvailableMetrics = function(req, res) {
   request(
     {
       url:
-        "http://localhost:8000/redfish/v1/TelemetryService/MetricReportDefinitions",
+        "http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions",
       json: true
     },
     (error, response, body) => {
@@ -28,15 +28,24 @@ exports.getAvailableMetrics = function(req, res) {
           error: "Could not retrieve metrics"
         });
       } else if (error) {
-        console.log(error);
+        // console.log(error);
       } else {
         let metrics = [];
-        for (var i = 0; i < body.Members.length; i++) {
-          let uri = body.Members[i]["@odata.id"];
-          metrics.push(uri.split("/")[uri.split("/").length - 1]);
-          // metrics.push(uri);
-        }
-        res.json(metrics);
+        // for (var i = 0; i < body['available'].length; i++) {
+        //   let uri = body['available'][i];
+        //   metrics.push(uri);
+        // }
+          for (var i = 0; i < body.Members.length; i++) {
+              let uri = body.Members[i]["@odata.id"];
+              // metrics.push(uri.split("/")[uri.split("/").length - 1]);
+              metrics.push(uri);
+          }
+          console.log(metrics);
+        // res.json(metrics);
+          res.render("landing.hbs", {
+              pageTitle: "Redfish Telemetry Client",
+              metrics: metrics
+          });
       }
     }
   );
@@ -50,7 +59,7 @@ exports.getMetric = function(req, res) {
   console.log(typeof metric);
   request(
     {
-      url: `http://localhost:8000/redfish/v1/TelemetryService/MetricReportDefinitions/${metric}`,
+      url: `http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions/${metric}`,
       json: true
     },
     (error, response, body) => {

@@ -1,0 +1,107 @@
+<!--Landing page-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="../Resources/js/index.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+          crossorigin="anonymous" />
+    <title>Redfish Telemetry Client</title>
+</head>
+<body>
+    <div>
+        <h1 class="text">{{ pageTitle }}</h1>
+        <div class="separator"></div>
+    </div>
+    <!--<h1>{{ pageTitle }}</h1><a href="/">(testing) proceed to graphs page</a>-->
+    <br />
+    <br />
+    <div>
+        <div style="margin-left: 15%; display: inline-block">
+            <input type="button" value="Start" id="run" />
+            <input type="button" value="View Graphs" id="view" />
+            <h2>Please select your metrics...</h2>
+            <ul class="list">
+                {{#each metrics }}
+                    <li class="metrics-list" value="{{this}}">{{ this }} (Stopped)</li>
+                {{/each}}
+            </ul>
+        </div>
+        <!--<div style="width: 30%; display: inline-block">-->
+        <!--</div>-->
+    </div>
+</body>
+<script>
+
+    var selected = [];
+    $('#view').prop('disabled', true);
+
+    // Change the colors on the selection list
+    $('.metrics-list').on('click', function(){
+        if($(this).css("color") === "rgb(255, 0, 0)"){
+            $(this).css('color', 'purple');
+            var text = $(this).attr('value');
+            var newText = text + " (Queued)";
+
+            $(this).text(newText);
+
+            //add to selected JSON
+            selected.push($(this).attr('value'));
+            $(this).attr('sel', "selected");
+
+        } else{
+            $(this).css('color', 'red');
+            var text = $(this).attr('value');
+            var newText = text + " (Stopped)";
+
+            $(this).text(newText);
+
+            // delete from selected JSON
+            selected.splice( $.inArray($(this).attr('value'), selected), 1 );
+            $(this).attr('sel', "");
+            // console.log(selected);
+        }
+    });
+
+    $('#run').on('click', function(e){
+        e.preventDefault();
+
+        $('.metrics-list').each(function(){
+           if($(this).attr('sel') === "selected"){
+               $(this).css('color', 'green');
+
+               var text = $(this).attr('value');
+               var newText = text + " (Running)";
+
+               $(this).text(newText);
+           }
+        });
+
+        $('#view').prop('disabled', false);
+
+        // $.ajax({
+        //     type: "POST",
+        //     url: "/placeholder",
+        //     data: {payload: selected}
+        // });
+    });
+
+    $('#view').on('click', function(e){
+        e.preventDefault();
+
+        window.location.replace("/graphs");
+
+        // $.ajax({
+        //     type: "POST",
+        //     url: "/something",
+        //     data: {payload: selected}
+        // });
+    })
+
+</script>
+</html>

@@ -201,6 +201,17 @@ body {
    to {opacity: 0.35;}
 }
 
+
+.list{
+    color: red;
+    cursor: pointer;
+    list-style-type: square;
+    /*margin-left: 15%;*/
+}
+
+.list li:hover{
+    background-color: rgba(232, 232, 232, 0.7);
+  
 .menuTitle {
    text-align: center;
    font-family: "Roboto", sans-serif;
@@ -219,4 +230,5 @@ body {
    height: 1px;
    margin: 15px 20px;
    background-color: #75aafa 
+
 }
