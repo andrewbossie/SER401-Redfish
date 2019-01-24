@@ -31,10 +31,16 @@ exports.getAvailableMetrics = function(req, res) {
         // console.log(error);
       } else {
         let metrics = [];
-        for (var i = 0; i < body['available'].length; i++) {
-          let uri = body['available'][i];
-          metrics.push(uri);
-        }
+        // for (var i = 0; i < body['available'].length; i++) {
+        //   let uri = body['available'][i];
+        //   metrics.push(uri);
+        // }
+          for (var i = 0; i < body.Members.length; i++) {
+              let uri = body.Members[i]["@odata.id"];
+              // metrics.push(uri.split("/")[uri.split("/").length - 1]);
+              metrics.push(uri);
+          }
+          console.log(metrics);
         // res.json(metrics);
           res.render("landing.hbs", {
               pageTitle: "Redfish Telemetry Client",

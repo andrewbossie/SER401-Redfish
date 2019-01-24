@@ -203,9 +203,8 @@ body {
 .list{
     color: red;
     cursor: pointer;
-    width: 50%;
     list-style-type: square;
-    margin-left: 15%;
+    /*margin-left: 15%;*/
 }
 
 .list li:hover{

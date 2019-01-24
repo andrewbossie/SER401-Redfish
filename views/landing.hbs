@@ -22,7 +22,7 @@
     <br />
     <br />
     <div>
-        <div style="margin-left: 15%; width: 50%; display: inline-block">
+        <div style="margin-left: 15%; display: inline-block">
             <input type="button" value="Start" id="run" />
             <input type="button" value="View Graphs" id="view" />
             <h2>Please select your metrics...</h2>
@@ -45,25 +45,25 @@
     $('.metrics-list').on('click', function(){
         if($(this).css("color") === "rgb(255, 0, 0)"){
             $(this).css('color', 'purple');
-            var text = $(this).text();
-            var newText = text.substr(0, 9);
-            newText = newText + " (Queued)";
+            var text = $(this).attr('value');
+            var newText = text + " (Queued)";
+
             $(this).text(newText);
-            $(this).attr("sel", "selected");
 
             //add to selected JSON
             selected.push($(this).attr('value'));
-            // console.log(selected);
+            $(this).attr('sel', "selected");
 
         } else{
             $(this).css('color', 'red');
-            var text = $(this).text();
-            var newText = text.substr(0, 9);
-            newText = newText + " (Stopped)";
+            var text = $(this).attr('value');
+            var newText = text + " (Stopped)";
+
             $(this).text(newText);
 
             // delete from selected JSON
             selected.splice( $.inArray($(this).attr('value'), selected), 1 );
+            $(this).attr('sel', "");
             // console.log(selected);
         }
     });
@@ -74,9 +74,10 @@
         $('.metrics-list').each(function(){
            if($(this).attr('sel') === "selected"){
                $(this).css('color', 'green');
-               var text = $(this).text();
-               var newText = text.substr(0, 9);
-               newText = newText + " (Running)";
+
+               var text = $(this).attr('value');
+               var newText = text + " (Running)";
+
                $(this).text(newText);
            }
         });
