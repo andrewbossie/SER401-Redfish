@@ -39,6 +39,7 @@
 <script>
 
     var selected = [];
+    $('#view').prop('disabled', true);
 
     // Change the colors on the selection list
     $('.metrics-list').on('click', function(){
@@ -52,7 +53,7 @@
 
             //add to selected JSON
             selected.push($(this).attr('value'));
-            console.log(selected);
+            // console.log(selected);
 
         } else{
             $(this).css('color', 'red');
@@ -63,7 +64,7 @@
 
             // delete from selected JSON
             selected.splice( $.inArray($(this).attr('value'), selected), 1 );
-            console.log(selected);
+            // console.log(selected);
         }
     });
 
@@ -79,6 +80,8 @@
                $(this).text(newText);
            }
         });
+
+        $('#view').prop('disabled', false);
 
         // $.ajax({
         //     type: "POST",
