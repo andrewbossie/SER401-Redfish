@@ -169,7 +169,7 @@ body {
 }
 
 #menuSurface {
-   height: 100%;
+   height: calc(100% - 50px);
    width: 300px;
    background-color: #cbddf8;
    position: absolute;
@@ -177,6 +177,7 @@ body {
    animation-name: menuAnimation;
    animation-duration: 0.5s;
    animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+   margin-top: 50px;
 }
 
 @keyframes menuAnimation {
@@ -198,4 +199,18 @@ body {
 @keyframes overlayAnimation {
    from {opacity: 0}
    to {opacity: 0.35;}
+}
+
+.menuTitle {
+   text-align: center;
+   font-family: "Roboto", sans-serif;
+   font-weight: 400;
+}
+
+.menuLink {
+   display: block;
+   padding: 0px 0px 20px 10px;
+   font-size: 20px;
+   font-family: "Roboto", sans-serif;
+   font-weight: 400;
 }
