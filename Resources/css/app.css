@@ -199,3 +199,15 @@ body {
    from {opacity: 0}
    to {opacity: 0.35;}
 }
+
+.list{
+    color: red;
+    cursor: pointer;
+    width: 50%;
+    list-style-type: square;
+    margin-left: 15%;
+}
+
+.list li:hover{
+    background-color: rgba(232, 232, 232, 0.7);
+}

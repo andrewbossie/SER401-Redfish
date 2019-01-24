@@ -28,10 +28,9 @@ exports.getAvailableMetrics = function(req, res) {
           error: "Could not retrieve metrics"
         });
       } else if (error) {
-        console.log(error);
+        // console.log(error);
       } else {
         let metrics = [];
-        console.log(body['available'].length);
         for (var i = 0; i < body['available'].length; i++) {
           let uri = body['available'][i];
           metrics.push(uri);
