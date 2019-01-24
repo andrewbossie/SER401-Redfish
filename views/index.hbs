@@ -72,7 +72,18 @@
 
    let onMenuClick = () => {
       menuOpened = !menuOpened;
-      let menuHtml = menuOpened ? "<div id='menuSurface'></div><div id='overlay' onclick='onMenuClick()'></div>" : "";
+      let menuHtml = menuOpened ? 
+         "<div id='menuSurface'>" +
+            "<h1 class='menuTitle'>Menu</h1>" +
+            "<div class='menuSeparator'></div>" +
+            "<a class='menuLink'>Metric Selections</a>" +
+            "<div class='menuSeparator'></div>" +
+            "<a class='menuLink'>Panel Display</a>" +
+            "<div class='menuSeparator'></div>" +
+         "</div>" + 
+         "<div id='overlay' onclick='onMenuClick()'>"+
+         "</div>" 
+         : "";
       document.getElementById('menuContainer').innerHTML = menuHtml;
    }
 
