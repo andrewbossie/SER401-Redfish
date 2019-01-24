@@ -4,6 +4,7 @@ var util = require("util");
 var fs = require("fs");
 
 var config;
+var port = 8001;
 var PFuncs = require("./PatternFuncs");
 
 // JSON cache for files that need to be written
@@ -20,11 +21,31 @@ if (process.argv.indexOf("-c") != -1) {
       config = require(configFile);
     } catch (e) {
       console.log("Error opening " + configFile + ": " + e);
+      config = null;
+    }
+  } else {
+    console.log("Option -c requires an argument!");
+  }
+}
+
+if (process.argv.indexOf("-p") != -1) {
+  if (process.argv.indexOf("-s") == -1) {
+    console.log("Option -p is only effective with the -s switch to start the server.");
+  } else {
+    if (process.argv[process.argv.indexOf("-p") + 1] != -1) {
+      if (process.argv[process.argv.indexOf("-p") + 1].match(/^[1-9][0-9]*$/)) {
+        port = process.argv[process.argv.indexOf("-p") + 1];
+      } else {
+        console.log("Option -p requires a numeric argument!");
+      }
+    } else {
+      console.log("Option -p requires an argument!");
     }
   }
 }
 
 if (!config) {
+  console.log("Using default config: ./config.js");
   config = require("./config");
 }
 
@@ -38,9 +59,9 @@ function startServer(redfishPath) {
 
   app.use("/redfish", express.static(redfishPath, { index: "index.json" }));
 
-  app.listen(8001);
+  console.log("Server starting on port: " + port);
 
-  console.log("Server started on port 8001");
+  app.listen(port);
 }
 
 var patternTimers = [];
@@ -79,12 +100,16 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
 
     var currFile = mockup.path + "index.json";
     if (!(currFile in dirty)) {
-      dirty[currFile] = JSON.parse(
-        fs.readFileSync(
-          config.RedFishData.path + currFile,
-          "utf-8"
-        )
-      );
+      try {
+        dirty[currFile] = JSON.parse(
+          fs.readFileSync(
+            config.RedFishData.path + currFile,
+            "utf-8"
+          )
+        );
+      } catch (e) {
+        console.log("Error opening " + config.RedFishData.path + currFile + ": " + e);
+      }
     } else {
       console.log(currFile + " found in dirty cache.");
     }
