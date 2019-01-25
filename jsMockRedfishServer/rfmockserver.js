@@ -9,8 +9,16 @@ var PFuncs = require("./PatternFuncs");
 // JSON cache for files that need to be written
 var dirty = [];
 
+// Set the default port, can be changed with the -p flag
+var port = 8001;
+
 // Flag to not start a new file write promise if one is already pending
 var fileWritePromiseFlag = false;
+
+if (process.argv.indexOf("-h") != -1) {
+  usage();
+  process.exit(1);
+}
 
 if (process.argv.indexOf("-c") != -1) {
   if (process.argv[process.argv.indexOf("-c") + 1] != -1) {
@@ -18,13 +26,33 @@ if (process.argv.indexOf("-c") != -1) {
     console.log("Using config file: " + configFile);
     try {
       config = require(configFile);
-    } catch (e) {
-      console.log("Error opening " + configFile + ": " + e);
+    } catch (err) {
+      console.log("Error opening " + configFile + ": " + err);
+      config = null;
+    }
+  } else {
+    console.log("Option -c requires an argument!");
+  }
+}
+
+if (process.argv.indexOf("-p") != -1) {
+  if (process.argv.indexOf("-s") == -1) {
+    console.log("Option -p is only effective with the -s switch to start the server.");
+  } else {
+    if (process.argv[process.argv.indexOf("-p") + 1] != -1) {
+      if (process.argv[process.argv.indexOf("-p") + 1].match(/^[1-9][0-9]*$/)) {
+        port = process.argv[process.argv.indexOf("-p") + 1];
+      } else {
+        console.log("Option -p requires a numeric argument!");
+      }
+    } else {
+      console.log("Option -p requires an argument!");
     }
   }
 }
 
 if (!config) {
+  console.log("Using default config: ./config.js");
   config = require("./config");
 }
 
@@ -38,9 +66,9 @@ function startServer(redfishPath) {
 
   app.use("/redfish", express.static(redfishPath, { index: "index.json" }));
 
-  app.listen(8001);
+  console.log("Server starting on port: " + port);
 
-  console.log("Server started on port 8001");
+  app.listen(port);
 }
 
 var patternTimers = [];
@@ -79,12 +107,16 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
 
     var currFile = mockup.path + "index.json";
     if (!(currFile in dirty)) {
-      dirty[currFile] = JSON.parse(
-        fs.readFileSync(
-          config.RedFishData.path + currFile,
-          "utf-8"
-        )
-      );
+      try {
+        dirty[currFile] = JSON.parse(
+          fs.readFileSync(
+            config.RedFishData.path + currFile,
+            "utf-8"
+          )
+        );
+      } catch (err) {
+        console.log("Error opening " + config.RedFishData.path + currFile + ": " + err);
+      }
     } else {
       console.log(currFile + " found in dirty cache.");
     }
@@ -164,3 +196,17 @@ var writeDirtyFilesTimer = setInterval(function() {
       console.log(">> Error: " + err);
     });
 }, 1000);
+
+function usage() {
+  console.log(`Usage:
+
+node jsmockserver [options]
+
+Options:
+  -c file   Change from the default config.js config file
+  -h        Print the usage and exit
+  -p port   Change from the default port of 8001
+  -s        Start the server to serve out the redfish API
+`);
+}
+
