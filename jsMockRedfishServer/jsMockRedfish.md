@@ -2,27 +2,27 @@
 
 `jsMockServer` is a set of scripts and patterns to create and optionally serve mockup [RedFish][RedFish] data. Note that it is *not* a full RedFish implementation. It uses templates from the `/redfish/v1/TelemetryService` portion of the RedFish API and a set of defined patterns to create mock data for visualization or other test cases.
 
-# `jsmockserver`
+# `rfmockserver`
 
-The `jsmockserver` script without any arguments reads from the `config.js` file and writes out mock data according to the specifications listed in that file to an existing RedFish directory. Specifically, it modifies the files under the `TelemetryService` directory to simulate incoming telemetry data.
+The `rfmockserver` script without any arguments reads from the `config.js` file and writes out mock data according to the specifications listed in that file to an existing RedFish directory. Specifically, it modifies the files under the `TelemetryService` directory to simulate incoming telemetry data.
 
 ## Usage
 
 ```
-$ node jsmockserver \[-s\] \[-c \<config file\>\]
+$ node rfmockserver \[-s\] \[-c \<config file\>\]
 
 -s         Starts a server on port 8001 to serve up the /redfish/v1/TelemetryService directory
 -c <file>  A config file other than ./config.js
 ```
 
-# `jsmockdatacreator`
+# `rfmockdatacreator`
 
-The `jsmockdatacreator` script uses the same `config.js` file but instead of writing to or serving up the RedFish directory it creates a CSV file suitable for replaying with the current Python RedFish mock server distributed by the DMTF organization.
+The `rfmockdatacreator` script uses the same `config.js` file but instead of writing to or serving up the RedFish directory it creates a CSV file suitable for replaying with the current Python RedFish mock server distributed by the DMTF organization.
 
 ## Usage
 
 ```
-$ node jsmockdatacreator \[-c \<config file\>\] \[-t\] \[-o\]
+$ node rfmockdatacreator \[-c \<config file\>\] \[-t\] \[-o\]
 
 -c <file>  A config file other than ./config.js
 -t         The number of iterations to calculate
