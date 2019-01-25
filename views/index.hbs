@@ -13,7 +13,11 @@
 </head>
 
 <body>
+   <div id="menuContainer"></div>
    <div>
+      <div class="header">
+         <i class="fas fa-bars menuIcon"></i>
+      </div>
       <h1 class="text">{{ pageTitle }}</h1>
       <form>
          <input type="radio" name="theme" value="dark" checked="checked" onclick="updateTheme(true /*isDark*/);" /><span
@@ -54,6 +58,7 @@
 <script>
    var count = 0;
    var displayed = [];
+   var menuOpened = false;
 
    $("#add").click(function (e) {
       e.preventDefault();
@@ -64,6 +69,25 @@
       $("ul.dropdown").slideToggle("medium");
       updatePanel(this);
    });
+
+   let onMenuClick = () => {
+      menuOpened = !menuOpened;
+      let menuHtml = menuOpened ? 
+         "<div id='menuSurface'>" +
+            "<h1 class='menuTitle'>Menu</h1>" +
+            "<div class='menuSeparator'></div>" +
+            "<a class='menuLink'>Metric Selections</a>" +
+            "<div class='menuSeparator'></div>" +
+            "<a class='menuLink'>Panel Display</a>" +
+            "<div class='menuSeparator'></div>" +
+         "</div>" + 
+         "<div id='overlay' onclick='onMenuClick()'>"+
+         "</div>" 
+         : "";
+      document.getElementById('menuContainer').innerHTML = menuHtml;
+   }
+
+   $(".menuIcon").on("click", onMenuClick);
 
    let isThemeDark = true;
    let themeURLParam = "";
