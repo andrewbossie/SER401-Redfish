@@ -3,7 +3,7 @@ var config = {
     // Path to the redfish directory that will be served.
     // This should be a copy of the original directory since
     // the data will be modified.
-    path: "../../DCSimTools/Redfish-Mockup-Server/redfish"
+    path: "../../redfish"
   },
   MockupData: {
     // This is an array of all of the MetricIDs to be modified
@@ -90,20 +90,19 @@ var config = {
           MetricProperty: "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/3/CPUUtil"
         }
       },
-		{
-        name: "Random Memory Util",
+      {
+        name: "Sawtooth Memory Util Tray 2",
         path: "/v1/TelemetryService/MetricReports/MemoryMetrics/",
-        timedelay: 1,
-        pattern: "fullrand",
-        min: 45,
-        max: 90,
+        timedelay: 10,
+        pattern: "sawtooth",
+        step: 3,
         MetricValueTemplate: {
           MemberID: "MemoryPercentUtil",
           MetricValue: "#value",
           TimeStamp: "#timestamp",
-          MetricProperty: "/redfish/v1/Chassis/Tray_1/Memory/MemoryControl/1/MemoryUtil"
+          MetricProperty: "/redfish/v1/Chassis/Tray_2/Memory/MemoryControl/1/MemoryUtil"
         }
-	  }
+      }
     ]
   }
 };
