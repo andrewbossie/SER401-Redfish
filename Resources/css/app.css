@@ -156,6 +156,10 @@ p {
    z-index: 20;
 }
 
+.themeLight .header {
+   background-color: #f3f3f3;
+}
+
 body {
    margin: 0px;
 }
@@ -166,6 +170,10 @@ body {
    color: #f3f3f3;
    cursor: pointer;
    z-index: 30;
+}
+
+.themeLight .menuIcon {
+   color: #212121;
 }
 
 #menuSurface {
@@ -211,11 +219,16 @@ body {
 
 .list li:hover{
     background-color: rgba(232, 232, 232, 0.7);
-  
+}
+
 .menuTitle {
    text-align: center;
    font-family: "Roboto", sans-serif;
    font-weight: 400;
+}
+
+.themeLight .menuTitle {
+   color: #212121;
 }
 
 .menuLink {
@@ -230,5 +243,4 @@ body {
    height: 1px;
    margin: 15px 20px;
    background-color: #75aafa 
-
 }
