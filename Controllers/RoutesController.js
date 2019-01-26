@@ -12,7 +12,7 @@ exports.getDefinitionCollection = function(req, res) {
   request(
     {
       url:
-        "http://localhost:8000/redfish/v1/TelemetryService/MetricReportDefinitions",
+        "http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions",
       json: true
     },
     (error, response, body) => {
@@ -35,17 +35,12 @@ exports.getDefinitionCollection = function(req, res) {
   );
 };
 
-// Route handler for /metrics
-// This will return a JSON array of URIs to each available metric report.
-
-// TODO: Once the metric definition JSON files are fixed, change
-// what's being returned here. We want definition returns, not actual
-// metric report returns. That's saved for InfluxDB.
+// Currently being used for the landing page.
 exports.getAvailableMetrics = function(req, res) {
   request(
     {
       url:
-        "http://localhost:8000/redfish/v1/TelemetryService/MetricReportDefinitions",
+        "http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions",
       json: true
     },
     (error, response, body) => {
@@ -86,7 +81,7 @@ exports.getMetric = function(req, res) {
   console.log(typeof metric);
   request(
     {
-      url: `http://localhost:8000/redfish/v1/TelemetryService/MetricReportDefinitions/${metric}`,
+      url: `http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions/${metric}`,
       json: true
     },
     (error, response, body) => {
@@ -104,4 +99,26 @@ exports.getMetric = function(req, res) {
       }
     }
   );
+};
+
+exports.postSelectedMetrics = function(req, res) {
+  let selectedMetrics = req.body;
+  if (selectedMetrics.from && selectedMetrics.metrics) {
+    // TODO: Future sprint - create function to do the I/O tasks for
+    // Metric-select persistence.
+
+    // TODO: The PATCH will go here - we need to check first if these reports are
+    // enabled.
+    res.json(selectedMetrics);
+  } else {
+    res.json({
+      error: "Bad Format"
+    });
+  }
+
+  // TODO: create incoming JSON format
+  // let format = {
+  //   from: "MetricReportName",
+  //   metrics: ["metric1", "metric2", "..."]
+  // };
 };
