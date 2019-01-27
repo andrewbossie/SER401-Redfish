@@ -29,6 +29,18 @@ $ node rfmockdatacreator \[-c \<config file\>\] \[-t\] \[-o\]
 -o         The output CSV file
 ```
 
+# Environment
+
+The minimum working environment is a recent version of [Node.js][NodeJS] (it was initially developed under version 11.8.0) and a working [RedFish][RedFish] API directory with the TelemetryServices.
+
+In the `jsMockRedfish` directory run:
+
+```
+$ npm install
+```
+
+This will direct `npm` to install all of the dependencies required for these scripts. 
+
 # `config.js`
 
 This is the main config file for the set of scripts. It is in JSON format in one large `config variable`.
@@ -173,3 +185,5 @@ var config = {
 
 module.exports = config;
 ```
+[RedFish]: https://www.dmtf.org/standards/redfish
+[NodeJS]: https://nodejs.org/en/
