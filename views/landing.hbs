@@ -28,7 +28,7 @@
             <h2>Please select your metrics...</h2>
             <ul class="list">
                 {{#each metrics }}
-                    <li class="metrics-list" value="{{this}}">{{ this }} (Stopped)</li>
+                    <li class="metrics-list" value="{{this}}">{{ this }} (Not Enabled)</li>
                 {{/each}}
             </ul>
         </div>
@@ -52,12 +52,12 @@
 
             //add to selected JSON
             selected.push($(this).attr('value'));
-            $(this).attr('sel', "selected");
+            $(this).attr('sel', "Not Enabled");
 
         } else{
             $(this).css('color', 'red');
             var text = $(this).attr('value');
-            var newText = text + " (Stopped)";
+            var newText = text + " (Not Enabled)";
 
             $(this).text(newText);
 
@@ -72,7 +72,7 @@
         e.preventDefault();
 
         $('.metrics-list').each(function(){
-           if($(this).attr('sel') === "selected"){
+           if($(this).attr('sel') === "Not Enabled"){
                $(this).css('color', 'green');
 
                var text = $(this).attr('value');
