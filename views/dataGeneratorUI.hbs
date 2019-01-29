@@ -5,7 +5,19 @@
 	</head>
 
 	<body>
-		<input type="button" onclick="secondsToString(5)">
+		<form action="/generateMockData" method="get">
+			<table>
+				<tr>
+					<td>Time (seconds)</td>
+					<td><input type = "text" name = "time"></td>
+				</tr>
+				<tr>
+					<td>Config</td>
+					<td><input type = "text" name = "config"></td>
+				</tr>
+			</table>
+			<input type="submit">
+		</form>
 	</body>
 
 

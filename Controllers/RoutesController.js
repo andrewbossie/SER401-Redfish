@@ -83,8 +83,22 @@ exports.getMetric = function(req, res) {
 //Route handler for /dataGenerator
 //TODO: build UI page since right now the generator gets run on page load
 exports.getDataGenerator = function(req, res) {
+	res.render("dataGeneratorUI.hbs", {
+		pageTitle: "Mockup Data Generator",
+		currentYear: new Date().getFullYear()
+	});
+
+};
+
+exports.generateMockData = function(req, res) {
+	var q = [];
+	if (req.query.time)
+		q.push("-t", req.query.time);
+	if (req.query.config)
+		q.push("-c", req.query.config);
 	function generate(path, callback){
-		var process = childProcess.fork(path);
+		var process = childProcess.fork(path,q);
+
 		var invoked = false;
 		// listen for errors
 		process.on('error', function (err) {
@@ -101,6 +115,7 @@ exports.getDataGenerator = function(req, res) {
 			callback(err);
 		});
 	}
+	
 	generate('./Resources/js/dataGenerator/rfmockdatacreator.js', function(err){
 		if(!err){
 			res.render("dataGeneratorUI.hbs", {
@@ -112,5 +127,3 @@ exports.getDataGenerator = function(req, res) {
 		}
 	});
 };
-
-
