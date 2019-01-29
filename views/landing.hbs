@@ -43,6 +43,19 @@
 
     // Change the colors on the selection list
     $('.metrics-list').on('click', function(){
+
+        //AJAX get selected metrics
+        $.ajax({
+            url: "/metrics",
+            method: "GET",
+            success: function(response){
+                console.log(response);
+            },
+            error: function(error){
+                console.log(error);
+            }
+        });
+
         if($(this).css("color") === "rgb(255, 0, 0)"){
             $(this).css('color', 'purple');
             var text = $(this).attr('value');
@@ -55,6 +68,18 @@
             $(this).attr('sel', "Not Enabled");
 
         } else{
+
+            $.ajax({
+                url: "/metrics",
+                method: "GET",
+                success: function(response){
+                    console.log(response);
+                },
+                error: function(error){
+                    console.log(error);
+                }
+            });
+            
             $(this).css('color', 'red');
             var text = $(this).attr('value');
             var newText = text + " (Not Enabled)";
