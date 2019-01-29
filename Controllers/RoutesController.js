@@ -104,11 +104,26 @@ exports.getMetric = function(req, res) {
 exports.postSelectedMetrics = function(req, res) {
   let selectedMetrics = req.body;
   if (selectedMetrics.from && selectedMetrics.metrics) {
+    let metricReport = selectedMetrics.from;
     // TODO: Future sprint - create function to do the I/O tasks for
     // Metric-select persistence.
 
-    // TODO: The PATCH will go here - we need to check first if these reports are
-    // enabled.
+    // Redfish Mockup Server does not seem to be accepting the PATCH request.
+    request.patch(
+      {
+        url: `http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions/${metricReport}`,
+        json: true,
+        form: {
+          Status: {
+            State: "Enabled"
+          }
+        }
+      },
+      (error, response, body) => {
+        console.log(response);
+      }
+    );
+
     res.json(selectedMetrics);
   } else {
     res.json({
