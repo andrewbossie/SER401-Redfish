@@ -13,6 +13,8 @@ $ node rfmockserver \[-s\] \[-c \<config file\>\]
 
 -s         Starts a server on port 8001 to serve up the /redfish/v1/TelemetryService directory
 -c <file>  A config file other than ./config.js
+-p <port>  Specify a port other than the default 8001 for the server
+-h         Display the inline help
 ```
 
 # `rfmockdatacreator`
