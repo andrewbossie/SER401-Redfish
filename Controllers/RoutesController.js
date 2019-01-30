@@ -113,7 +113,7 @@ exports.postSelectedMetrics = function(req, res) {
       {
         url: `http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions/${metricReport}`,
         json: true,
-        form: {
+        body: {
           Status: {
             State: "Enabled"
           }
