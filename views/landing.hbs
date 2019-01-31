@@ -29,6 +29,7 @@
             <ul class="list">
                 {{#each metrics }}
                     <li class="metrics-list" value="{{this}}">{{ this }} (Not Enabled)</li>
+                    <li class="individual" style="display: none;"></li>
                 {{/each}}
             </ul>
         </div>
@@ -44,12 +45,16 @@
     // Change the colors on the selection list
     $('.metrics-list').on('click', function(){
 
+        var metric = $(this).attr('value').substr(53, this.length);
+        console.log(metric);
+
         //AJAX get selected metrics
         $.ajax({
-            url: "/metrics",
+            url: "./api/metrics/" + metric,
             method: "GET",
             success: function(response){
                 console.log(response);
+                $('.individual').show();
             },
             error: function(error){
                 console.log(error);
@@ -69,17 +74,17 @@
 
         } else{
 
-            $.ajax({
-                url: "/metrics",
-                method: "GET",
-                success: function(response){
-                    console.log(response);
-                },
-                error: function(error){
-                    console.log(error);
-                }
-            });
-            
+            // $.ajax({
+            //     url: "/metrics",
+            //     method: "GET",
+            //     success: function(response){
+            //         console.log(response);
+            //     },
+            //     error: function(error){
+            //         console.log(error);
+            //     }
+            // });
+
             $(this).css('color', 'red');
             var text = $(this).attr('value');
             var newText = text + " (Not Enabled)";
