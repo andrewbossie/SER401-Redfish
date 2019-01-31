@@ -22,7 +22,10 @@ module.exports = (app, router) => {
   * These are actual application routes.
   */
   app.get("/graphs", routes_controller.getPanels);
+  app.get("/datagenerator", routes_controller.getDataGenerator);
   app.get("/", routes_controller.getAvailableMetrics);
+  app.get("/:metric", routes_controller.getMetric);
+  
 
   // This is a catchall for any bad request.
   app.all("*", function(req, res) {

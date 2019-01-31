@@ -1,0 +1,35 @@
+{
+	"@Redfish.Copyright": "Copyright 2014-2016 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+	"@odata.context": "/redfish/v1/$metadata#MetricReport.MetricReport",
+	"@odata.type": "#MetricReport.v1_0_0.MetricReport",
+	"@odata.id": "/redfish/v1/TelemetryService/MetricReports/MemoryMetrics",
+	"Id": "MemoryMetrics",
+	"Name": "MemoryMetrics",
+	"EventTimestamp": "2018-10-25 19:40:32.546420",
+	"MetricReportDefinition": {
+		"@odata.id": "/redfish/v1/TelemetryService/MetricReportDefinitions/MemoryMetrics"
+	},
+	"MetricValues": [
+		{
+			"MemberID": "MemoryPercentUtil",
+			"MetricValue": "20",
+			"TimeStamp": "20161108T142504-0500",
+			"MetricProperty": "/redfish/v1/Chassis/Tray_1/Memory/MemoryControl/1/MemoryUtil"
+		}, {
+			"MemberID": "MemoryPeakUtil",
+			"MetricValue": "90",
+			"TimeStamp": "20161108T142504-0500",
+			"MetricProperty": "/redfish/v1/Chassis/Tray_1/Memory/MemoryControl/1/MemoryUtil"
+		}, {
+			"MemberID": "MemoryPeakDuration",
+			"MetricValue": "5",
+			"TimeStamp": "20161108T142504-0500",
+			"MetricProperty": "/redfish/v1/Chassis/Tray_1/Memory/MemoryControl/1/MemoryUtil"
+		}, {
+			"MemberID": "MemoryPeakStartTime",
+			"MetricValue": "1",
+			"TimeStamp": "20161108T142504-0500",
+			"MetricProperty": "/redfish/v1/Chassis/Tray_1/Memory/MemoryControl/1/MemoryUtil"
+		}
+	]
+}

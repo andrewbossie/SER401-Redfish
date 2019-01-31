@@ -1,0 +1,50 @@
+{
+	"@Redfish.Copyright": "Copyright 2014-2016 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+	"@odata.context": "/redfish/v1/$metadata#MetricReport.MetricReport",
+	"@odata.type": "#MetricReport.v1_0_0.MetricReport",
+	"@odata.id": "/redfish/v1/TelemetryService/MetricReports/CPUMetrics",
+	"Id": "CPUMetrics",
+	"Name": "CPUMetrics",
+	"EventTimestamp": "2018-10-25 19:40:32.546420",
+	"MetricReportDefinition": {
+		"@odata.id": "/redfish/v1/TelemetryService/MetricReportDefinitions/CPUMetrics"
+	},
+	"MetricValues": [
+		{
+			"MemberID": "CPUPeakUtil",
+			"MetricValue": "20",
+			"TimeStamp": "20161108T142504-0500",
+			"MetricProperty": "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/1/CPUUtil"
+		},
+		{
+			"MemberID": "CPUPeakDuration",
+			"MetricValue": "5",
+			"TimeStamp": "20161108T142504-0500",
+			"MetricProperty": "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/1/CPUUtil"
+		},
+		{
+			"MemberID": "CPUPeakStartTime",
+			"MetricValue": "1",
+			"TimeStamp": "20161108T142504-0500",
+			"MetricProperty": "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/1/CPUUtil"
+		},
+		{
+			"MemberID": "CPUPercentUtil",
+			"MetricValue": "1",
+			"TimeStamp": "2018-11-26T16:30:56.311Z",
+			"MetricProperty": "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/1/CPUUtil"
+		},
+		{
+			"MemberID": "CPUPercentUtil",
+			"MetricValue": "71",
+			"TimeStamp": "2018-11-26T16:30:56.311Z",
+			"MetricProperty": "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/2/CPUUtil"
+		},
+		{
+			"MemberID": "CPUPercentUtil",
+			"MetricValue": "56",
+			"TimeStamp": "2018-11-26T16:30:56.327Z",
+			"MetricProperty": "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/3/CPUUtil"
+		}
+	]
+}

@@ -1,4 +1,5 @@
 const request = require("request");
+const childProcess = require("child_process");
 
 // Render Static Panels in Grafana
 exports.getPanels = function(req, res) {
@@ -101,6 +102,42 @@ exports.getMetric = function(req, res) {
   );
 };
 
+
+//Route handler for /dataGenerator
+//TODO: build UI page since right now the generator gets run on page load
+exports.getDataGenerator = function(req, res) {
+	function generate(path, callback){
+		var process = childProcess.fork(path);
+		var invoked = false;
+		// listen for errors
+		process.on('error', function (err) {
+			if (invoked) return;
+			invoked = true;
+			callback(err);
+		});
+
+		// execute the callback
+		process.on('exit', function (code) {
+			if (invoked) return;
+			invoked = true;
+			var err = code === 0 ? null : new Error('exit code ' + code);
+			callback(err);
+		});
+	}
+	generate('./Resources/js/dataGenerator/rfmockdatacreator.js', function(err){
+		if(!err){
+			res.render("dataGeneratorUI.hbs", {
+				pageTitle: "Mockup Data Generator",
+				currentYear: new Date().getFullYear()
+			});
+		}else{
+			console.log(err);
+		}
+	});
+};
+
+
+
 exports.postSelectedMetrics = function(req, res) {
   let selectedMetrics = req.body;
   if (selectedMetrics.from && selectedMetrics.metrics) {
@@ -122,3 +159,4 @@ exports.postSelectedMetrics = function(req, res) {
   //   metrics: ["metric1", "metric2", "..."]
   // };
 };
+
