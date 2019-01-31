@@ -28,8 +28,9 @@
             <h2>Please select your metrics...</h2>
             <ul class="list">
                 {{#each metrics }}
-                    <li class="metrics-list" value="{{this}}">{{ this }} (Not Enabled)</li>
-                    <li class="individual" style="display: none;"></li>
+                    <li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}
+                        <ul class="metrics-indiv"></ul>
+                    </li>
                 {{/each}}
             </ul>
         </div>
@@ -40,40 +41,57 @@
 <script>
 
     var selected = [];
+    var newData = "";
     $('#view').prop('disabled', true);
+    $('.metrics-indiv').hide();
 
     // Change the colors on the selection list
-    $('.metrics-list').on('click', function(){
+    $('.metrics-defs').on('click', function(){
 
         var metric = $(this).attr('value').substr(53, this.length);
         console.log(metric);
 
-        //AJAX get selected metrics
-        $.ajax({
-            url: "./api/metrics/" + metric,
-            method: "GET",
-            success: function(response){
-                console.log(response);
-                $('.individual').show();
-            },
-            error: function(error){
-                console.log(error);
-            }
-        });
+        if($(this).attr('data-opened') === 'closed') {
 
-        if($(this).css("color") === "rgb(255, 0, 0)"){
-            $(this).css('color', 'purple');
-            var text = $(this).attr('value');
-            var newText = text + " (Queued)";
+            $(this).attr('data-opened', 'opened');
 
-            $(this).text(newText);
+            $(this).find('ul').show();
 
-            //add to selected JSON
-            selected.push($(this).attr('value'));
-            $(this).attr('sel', "Not Enabled");
+            //AJAX get selected metrics
+            $.ajax({
+                context: this,
+                url: "./api/metrics/" + metric,
+                method: "GET",
+                success: function (response) {
+                    console.log(response['MetricProperties']);
+                    newData = response['MetricProperties'];
+                    for(var i = 0; i < newData.length; i++){
+                        $(this).find('ul').append('<li class="data">' + newData[i] + '</li>');
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
 
         } else{
+            $(this).attr('data-opened', 'closed');
+            $(this).find('ul').hide();
+        }
 
+        // if($(this).css("color") === "rgb(255, 0, 0)"){
+        //     $(this).css('color', 'purple');
+        //     var text = $(this).attr('value');
+        //     var newText = text + " (Queued)";
+        //
+        //     $(this).text(newText);
+        //
+        //     //add to selected JSON
+        //     selected.push($(this).attr('value'));
+        //     $(this).attr('sel', "Not Enabled");
+        //
+        // } else{
+        //     $(this).next('div').hide();
             // $.ajax({
             //     url: "/metrics",
             //     method: "GET",
@@ -85,17 +103,17 @@
             //     }
             // });
 
-            $(this).css('color', 'red');
-            var text = $(this).attr('value');
-            var newText = text + " (Not Enabled)";
-
-            $(this).text(newText);
-
-            // delete from selected JSON
-            selected.splice( $.inArray($(this).attr('value'), selected), 1 );
-            $(this).attr('sel', "");
-            // console.log(selected);
-        }
+        //     $(this).css('color', 'red');
+        //     var text = $(this).attr('value');
+        //     var newText = text + " (Not Enabled)";
+        //
+        //     $(this).text(newText);
+        //
+        //     // delete from selected JSON
+        //     selected.splice( $.inArray($(this).attr('value'), selected), 1 );
+        //     $(this).attr('sel', "");
+        //     // console.log(selected);
+        // }
     });
 
     $('#run').on('click', function(e){

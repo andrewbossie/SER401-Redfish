@@ -211,7 +211,7 @@ body {
 
 
 .list{
-    color: red;
+    /*color: red;*/
     cursor: pointer;
     list-style-type: square;
     /*margin-left: 15%;*/
