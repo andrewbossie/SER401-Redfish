@@ -9,12 +9,34 @@ exports.getPanels = function(req, res) {
   });
 };
 
-// Route handler for /metrics
-// This will return a JSON array of URIs to each available metric report.
+exports.getDefinitionCollection = function(req, res) {
+  request(
+    {
+      url:
+        "http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions",
+      json: true
+    },
+    (error, response, body) => {
+      if (!body) {
+        res.status(404);
+        res.json({
+          error: "Could not retrieve metrics"
+        });
+      } else if (error) {
+        console.log(error);
+      } else {
+        let metrics = [];
+        for (var i = 0; i < body.Members.length; i++) {
+          let uri = body.Members[i]["@odata.id"];
+          metrics.push(uri.split("/")[uri.split("/").length - 1]);
+        }
+        res.json(metrics);
+      }
+    }
+  );
+};
 
-// TODO: Once the metric definition JSON files are fixed, change
-// what's being returned here. We want definition returns, not actual
-// metric report returns. That's saved for InfluxDB.
+// Currently being used for the landing page.
 exports.getAvailableMetrics = function(req, res) {
   request(
     {
@@ -36,17 +58,17 @@ exports.getAvailableMetrics = function(req, res) {
         //   let uri = body['available'][i];
         //   metrics.push(uri);
         // }
-          for (var i = 0; i < body.Members.length; i++) {
-              let uri = body.Members[i]["@odata.id"];
-              // metrics.push(uri.split("/")[uri.split("/").length - 1]);
-              metrics.push(uri);
-          }
-          console.log(metrics);
+        for (var i = 0; i < body.Members.length; i++) {
+          let uri = body.Members[i]["@odata.id"];
+          // metrics.push(uri.split("/")[uri.split("/").length - 1]);
+          metrics.push(uri);
+        }
+        console.log(metrics);
         // res.json(metrics);
-          res.render("landing.hbs", {
-              pageTitle: "Redfish Telemetry Client",
-              metrics: metrics
-          });
+        res.render("landing.hbs", {
+          pageTitle: "Redfish Telemetry Client",
+          metrics: metrics
+        });
       }
     }
   );
@@ -79,6 +101,7 @@ exports.getMetric = function(req, res) {
     }
   );
 };
+
 
 //Route handler for /dataGenerator
 //TODO: build UI page since right now the generator gets run on page load
@@ -127,3 +150,27 @@ exports.generateMockData = function(req, res) {
 		}
 	});
 };
+
+
+exports.postSelectedMetrics = function(req, res) {
+  let selectedMetrics = req.body;
+  if (selectedMetrics.from && selectedMetrics.metrics) {
+    // TODO: Future sprint - create function to do the I/O tasks for
+    // Metric-select persistence.
+
+    // TODO: The PATCH will go here - we need to check first if these reports are
+    // enabled.
+    res.json(selectedMetrics);
+  } else {
+    res.json({
+      error: "Bad Format"
+    });
+  }
+
+  // TODO: create incoming JSON format
+  // let format = {
+  //   from: "MetricReportName",
+  //   metrics: ["metric1", "metric2", "..."]
+  // };
+};
+
