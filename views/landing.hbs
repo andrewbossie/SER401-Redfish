@@ -49,12 +49,10 @@
     $('.metrics-defs').on('click', function(){
 
         var metric = $(this).attr('value').substr(53, this.length);
-        console.log(metric);
-
+        console.log(this);
         if($(this).attr('data-opened') === 'closed') {
 
             $(this).attr('data-opened', 'opened');
-
             $(this).find('ul').show();
 
             //AJAX get selected metrics
@@ -63,10 +61,10 @@
                 url: "./api/metrics/" + metric,
                 method: "GET",
                 success: function (response) {
-                    console.log(response['MetricProperties']);
+                    // console.log(response['MetricProperties']);
                     newData = response['MetricProperties'];
                     for(var i = 0; i < newData.length; i++){
-                        $(this).find('ul').append('<li class="data">' + newData[i] + '</li>');
+                        $(this).find('ul').append('<li class="data" data-selected="no" style="color: red;">' + newData[i] + '</li>');
                     }
                 },
                 error: function (error) {
@@ -78,42 +76,23 @@
             $(this).attr('data-opened', 'closed');
             $(this).find('ul').hide();
         }
+    });
 
-        // if($(this).css("color") === "rgb(255, 0, 0)"){
-        //     $(this).css('color', 'purple');
-        //     var text = $(this).attr('value');
-        //     var newText = text + " (Queued)";
-        //
-        //     $(this).text(newText);
-        //
-        //     //add to selected JSON
-        //     selected.push($(this).attr('value'));
-        //     $(this).attr('sel', "Not Enabled");
-        //
-        // } else{
-        //     $(this).next('div').hide();
-            // $.ajax({
-            //     url: "/metrics",
-            //     method: "GET",
-            //     success: function(response){
-            //         console.log(response);
-            //     },
-            //     error: function(error){
-            //         console.log(error);
-            //     }
-            // });
+    $('.metrics-indiv').on('click', '.data', function(e){
+        e.preventDefault();
+        // console.log($(this).text());
 
-        //     $(this).css('color', 'red');
-        //     var text = $(this).attr('value');
-        //     var newText = text + " (Not Enabled)";
-        //
-        //     $(this).text(newText);
-        //
-        //     // delete from selected JSON
-        //     selected.splice( $.inArray($(this).attr('value'), selected), 1 );
-        //     $(this).attr('sel', "");
-        //     // console.log(selected);
-        // }
+        if($(this).attr('data-selected') === 'no'){
+            $(this).attr('data-selected', 'yes');
+            $(this).css('color', 'green');
+
+            //add to JSON
+        } else{
+            $(this).attr('data-selected', 'no');
+            $(this).css('color', 'red');
+
+            //remove from JSON
+        }
     });
 
     $('#run').on('click', function(e){
