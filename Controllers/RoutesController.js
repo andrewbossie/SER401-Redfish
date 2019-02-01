@@ -102,55 +102,50 @@ exports.getMetric = function(req, res) {
   );
 };
 
-
 //Route handler for /dataGenerator
 //TODO: build UI page since right now the generator gets run on page load
 exports.getDataGenerator = function(req, res) {
-	res.render("dataGeneratorUI.hbs", {
-		pageTitle: "Mockup Data Generator",
-		currentYear: new Date().getFullYear()
-	});
-
+  res.render("dataGeneratorUI.hbs", {
+    pageTitle: "Mockup Data Generator",
+    currentYear: new Date().getFullYear()
+  });
 };
 
 exports.generateMockData = function(req, res) {
-	var q = [];
-	if (req.query.time)
-		q.push("-t", req.query.time);
-	if (req.query.config)
-		q.push("-c", req.query.config);
-	function generate(path, callback){
-		var process = childProcess.fork(path,q);
+  var q = [];
+  if (req.query.time) q.push("-t", req.query.time);
+  if (req.query.config) q.push("-c", req.query.config);
+  function generate(path, callback) {
+    var process = childProcess.fork(path, q);
 
-		var invoked = false;
-		// listen for errors
-		process.on('error', function (err) {
-			if (invoked) return;
-			invoked = true;
-			callback(err);
-		});
+    var invoked = false;
+    // listen for errors
+    process.on("error", function(err) {
+      if (invoked) return;
+      invoked = true;
+      callback(err);
+    });
 
-		// execute the callback
-		process.on('exit', function (code) {
-			if (invoked) return;
-			invoked = true;
-			var err = code === 0 ? null : new Error('exit code ' + code);
-			callback(err);
-		});
-	}
-	
-	generate('./Resources/js/dataGenerator/rfmockdatacreator.js', function(err){
-		if(!err){
-			res.render("dataGeneratorUI.hbs", {
-				pageTitle: "Mockup Data Generator",
-				currentYear: new Date().getFullYear()
-			});
-		}else{
-			console.log(err);
-		}
-	});
+    // execute the callback
+    process.on("exit", function(code) {
+      if (invoked) return;
+      invoked = true;
+      var err = code === 0 ? null : new Error("exit code " + code);
+      callback(err);
+    });
+  }
+
+  generate("./Resources/js/dataGenerator/rfmockdatacreator.js", function(err) {
+    if (!err) {
+      res.render("dataGeneratorUI.hbs", {
+        pageTitle: "Mockup Data Generator",
+        currentYear: new Date().getFullYear()
+      });
+    } else {
+      console.log(err);
+    }
+  });
 };
-
 
 exports.postSelectedMetrics = function(req, res) {
   let selectedMetrics = req.body;
@@ -159,21 +154,7 @@ exports.postSelectedMetrics = function(req, res) {
     // TODO: Future sprint - create function to do the I/O tasks for
     // Metric-select persistence.
 
-    // Redfish Mockup Server does not seem to be accepting the PATCH request.
-    request.patch(
-      {
-        url: `http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions/${metricReport}`,
-        json: true,
-        body: {
-          Status: {
-            State: "Enabled"
-          }
-        }
-      },
-      (error, response, body) => {
-        console.log(response);
-      }
-    );
+    patchMetricToEnabled(metricReport);
 
     res.json(selectedMetrics);
   } else {
@@ -181,11 +162,23 @@ exports.postSelectedMetrics = function(req, res) {
       error: "Bad Format"
     });
   }
-
-  // TODO: create incoming JSON format
-  // let format = {
-  //   from: "MetricReportName",
-  //   metrics: ["metric1", "metric2", "..."]
-  // };
 };
 
+let patchMetricToEnabled = report => {
+  request.patch(
+    {
+      url: `http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions/${report}`,
+      json: true,
+      body: {
+        // This is temporary and will need to be changed upon schema update.
+        // Status.State is read-only.
+        Status: {
+          State: "Enabled"
+        }
+      }
+    },
+    (error, response, body) => {
+      console.log(response);
+    }
+  );
+};
