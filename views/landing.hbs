@@ -14,6 +14,7 @@
     <title>Redfish Telemetry Client</title>
 </head>
 <body>
+    <div id="menuContainer"></div>
     <div>
         <div class="header">
             <i class="fas fa-bars menuIcon"></i>
@@ -43,6 +44,26 @@
 
     var selected = [];
     $('#view').prop('disabled', true);
+
+    var menuOpened = false;
+    let onMenuClick = () => {
+      menuOpened = !menuOpened;
+      let menuHtml = menuOpened ? 
+         "<div id='menuSurface'>" +
+            "<h1 class='menuTitle'>Menu</h1>" +
+            "<div class='menuSeparator'></div>" +
+            "<a href='/' class='menuLink'>Metric Selections</a>" +
+            "<div class='menuSeparator'></div>" +
+            "<a href='/graphs' class='menuLink'>Panel Display</a>" +
+            "<div class='menuSeparator'></div>" +
+         "</div>" + 
+         "<div id='overlay' onclick='onMenuClick()'>"+
+         "</div>" 
+         : "";
+      document.getElementById('menuContainer').innerHTML = menuHtml;
+   }
+
+   $(".menuIcon").on("click", onMenuClick);
 
     // Change the colors on the selection list
     $('.metrics-list').on('click', function(){
