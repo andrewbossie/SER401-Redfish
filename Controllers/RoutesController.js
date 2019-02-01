@@ -141,10 +141,11 @@ exports.generateMockData = function(req, res) {
 	
 	generate('./Resources/js/dataGenerator/rfmockdatacreator.js', function(err){
 		if(!err){
-			res.render("dataGeneratorUI.hbs", {
-				pageTitle: "Mockup Data Generator",
-				currentYear: new Date().getFullYear()
-			});
+		//	res.render("dataGeneratorUI.hbs", {
+		//		pageTitle: "Mockup Data Generator",
+		//		currentYear: new Date().getFullYear()
+		//	});
+			res.download('./Resources/js/dataGenerator/output.csv');
 		}else{
 			console.log(err);
 		}
