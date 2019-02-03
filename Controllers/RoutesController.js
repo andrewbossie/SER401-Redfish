@@ -126,26 +126,28 @@ exports.generateMockData = function(req, res) {
       callback(err);
     });
 
-    // execute the callback
-    process.on("exit", function(code) {
-      if (invoked) return;
-      invoked = true;
-      var err = code === 0 ? null : new Error("exit code " + code);
-      callback(err);
-    });
-  }
-
-  generate("./Resources/js/dataGenerator/rfmockdatacreator.js", function(err) {
-    if (!err) {
-      res.render("dataGeneratorUI.hbs", {
-        pageTitle: "Mockup Data Generator",
-        currentYear: new Date().getFullYear()
-      });
-    } else {
-      console.log(err);
-    }
-  });
+		// execute the callback
+		process.on('exit', function (code) {
+			if (invoked) return;
+			invoked = true;
+			var err = code === 0 ? null : new Error('exit code ' + code);
+			callback(err);
+		});
+	}
+	
+	generate('./Resources/js/dataGenerator/rfmockdatacreator.js', function(err){
+		if(!err){
+		//	res.render("dataGeneratorUI.hbs", {
+		//		pageTitle: "Mockup Data Generator",
+		//		currentYear: new Date().getFullYear()
+		//	});
+			res.download('./Resources/js/dataGenerator/output.csv');
+		}else{
+			console.log(err);
+		}
+	});
 };
+
 
 exports.postSelectedMetrics = function(req, res) {
   let selectedMetrics = req.body;
