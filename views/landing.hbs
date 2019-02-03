@@ -73,7 +73,7 @@
     $('.metrics-defs').on('click', function(){
 
         var metric = $(this).attr('value').substr(53, this.length);
-        console.log(this);
+        // console.log(this);
         if($(this).attr('data-opened') === 'closed') {
 
             $(this).attr('data-opened', 'opened');
@@ -109,12 +109,13 @@
         if($(this).attr('data-selected') === 'no'){
             $(this).attr('data-selected', 'yes');
             $(this).css('color', 'green');
+            selected.push($(this).text());
 
             //add to JSON
         } else{
             $(this).attr('data-selected', 'no');
             $(this).css('color', 'red');
-
+            selected.splice(selected.indexOf($(this).text()), 1);
             //remove from JSON
         }
     });
