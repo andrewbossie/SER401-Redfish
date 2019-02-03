@@ -1,4 +1,5 @@
 const request = require("request");
+const childProcess = require("child_process");
 
 // Render Static Panels in Grafana
 exports.getPanels = function(req, res) {
@@ -96,24 +97,83 @@ exports.getMetric = function(req, res) {
   );
 };
 
+//Route handler for /dataGenerator
+//TODO: build UI page since right now the generator gets run on page load
+exports.getDataGenerator = function(req, res) {
+  res.render("dataGeneratorUI.hbs", {
+    pageTitle: "Mockup Data Generator",
+    currentYear: new Date().getFullYear()
+  });
+};
+
+exports.generateMockData = function(req, res) {
+  var q = [];
+  if (req.query.time) q.push("-t", req.query.time);
+  if (req.query.config) q.push("-c", req.query.config);
+  function generate(path, callback) {
+    var process = childProcess.fork(path, q);
+
+    var invoked = false;
+    // listen for errors
+    process.on("error", function(err) {
+      if (invoked) return;
+      invoked = true;
+      callback(err);
+    });
+
+    // execute the callback
+    process.on("exit", function(code) {
+      if (invoked) return;
+      invoked = true;
+      var err = code === 0 ? null : new Error("exit code " + code);
+      callback(err);
+    });
+  }
+
+  generate("./Resources/js/dataGenerator/rfmockdatacreator.js", function(err) {
+    if (!err) {
+      res.render("dataGeneratorUI.hbs", {
+        pageTitle: "Mockup Data Generator",
+        currentYear: new Date().getFullYear()
+      });
+    } else {
+      console.log(err);
+    }
+  });
+};
+
 exports.postSelectedMetrics = function(req, res) {
   let selectedMetrics = req.body;
   if (selectedMetrics.from && selectedMetrics.metrics) {
+    let metricReport = selectedMetrics.from;
     // TODO: Future sprint - create function to do the I/O tasks for
     // Metric-select persistence.
 
-    // TODO: The PATCH will go here - we need to check first if these reports are
-    // enabled.
+    patchMetricToEnabled(metricReport);
+
     res.json(selectedMetrics);
   } else {
     res.json({
       error: "Bad Format"
     });
   }
+};
 
-  // TODO: create incoming JSON format
-  // let format = {
-  //   from: "MetricReportName",
-  //   metrics: ["metric1", "metric2", "..."]
-  // };
+let patchMetricToEnabled = report => {
+  request.patch(
+    {
+      url: `http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions/${report}`,
+      json: true,
+      body: {
+        // This is temporary and will need to be changed upon schema update.
+        // Status.State is read-only.
+        Status: {
+          State: "Enabled"
+        }
+      }
+    },
+    (error, response, body) => {
+      console.log(response);
+    }
+  );
 };

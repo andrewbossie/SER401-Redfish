@@ -1,0 +1,16 @@
+{
+    "@odata.type": "#ComputerSystemCollection.MetricReportsCollection",
+    "Name": "Metric Reports Collection",
+    "Members@odata.count": 2,
+    "Members": [
+        {
+            "@odata.id": "/redfish/v1/TelemetryService/MetricReports/CPUMetrics"
+        },
+        {
+            "@odata.id": "/redfish/v1/TelemetryService/MetricReports/MemoryMetrics"
+        }
+    ],
+    "@odata.context": "/redfish/v1/$metadata#MetricReportsCollection",
+    "@odata.id": "/redfish/v1/TelemetryService/MetricReports",
+    "@Redfish.Copyright": "Copyright 2014-2016 Distributed Management Task Force, Inc. (DMTF). For the full DMTF copyright policy, see http://www.dmtf.org/about/policies/copyright."
+}

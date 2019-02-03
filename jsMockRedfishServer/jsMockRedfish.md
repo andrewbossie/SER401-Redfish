@@ -13,6 +13,8 @@ $ node rfmockserver \[-s\] \[-c \<config file\>\]
 
 -s         Starts a server on port 8001 to serve up the /redfish/v1/TelemetryService directory
 -c <file>  A config file other than ./config.js
+-p <port>  Specify a port other than the default 8001 for the server
+-h         Display the inline help
 ```
 
 # `rfmockdatacreator`
@@ -28,6 +30,18 @@ $ node rfmockdatacreator \[-c \<config file\>\] \[-t\] \[-o\]
 -t         The number of iterations to calculate
 -o         The output CSV file
 ```
+
+# Environment
+
+The minimum working environment is a recent version of [Node.js][NodeJS] (it was initially developed under version 11.8.0) and a working [RedFish][RedFish] API directory with the TelemetryServices.
+
+In the `jsMockRedfish` directory run:
+
+```
+$ npm install
+```
+
+This will direct `npm` to install all of the dependencies required for these scripts. 
 
 # `config.js`
 
@@ -173,3 +187,5 @@ var config = {
 
 module.exports = config;
 ```
+[RedFish]: https://www.dmtf.org/standards/redfish
+[NodeJS]: https://nodejs.org/en/

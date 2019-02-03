@@ -5,17 +5,17 @@ var fs = require("fs");
 var PFuncs = require("./PatternFuncs");
 var config;
 var iterations = 60*60*10; //default to 10 hours unless specified otherwise
-var outputPath = "output.csv"; //default. override with -o switch
-
+var outputPath = "./Resources/js/dataGenerator/output.csv"; //default. override with -o switch
+var newPerc = 0;
 //-c switch to specify config file
 if (process.argv.indexOf("-c") != -1) {
    if (process.argv[process.argv.indexOf("-c") + 1] != -1) {
       var configFile = "./" + process.argv[process.argv.indexOf("-c") + 1];
-      console.log("Using config file: " + configFile);
+		//console.log("Using config file: " + configFile);
       try {
          config = require(configFile);
       } catch (e) {
-         console.log("Error opening " + configFile + ": " + e);
+         //console.log("Error opening " + configFile + ": " + e);
       }
    }
 }
@@ -52,7 +52,7 @@ function generate(){
 	var percLen = 50;			//the length, in characters, of the percentage loading bar
 	var stream = fs.createWriteStream(outputPath);
 	stream.write("");
-	console.log("Generating " + secondsToString(iterations) + " of data... ");
+	//console.log("Generating " + secondsToString(iterations) + " of data... ");
 
 	//calculate GCD of iterations for iteration optimazation
 	config.MockupData.MockupPatterns.forEach(function(mockup, index) {
@@ -67,23 +67,8 @@ function generate(){
 	for (var i = 0; i <= iterations; i+=gcd) {
 		
 		//draw the percent loading bar
-		let newPerc = Math.floor(i / iterations * 100)
-		if ( newPerc > oldPerc){
-			oldPerc = newPerc;
-			process.stdout.cursorTo(0);
-			let percStr = "["
-			for(var x = 0; x  < Math.floor(newPerc / 100 * percLen); x++){
-				percStr += "█";
-			}
-			
-			for(var x = Math.floor(newPerc / 100 * percLen); x < percLen; x++){
-				percStr += " ";
-			}
-			percStr += "]";
-			percStr += (newPerc + "%");
-			
-			process.stdout.write(percStr);
-		}
+		newPerc = Math.floor(i / iterations * 100)
+		
 		
 		//start with a fresh line
 		var line = "";
@@ -173,7 +158,7 @@ function generate(){
 	//wrap up
 	str += "0,END";
 	stream.write(str);
-	console.log("\nCompleted in " + (Date.now() - isoDTG) + "ms");
+	//console.log("\nCompleted in " + (Date.now() - isoDTG) + "ms");
 
 	})();
 }
@@ -216,4 +201,5 @@ function write(stream, data) {
 	}
     return;
 }
+
 
