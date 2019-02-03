@@ -136,11 +136,11 @@
 
         $('#view').prop('disabled', false);
 
-        // $.ajax({
-        //     type: "POST",
-        //     url: "/placeholder",
-        //     data: {payload: selected}
-        // });
+        $.ajax({
+            type: "POST",
+            url: "api/metrics",
+            data: {payload: selected}
+        });
     });
 
     $('#view').on('click', function(e){
