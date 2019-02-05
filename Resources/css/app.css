@@ -254,3 +254,7 @@ body {
    margin: 10px 20px;
    background-color: #75aafa 
 }
+
+.selectedLink {
+   background-color: #acccfc;
+}

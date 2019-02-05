@@ -1,5 +1,8 @@
 const request = require("request");
 const childProcess = require("child_process");
+const config = require("../config/config");
+
+const def_path = `${config.host}${config.redfish_defs}`;
 
 // Render Static Panels in Grafana
 exports.getPanels = function(req, res) {
@@ -12,8 +15,7 @@ exports.getPanels = function(req, res) {
 exports.getDefinitionCollection = function(req, res) {
   request(
     {
-      url:
-        "http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions",
+      url: def_path,
       json: true
     },
     (error, response, body) => {
@@ -40,8 +42,7 @@ exports.getDefinitionCollection = function(req, res) {
 exports.getAvailableMetrics = function(req, res) {
   request(
     {
-      url:
-        "http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions",
+      url: def_path,
       json: true
     },
     (error, response, body) => {
@@ -59,7 +60,6 @@ exports.getAvailableMetrics = function(req, res) {
           metrics.push(uri);
         }
         console.log(metrics);
-        // res.json(metrics);
         res.render("landing.hbs", {
           pageTitle: "Redfish Telemetry Client",
           metrics: metrics
@@ -77,7 +77,7 @@ exports.getMetric = function(req, res) {
   console.log(typeof metric);
   request(
     {
-      url: `http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions/${metric}`,
+      url: `${def_path}/${metric}`,
       json: true
     },
     (error, response, body) => {
@@ -121,26 +121,28 @@ exports.generateMockData = function(req, res) {
       callback(err);
     });
 
-    // execute the callback
-    process.on("exit", function(code) {
-      if (invoked) return;
-      invoked = true;
-      var err = code === 0 ? null : new Error("exit code " + code);
-      callback(err);
-    });
-  }
-
-  generate("./Resources/js/dataGenerator/rfmockdatacreator.js", function(err) {
-    if (!err) {
-      res.render("dataGeneratorUI.hbs", {
-        pageTitle: "Mockup Data Generator",
-        currentYear: new Date().getFullYear()
-      });
-    } else {
-      console.log(err);
-    }
-  });
+		// execute the callback
+		process.on('exit', function (code) {
+			if (invoked) return;
+			invoked = true;
+			var err = code === 0 ? null : new Error('exit code ' + code);
+			callback(err);
+		});
+	}
+	
+	generate('./Resources/js/dataGenerator/rfmockdatacreator.js', function(err){
+		if(!err){
+		//	res.render("dataGeneratorUI.hbs", {
+		//		pageTitle: "Mockup Data Generator",
+		//		currentYear: new Date().getFullYear()
+		//	});
+			res.download('./Resources/js/dataGenerator/output.csv');
+		}else{
+			console.log(err);
+		}
+	});
 };
+
 
 exports.postSelectedMetrics = function(req, res) {
   let selectedMetrics = req.body;
@@ -162,7 +164,7 @@ exports.postSelectedMetrics = function(req, res) {
 let patchMetricToEnabled = report => {
   request.patch(
     {
-      url: `http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions/${report}`,
+      url: `${def_path}/${report}`,
       json: true,
       body: {
         // This is temporary and will need to be changed upon schema update.
