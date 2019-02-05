@@ -1,5 +1,8 @@
 const request = require("request");
 const childProcess = require("child_process");
+const config = require("../config/config");
+
+const def_path = `${config.host}${config.redfish_defs}`;
 
 // Render Static Panels in Grafana
 exports.getPanels = function(req, res) {
@@ -12,8 +15,7 @@ exports.getPanels = function(req, res) {
 exports.getDefinitionCollection = function(req, res) {
   request(
     {
-      url:
-        "http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions",
+      url: def_path,
       json: true
     },
     (error, response, body) => {
@@ -40,8 +42,7 @@ exports.getDefinitionCollection = function(req, res) {
 exports.getAvailableMetrics = function(req, res) {
   request(
     {
-      url:
-        "http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions",
+      url: def_path,
       json: true
     },
     (error, response, body) => {
@@ -54,17 +55,11 @@ exports.getAvailableMetrics = function(req, res) {
         // console.log(error);
       } else {
         let metrics = [];
-        // for (var i = 0; i < body['available'].length; i++) {
-        //   let uri = body['available'][i];
-        //   metrics.push(uri);
-        // }
         for (var i = 0; i < body.Members.length; i++) {
           let uri = body.Members[i]["@odata.id"];
-          // metrics.push(uri.split("/")[uri.split("/").length - 1]);
           metrics.push(uri);
         }
         console.log(metrics);
-        // res.json(metrics);
         res.render("landing.hbs", {
           pageTitle: "Redfish Telemetry Client",
           metrics: metrics
@@ -82,7 +77,7 @@ exports.getMetric = function(req, res) {
   console.log(typeof metric);
   request(
     {
-      url: `http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions/${metric}`,
+      url: `${def_path}/${metric}`,
       json: true
     },
     (error, response, body) => {
@@ -169,7 +164,7 @@ exports.postSelectedMetrics = function(req, res) {
 let patchMetricToEnabled = report => {
   request.patch(
     {
-      url: `http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions/${report}`,
+      url: `${def_path}/${report}`,
       json: true,
       body: {
         // This is temporary and will need to be changed upon schema update.
