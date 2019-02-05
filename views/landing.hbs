@@ -32,9 +32,8 @@
             <h2>Please select your metrics...</h2>
             <ul class="list">
                 {{#each metrics }}
-                    <li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}
-                        <ul class="metrics-indiv"></ul>
-                    </li>
+                    <li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}</li>
+                    <ul class="metrics-indiv"></ul>
                 {{/each}}
             </ul>
         </div>
@@ -73,11 +72,11 @@
     $('.metrics-defs').on('click', function(){
 
         var metric = $(this).attr('value').substr(53, this.length);
-        // console.log(this);
+        // console.log(metric);
         if($(this).attr('data-opened') === 'closed') {
 
             $(this).attr('data-opened', 'opened');
-            $(this).find('ul').show();
+            $(this).next().show();
 
             //AJAX get selected metrics
             $.ajax({
@@ -85,10 +84,10 @@
                 url: "./api/metrics/" + metric,
                 method: "GET",
                 success: function (response) {
-                    // console.log(response['MetricProperties']);
+                    console.log(response['MetricProperties']);
                     newData = response['MetricProperties'];
                     for(var i = 0; i < newData.length; i++){
-                        $(this).find('ul').append('<li class="data" data-selected="no" style="color: red;">' + newData[i] + '</li>');
+                        $(this).next().append('<li class="data" data-selected="no" style="color: red;">' + newData[i] + '</li>');
                     }
                 },
                 error: function (error) {
@@ -98,7 +97,7 @@
 
         } else{
             $(this).attr('data-opened', 'closed');
-            $(this).find('ul').hide();
+            $(this).next().hide();
         }
     });
 
