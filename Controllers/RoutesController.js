@@ -57,7 +57,7 @@ exports.getAvailableMetrics = function(req, res) {
         let metrics = [];
         for (var i = 0; i < body.Members.length; i++) {
           let uri = body.Members[i]["@odata.id"];
-          metrics.push(uri);
+          metrics.push(uri.substr(53, uri.length));
         }
         console.log(metrics);
         res.render("landing.hbs", {
