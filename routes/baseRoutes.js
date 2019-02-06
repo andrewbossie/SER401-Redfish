@@ -6,7 +6,7 @@ const test_controller = require("../Controllers/TestController");
 
 module.exports = (app, router) => {
   app.use(express.static("./Resources"));
-  app.use(bodyParser.urlencoded());
+  app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
 
   /*
