@@ -72,8 +72,10 @@
 
    let onMenuClick = () => {
       menuOpened = !menuOpened;
-      let menuHtml = menuOpened ? 
-         "<div id='menuSurface'>" +
+      let menuId = menuOpened ? "menuSurface" : "menuSurfaceClosing";
+      let overlayId = menuOpened ? "overlay" : "overlayClosing";
+      let menuHtml = 
+         "<div id='" + menuId + "'>" +
             "<h1 class='menuTitle'>Menu</h1>" +
             "<div class='menuSeparator'></div>" +
             "<a href='/' class='menuLink'>Metric Selections</a>" +
@@ -81,10 +83,15 @@
             "<a href='/graphs' class='menuLink selectedLink'>Panel Display</a>" +
             "<div class='menuSeparator'></div>" +
          "</div>" + 
-         "<div id='overlay' onclick='onMenuClick()'>"+
-         "</div>" 
-         : "";
+         "<div id='"+ overlayId +"' onclick='onMenuClick()'>"+
+         "</div>";
       document.getElementById('menuContainer').innerHTML = menuHtml;
+
+      if (!menuOpened) {
+         setTimeout(() => {
+            document.getElementById('menuContainer').innerHTML = "";
+         }, 500)
+      }
    }
 
    $(".menuIcon").on("click", onMenuClick);
