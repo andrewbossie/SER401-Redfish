@@ -1,4 +1,8 @@
 const request = require("request");
+const childProcess = require("child_process");
+const config = require("../config/config");
+
+const def_path = `${config.host}${config.redfish_defs}`;
 
 // Render Static Panels in Grafana
 exports.getPanels = function(req, res) {
@@ -8,17 +12,37 @@ exports.getPanels = function(req, res) {
   });
 };
 
-// Route handler for /metrics
-// This will return a JSON array of URIs to each available metric report.
+exports.getDefinitionCollection = function(req, res) {
+  request(
+    {
+      url: def_path,
+      json: true
+    },
+    (error, response, body) => {
+      if (!body) {
+        res.status(404);
+        res.json({
+          error: "Could not retrieve metrics"
+        });
+      } else if (error) {
+        console.log(error);
+      } else {
+        let metrics = [];
+        for (var i = 0; i < body.Members.length; i++) {
+          let uri = body.Members[i]["@odata.id"];
+          metrics.push(uri.split("/")[uri.split("/").length - 1]);
+        }
+        res.json(metrics);
+      }
+    }
+  );
+};
 
-// TODO: Once the metric definition JSON files are fixed, change
-// what's being returned here. We want definition returns, not actual
-// metric report returns. That's saved for InfluxDB.
+// Currently being used for the landing page.
 exports.getAvailableMetrics = function(req, res) {
   request(
     {
-      url:
-        "http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions",
+      url: def_path,
       json: true
     },
     (error, response, body) => {
@@ -31,21 +55,15 @@ exports.getAvailableMetrics = function(req, res) {
         // console.log(error);
       } else {
         let metrics = [];
-        // for (var i = 0; i < body['available'].length; i++) {
-        //   let uri = body['available'][i];
-        //   metrics.push(uri);
-        // }
-          for (var i = 0; i < body.Members.length; i++) {
-              let uri = body.Members[i]["@odata.id"];
-              // metrics.push(uri.split("/")[uri.split("/").length - 1]);
-              metrics.push(uri);
-          }
-          console.log(metrics);
-        // res.json(metrics);
-          res.render("landing.hbs", {
-              pageTitle: "Redfish Telemetry Client",
-              metrics: metrics
-          });
+        for (var i = 0; i < body.Members.length; i++) {
+          let uri = body.Members[i]["@odata.id"];
+          metrics.push(uri);
+        }
+        console.log(metrics);
+        res.render("landing.hbs", {
+          pageTitle: "Redfish Telemetry Client",
+          metrics: metrics
+        });
       }
     }
   );
@@ -59,7 +77,7 @@ exports.getMetric = function(req, res) {
   console.log(typeof metric);
   request(
     {
-      url: `http://localhost:8001/redfish/v1/TelemetryService/MetricReportDefinitions/${metric}`,
+      url: `${def_path}/${metric}`,
       json: true
     },
     (error, response, body) => {
@@ -75,6 +93,89 @@ exports.getMetric = function(req, res) {
         console.log(body);
         res.json(body);
       }
+    }
+  );
+};
+
+//Route handler for /dataGenerator
+//TODO: build UI page since right now the generator gets run on page load
+exports.getDataGenerator = function(req, res) {
+  res.render("dataGeneratorUI.hbs", {
+    pageTitle: "Mockup Data Generator",
+    currentYear: new Date().getFullYear()
+  });
+};
+
+exports.generateMockData = function(req, res) {
+  var q = [];
+  if (req.query.time) q.push("-t", req.query.time);
+  if (req.query.config) q.push("-c", req.query.config);
+  function generate(path, callback) {
+    var process = childProcess.fork(path, q);
+
+    var invoked = false;
+    // listen for errors
+    process.on("error", function(err) {
+      if (invoked) return;
+      invoked = true;
+      callback(err);
+    });
+
+		// execute the callback
+		process.on('exit', function (code) {
+			if (invoked) return;
+			invoked = true;
+			var err = code === 0 ? null : new Error('exit code ' + code);
+			callback(err);
+		});
+	}
+	
+	generate('./Resources/js/dataGenerator/rfmockdatacreator.js', function(err){
+		if(!err){
+		//	res.render("dataGeneratorUI.hbs", {
+		//		pageTitle: "Mockup Data Generator",
+		//		currentYear: new Date().getFullYear()
+		//	});
+			res.download('./Resources/js/dataGenerator/output.csv');
+		}else{
+			console.log(err);
+		}
+	});
+};
+
+
+exports.postSelectedMetrics = function(req, res) {
+  let selectedMetrics = req.body;
+  if (selectedMetrics.from && selectedMetrics.metrics) {
+    let metricReport = selectedMetrics.from;
+    // TODO: Future sprint - create function to do the I/O tasks for
+    // Metric-select persistence.
+
+    patchMetricToEnabled(metricReport);
+
+    res.json(selectedMetrics);
+  } else {
+    res.json({
+      error: "Bad Format"
+    });
+  }
+};
+
+let patchMetricToEnabled = report => {
+  request.patch(
+    {
+      url: `${def_path}/${report}`,
+      json: true,
+      body: {
+        // This is temporary and will need to be changed upon schema update.
+        // Status.State is read-only.
+        Status: {
+          State: "Enabled"
+        }
+      }
+    },
+    (error, response, body) => {
+      console.log(response);
     }
   );
 };
