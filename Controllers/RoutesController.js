@@ -1,4 +1,6 @@
 const request = require("request");
+const fs = require("fs");
+
 const childProcess = require("child_process");
 const config = require("../config/config");
 
@@ -121,37 +123,38 @@ exports.generateMockData = function(req, res) {
       callback(err);
     });
 
-		// execute the callback
-		process.on('exit', function (code) {
-			if (invoked) return;
-			invoked = true;
-			var err = code === 0 ? null : new Error('exit code ' + code);
-			callback(err);
-		});
-	}
-	
-	generate('./Resources/js/dataGenerator/rfmockdatacreator.js', function(err){
-		if(!err){
-		//	res.render("dataGeneratorUI.hbs", {
-		//		pageTitle: "Mockup Data Generator",
-		//		currentYear: new Date().getFullYear()
-		//	});
-			res.download('./Resources/js/dataGenerator/output.csv');
-		}else{
-			console.log(err);
-		}
-	});
-};
+    // execute the callback
+    process.on("exit", function(code) {
+      if (invoked) return;
+      invoked = true;
+      var err = code === 0 ? null : new Error("exit code " + code);
+      callback(err);
+    });
+  }
 
+  generate("./Resources/js/dataGenerator/rfmockdatacreator.js", function(err) {
+    if (!err) {
+      //	res.render("dataGeneratorUI.hbs", {
+      //		pageTitle: "Mockup Data Generator",
+      //		currentYear: new Date().getFullYear()
+      //	});
+      res.download("./Resources/js/dataGenerator/output.csv");
+    } else {
+      console.log(err);
+    }
+  });
+};
 
 exports.postSelectedMetrics = function(req, res) {
   let selectedMetrics = req.body;
   if (selectedMetrics.from && selectedMetrics.metrics) {
     let metricReport = selectedMetrics.from;
+    let metrics = selectedMetrics.metrics;
     // TODO: Future sprint - create function to do the I/O tasks for
     // Metric-select persistence.
 
-    patchMetricToEnabled(metricReport);
+    // patchMetricToEnabled(metricReport); ENABLE ONCE WE HAVE THE RIGHT ENDPOINT
+    saveSelectionToDisk(metrics);
 
     res.json(selectedMetrics);
   } else {
@@ -161,7 +164,7 @@ exports.postSelectedMetrics = function(req, res) {
   }
 };
 
-let patchMetricToEnabled = report => {
+const patchMetricToEnabled = report => {
   request.patch(
     {
       url: `${def_path}/${report}`,
@@ -176,6 +179,21 @@ let patchMetricToEnabled = report => {
     },
     (error, response, body) => {
       console.log(response);
+    }
+  );
+};
+
+const saveSelectionToDisk = selection => {
+  let currentConfiguration = JSON.stringify(selection, undefined, 3);
+
+  fs.writeFile(
+    "metrics_config.json",
+    currentConfiguration,
+    "utf8",
+    (err, data) => {
+      if (err) {
+        console.log(err);
+      }
     }
   );
 };
