@@ -91,11 +91,12 @@ var config = {
         }
       },
       {
-        name: "Sawtooth Memory Util Tray 2",
+        name: "Rubberband Memory Util Tray 2",
         path: "/v1/TelemetryService/MetricReports/MemoryMetrics/",
-        timedelay: 10,
-        pattern: "sawtooth",
-        step: 3,
+        timedelay: 2,
+        pattern: "rubberband",
+        center: 70,
+        step: 5,
         MetricValueTemplate: {
           MemberID: "MemoryPercentUtil",
           MetricValue: "#value",
