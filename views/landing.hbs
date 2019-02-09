@@ -33,7 +33,7 @@
             <ul class="list">
                 {{#each metrics }}
                     <li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}</li>
-                    <ul class="metrics-indiv"></ul>
+                    <ul class="metrics-indiv" data-parent="{{this}}"></ul>
                 {{/each}}
             </ul>
         </div>
@@ -64,7 +64,7 @@
          "</div>" 
          : "";
       document.getElementById('menuContainer').innerHTML = menuHtml;
-   }
+   };
 
    $(".menuIcon").on("click", onMenuClick);
 
@@ -103,12 +103,23 @@
 
     $('.metrics-indiv').on('click', '.data', function(e){
         e.preventDefault();
-        // console.log($(this).text());
+        var parent = $(this).parent().attr('data-parent');
+        var individual = $(this).parent().text();
 
         if($(this).attr('data-selected') === 'no'){
             $(this).attr('data-selected', 'yes');
             $(this).css('color', 'green');
-            selected.push($(this).text());
+
+            if(!(selected.includes(parent))){
+                selected.push(parent);
+                var loc = selected.indexOf(parent);
+                console.log(loc);
+                if(!(selected[loc].includes(individual))){
+                    selected[loc].push(individual);
+                }
+            }
+            console.log(selected);
+            // selected.push($(this).text());
 
             //add to JSON
         } else{
