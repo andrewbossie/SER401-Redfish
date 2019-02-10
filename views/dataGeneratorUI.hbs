@@ -17,8 +17,26 @@
 				</tr>
 			</table>
 			<input type="submit">
+			<h1 id = "output"></h1>
 		</form>
 	</body>
 
+	
+	<script type="text/javascript">
+		function getPerc() {
+			var xmlhttp = new XMLHttpRequest();
+
+			xmlhttp.onreadystatechange = function() {
+				if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+				   if (xmlhttp.status == 200) {
+					   document.getElementById("output").innerHTML = xmlhttp.responseText;
+				   }
+				}
+			};
+
+			xmlhttp.open("GET", "/getPerc", true);
+			xmlhttp.send();
+		}
+	</script>
 
 <html>
