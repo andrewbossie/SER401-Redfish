@@ -27,6 +27,20 @@
     <br />
     <div>
         <div style="margin-left: 15%; display: inline-block">
+            <h2>Please Select your Retrieval Method...</h2>
+            <label for="polling">Polling (Default)</label>
+            <input id="polling" name="type" type="radio" value="polling" checked="checked"/>
+            <br />
+            <label for="subscription">Subscription</label>
+            <input id="subscription" name="type" type="radio" value="subscription" />
+            <br />
+            <label for="SSE">SSE Streaming</label>
+            <input id="SSE" name="type" type="radio" value="sse" />
+        </div>
+    </div>
+    <br />
+    <div>
+        <div style="margin-left: 15%; display: inline-block">
             <input type="button" value="Start" id="run" />
             <input type="button" value="View Graphs" id="view" />
             <h2>Please select your metrics...</h2>
@@ -44,6 +58,7 @@
 <script>
 
     var selected = [];
+    var sub_type = "";
     var newData = "";
     $('#view').prop('disabled', true);
     $('.metrics-indiv').hide();
@@ -113,7 +128,7 @@
             if(!(selected.includes(parent))){
                 selected.push(parent);
                 var loc = selected.indexOf(parent);
-                console.log(loc);
+                // console.log(loc);
                 if(!(selected[loc].includes(individual))){
                     selected[loc].push(individual);
                 }
@@ -132,6 +147,8 @@
 
     $('#run').on('click', function(e){
         e.preventDefault();
+
+        sub_type = $('input[name=type]:checked').val();
 
         $('.metrics-list').each(function(){
            if($(this).attr('sel') === "Not Enabled"){
