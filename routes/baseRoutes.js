@@ -17,6 +17,7 @@ module.exports = (app, router) => {
     .get(routes_controller.getDefinitionCollection)
     .post(routes_controller.postSelectedMetrics);
   router.route("/metrics/:metric").get(routes_controller.getMetric);
+  router.route("/config").get(routes_controller.getCurrentConfig);
   router.route("/test").get(test_controller.testGo);
   app.use("/api", router);
 

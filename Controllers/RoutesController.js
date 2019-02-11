@@ -164,6 +164,19 @@ exports.postSelectedMetrics = function(req, res) {
   }
 };
 
+exports.getCurrentConfig = function(req, res) {
+  let configData;
+
+  fs.readFile("metrics_config.json", "utf8", (err, data) => {
+    if (err) {
+      throw err;
+    } else {
+      configData = JSON.parse(data);
+      res.json(configData);
+    }
+  });
+};
+
 const patchMetricToEnabled = report => {
   request.patch(
     {
