@@ -1,5 +1,6 @@
 const request = require("request");
 const fs = require("fs");
+const _ = require("lodash");
 
 const childProcess = require("child_process");
 const config = require("../config/config");
@@ -150,11 +151,10 @@ exports.postSelectedMetrics = function(req, res) {
   if (selectedMetrics.from && selectedMetrics.metrics) {
     let metricReport = selectedMetrics.from;
     let metrics = selectedMetrics.metrics;
-    // TODO: Future sprint - create function to do the I/O tasks for
-    // Metric-select persistence.
 
     // patchMetricToEnabled(metricReport); ENABLE ONCE WE HAVE THE RIGHT ENDPOINT
-    saveSelectionToDisk(metrics);
+    // saveSelectionToDisk(req.body);
+    updateConfig(selectedMetrics);
 
     res.json(selectedMetrics);
   } else {
@@ -209,4 +209,28 @@ const saveSelectionToDisk = selection => {
       }
     }
   );
+};
+
+const updateConfig = newSelection => {
+  fs.readFile("metrics_config.json", "utf8", (err, data) => {
+    if (err) {
+      throw err;
+    } else {
+      configData = JSON.parse(data);
+      !configData.enabledReports.includes(newSelection.from) &&
+        configData.enabledReports.push(newSelection.from) &&
+        configData.selections.push(newSelection);
+
+      fs.writeFile(
+        "metrics_config.json",
+        JSON.stringify(configData, undefined, 3),
+        "utf8",
+        (err, data) => {
+          if (err) {
+            console.log(err);
+          }
+        }
+      );
+    }
+  });
 };

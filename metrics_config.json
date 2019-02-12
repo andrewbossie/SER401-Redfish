@@ -1,4 +1,22 @@
-[
-   "LogicalProcessor",
-   "Brand"
-]
+{
+   "enabledReports": [
+      "CPUConfig",
+      "FanStatus"
+   ],
+   "selections": [
+      {
+         "from": "CPUConfig",
+         "metrics": [
+            "LogicalProcessor",
+            "Brand"
+         ]
+      },
+      {
+         "from": "FanStatus",
+         "metrics": [
+            "Status",
+            "CurrentSpeedPWM"
+         ]
+      }
+   ]
+}
