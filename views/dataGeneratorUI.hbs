@@ -18,6 +18,7 @@
 			</table>
 			<input type="submit">
 			<h1 id = "output"></h1>
+			<input type="button" onclick='getPerc()'>
 		</form>
 	</body>
 
@@ -34,7 +35,7 @@
 				}
 			};
 
-			xmlhttp.open("GET", "/getPerc", true);
+			xmlhttp.open("GET", "/generateMockData?perc=1", true);
 			xmlhttp.send();
 		}
 	</script>

@@ -1,8 +1,8 @@
 const request = require("request");
 const childProcess = require("child_process");
 const config = require("../config/config");
-
 const def_path = `${config.host}${config.redfish_defs}`;
+var generatorProcess; //Global reference to generator child process
 
 // Render Static Panels in Grafana
 exports.getPanels = function(req, res) {
@@ -108,21 +108,36 @@ exports.getDataGenerator = function(req, res) {
 
 exports.generateMockData = function(req, res) {
   var q = [];
+  var perc;
+  
+  //for ajax call to get percentage complete
+  if (req.query.perc){
+	  generatorProcess.send("Percentage Please");
+	  // listen for perc message
+	  generatorProcess.on('message', (msg) => {
+			  res.writeHead(200, { 'Content-Type': 'application/json' }); 
+			  res.end(msg);
+			  return;
+		});
+		return;
+  }
+  
+  //if not a percentage call, start the generator
   if (req.query.time) q.push("-t", req.query.time);
   if (req.query.config) q.push("-c", req.query.config);
   function generate(path, callback) {
-    var process = childProcess.fork(path, q);
-
-    var invoked = false;
-    // listen for errors
-    process.on("error", function(err) {
-      if (invoked) return;
-      invoked = true;
-      callback(err);
-    });
+		generatorProcess = childProcess.fork(path, q);
+		var invoked = false;
+		
+		// listen for errors
+		generatorProcess.on("error", function(err) {
+		  if (invoked) return;
+		  invoked = true;
+		  callback(err);
+		});
 
 		// execute the callback
-		process.on('exit', function (code) {
+		generatorProcess.on('exit', function (code) {
 			if (invoked) return;
 			invoked = true;
 			var err = code === 0 ? null : new Error('exit code ' + code);
@@ -132,10 +147,6 @@ exports.generateMockData = function(req, res) {
 	
 	generate('./Resources/js/dataGenerator/rfmockdatacreator.js', function(err){
 		if(!err){
-		//	res.render("dataGeneratorUI.hbs", {
-		//		pageTitle: "Mockup Data Generator",
-		//		currentYear: new Date().getFullYear()
-		//	});
 			res.download('./Resources/js/dataGenerator/output.csv');
 		}else{
 			console.log(err);

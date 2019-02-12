@@ -1,5 +1,11 @@
 "use strict";
 
+process.on('message', (msg) => {
+	console.log('msg');
+	process.send(""+newPerc); //send percentage to parent process
+});
+
+
 var util = require("util");
 var fs = require("fs");
 var PFuncs = require("./PatternFuncs");
@@ -39,9 +45,15 @@ if (!config) {
    config = require("./config");
 }
 
+
+
 generate();
 
+
+
+
 function generate(){
+	
 	var patternTimers = [];
 	var parsedPaths = [];		//cached json template paths
 	var parsedTemplates = [];	//cached json templates
@@ -67,8 +79,11 @@ function generate(){
 	for (var i = 0; i <= iterations; i+=gcd) {
 		
 		//draw the percent loading bar
-		newPerc = Math.floor(i / iterations * 100)
-		
+		newPerc = Math.floor(i / iterations * 100);
+		if (newPerc > oldPerc){
+			oldPerc = newPerc;
+			
+		}
 		
 		//start with a fresh line
 		var line = "";
@@ -159,7 +174,7 @@ function generate(){
 	str += "0,END";
 	stream.write(str);
 	//console.log("\nCompleted in " + (Date.now() - isoDTG) + "ms");
-
+	process.exit();
 	})();
 }
 
