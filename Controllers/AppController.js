@@ -38,7 +38,7 @@ exports.updateCPUUtil = () => {
   request(
     {
       url:
-        "http://localhost:8000/redfish/v1/TelemetryService/MetricReports/CPUMetrics",
+        "http://localhost:8001/redfish/v1/TelemetryService/MetricReports/CPUMetrics",
       json: true
     },
     (error, response, body) => {
@@ -76,11 +76,10 @@ exports.updateCPUUtil = () => {
 
 // InfluxDB Connection
 const influx = new Influx.InfluxDB({
-
-    host: keys.influxHost,
-    database: "test",
-    username: keys.influxUserName,
-    password: keys.influxPassword,
+  host: keys.influxHost,
+  database: "test",
+  username: keys.influxUserName,
+  password: keys.influxPassword,
 
   schema: [
     {

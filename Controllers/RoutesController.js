@@ -164,6 +164,23 @@ exports.postSelectedMetrics = function(req, res) {
   }
 };
 
+exports.postSubType = function(req, res) {
+  let selectedSubType = req.body;
+  if (
+    selectedSubType.type &&
+    ["sse", "sub", "poll"].includes(selectedSubType.type)
+  ) {
+    // TODO: Set up connection to Redfish accordingly
+    // TODO: Update metrics_config.json
+    res.json(selectedSubType);
+  } else {
+    res.json({
+      error:
+        "POST body must include property 'type'. Acceptable values: poll, sse, or sub"
+    });
+  }
+};
+
 exports.getCurrentConfig = function(req, res) {
   let configData;
 
