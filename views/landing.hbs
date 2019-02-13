@@ -181,6 +181,12 @@
         $('#view').prop('disabled', false);
 
         $.ajax({
+           type: "POST",
+           url: "",
+           data: {type: sub_type}
+        });
+
+        $.ajax({
             type: "POST",
             url: "api/metrics",
             data: {payload: selected}
@@ -197,7 +203,7 @@
         //     url: "/something",
         //     data: {payload: selected}
         // });
-    })
+    });
 
     let testSelectedMetrics = ['a','b','c']
     let selectedMetricsHtml = '';
