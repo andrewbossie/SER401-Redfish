@@ -193,6 +193,24 @@ body {
    to {left: 0px}
 }
 
+#menuSurfaceClosing {
+   height: calc(100% - 50px);
+   width: 300px;
+   background-color: #cbddf8;
+   position: absolute;
+   z-index: 10;
+   animation-name: menuClosingAnimation;
+   animation-duration: 0.5s;
+   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+   margin-top: 50px;
+   left: -300px;
+}
+
+@keyframes menuClosingAnimation {
+   from {left: 0px}
+   to {left: -300px}
+}
+
 #overlay {
    position: absolute;
    width: 100%;
@@ -209,6 +227,21 @@ body {
    to {opacity: 0.35;}
 }
 
+#overlayClosing {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   background: white;
+   opacity: 0;
+   animation-name: overlayClosingAnimation;
+   animation-duration: 0.5s;
+   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes overlayClosingAnimation {
+   from {opacity: 0.35}
+   to {opacity: 0;}
+}
 
 .list{
     /*color: red;*/
@@ -241,7 +274,7 @@ body {
    font-size: 20px;
    font-family: "Roboto", sans-serif;
    font-weight: 400;
-   text-decoration: none;
+   text-decoration: none;  
 }
 
 .menuLink:hover {
@@ -259,8 +292,18 @@ body {
    background-color: #acccfc;
 }
 
-ul{
+
+ul {
    columns: 2;
    -webkit-columns: 2;
    -moz-columns: 2;
+}
+
+#dashboard {
+   height: 500px;
+   display: flex;
+   border: 2px solid #212121;
+   width: 25%;
+   margin: 0 auto;
+>>>>>>> origin/sprint6-dev
 }
