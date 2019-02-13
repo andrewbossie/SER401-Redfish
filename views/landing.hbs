@@ -26,7 +26,7 @@
     <br />
     <br />
     <div>
-        <div style="margin-left: 15%; display: inline-block">
+        <div style="margin-left: 15%; display: inline-block; float: left">
             <input type="button" value="Start" id="run" />
             <input type="button" value="View Graphs" id="view" />
             <h2>Please select your metrics...</h2>
@@ -36,6 +36,11 @@
                     <ul class="metrics-indiv"></ul>
                 {{/each}}
             </ul>
+        </div>
+        <div id="dashboard">
+            <span>Selected Metrics:</span>
+            <br/>
+            <div id="selectedMetrics"/>
         </div>
         <!--<div style="width: 30%; display: inline-block">-->
         <!--</div>-->
@@ -165,5 +170,11 @@
         // });
     })
 
+    let testSelectedMetrics = ['a','b','c']
+    let selectedMetricsHtml = '';
+    testSelectedMetrics.forEach(metric => {
+        selectedMetricsHtml += '<p>'+metric+'</p>';
+    });
+    document.getElementById('selectedMetrics').innerHTML = selectedMetricsHtml;
 </script>
 </html>

@@ -291,3 +291,11 @@ body {
 .selectedLink {
    background-color: #acccfc;
 }
+
+#dashboard {
+   height: 500px;
+   display: flex;
+   border: 2px solid #212121;
+   width: 25%;
+   margin: 0 auto;
+}
