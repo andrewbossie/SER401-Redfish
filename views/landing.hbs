@@ -65,7 +65,7 @@
    $('#view').prop('disabled', true);
 
     var selected = [];
-    var sub_type = "";
+    var sub_type = [];
     var newData = "";
     $('#view').prop('disabled', true);
     $('.metrics-indiv').hide();
@@ -165,7 +165,7 @@
     $('#run').on('click', function(e){
         e.preventDefault();
 
-        sub_type = $('input[name=type]:checked').val();
+        sub_type["type"] = $('input[name=type]:checked').val();
 
         $('.metrics-list').each(function(){
            if($(this).attr('sel') === "Not Enabled"){
