@@ -38,6 +38,9 @@
             </ul>
         </div>
         <div id="dashboard">
+            <span>Selected Metrics:</span>
+            <br/>
+            <div id="selectedMetrics"/>
         </div>
         <!--<div style="width: 30%; display: inline-block">-->
         <!--</div>-->
@@ -167,5 +170,11 @@
         // });
     })
 
+    let testSelectedMetrics = ['a','b','c']
+    let selectedMetricsHtml = '';
+    testSelectedMetrics.forEach(metric => {
+        selectedMetricsHtml += '<p>'+metric+'</p>';
+    });
+    document.getElementById('selectedMetrics').innerHTML = selectedMetricsHtml;
 </script>
 </html>
