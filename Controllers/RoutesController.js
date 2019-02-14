@@ -172,6 +172,7 @@ exports.postSubType = function(req, res) {
   ) {
     // TODO: Set up connection to Redfish accordingly
     // TODO: Update metrics_config.json
+    updateSubType(selectedSubType.type);
     res.json(selectedSubType);
   } else {
     res.json({
@@ -238,6 +239,27 @@ const updateConfig = newSelection => {
         configData.enabledReports.push(newSelection.from) &&
         configData.selections.push(newSelection);
 
+      fs.writeFile(
+        "metrics_config.json",
+        JSON.stringify(configData, undefined, 3),
+        "utf8",
+        (err, data) => {
+          if (err) {
+            console.log(err);
+          }
+        }
+      );
+    }
+  });
+};
+
+const updateSubType = newSubType => {
+  fs.readFile("metrics_config.json", "utf8", (err, data) => {
+    if (err) {
+      throw err;
+    } else {
+      configData = JSON.parse(data);
+      configData.sub_method = newSubType;
       fs.writeFile(
         "metrics_config.json",
         JSON.stringify(configData, undefined, 3),

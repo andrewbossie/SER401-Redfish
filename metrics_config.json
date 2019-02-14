@@ -1,13 +1,23 @@
 {
-  "enabledReports": ["CPUConfig", "FanStatus"],
-  "selections": [
-    {
-      "from": "CPUConfig",
-      "metrics": ["LogicalProcessor", "Brand"]
-    },
-    {
-      "from": "FanStatus",
-      "metrics": ["Status", "CurrentSpeedPWM"]
-    }
-  ]
+   "enabledReports": [
+      "CPUConfig",
+      "FanStatus"
+   ],
+   "selections": [
+      {
+         "from": "CPUConfig",
+         "metrics": [
+            "LogicalProcessor",
+            "Brand"
+         ]
+      },
+      {
+         "from": "FanStatus",
+         "metrics": [
+            "Status",
+            "CurrentSpeedPWM"
+         ]
+      }
+   ],
+   "sub_method": "poll"
 }

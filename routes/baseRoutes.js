@@ -16,10 +16,7 @@ module.exports = (app, router) => {
     .route("/metrics")
     .get(routes_controller.getDefinitionCollection)
     .post(routes_controller.postSelectedMetrics);
-  router
-    .route("/sub_type")
-    // .get(routes_controller.getSubType)
-    .post(routes_controller.postSubType);
+  router.route("/sub_type").post(routes_controller.postSubType);
   router.route("/metrics/:metric").get(routes_controller.getMetric);
   router.route("/config").get(routes_controller.getCurrentConfig);
   router.route("/test").get(test_controller.testGo);
