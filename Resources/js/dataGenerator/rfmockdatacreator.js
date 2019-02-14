@@ -1,7 +1,6 @@
 "use strict";
 
 process.on('message', (msg) => {
-	console.log('msg');
 	process.send(""+newPerc); //send percentage to parent process
 });
 

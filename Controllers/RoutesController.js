@@ -2,7 +2,7 @@ const request = require("request");
 const childProcess = require("child_process");
 const config = require("../config/config");
 const def_path = `${config.host}${config.redfish_defs}`;
-var generatorProcess; //Global reference to generator child process
+var generatorProcess = null; //Global reference to generator child process
 
 // Render Static Panels in Grafana
 exports.getPanels = function(req, res) {
@@ -109,17 +109,26 @@ exports.getDataGenerator = function(req, res) {
 exports.generateMockData = function(req, res) {
   var q = [];
   var perc;
+	
   
   //for ajax call to get percentage complete
   if (req.query.perc){
-	  generatorProcess.send("Percentage Please");
-	  // listen for perc message
-	  generatorProcess.on('message', (msg) => {
-			  res.writeHead(200, { 'Content-Type': 'application/json' }); 
-			  res.end(msg);
-			  return;
+	 if (generatorProcess != null){
+		//setup callback for message from child process
+		generatorProcess.on('message', (msg) => {
+			perc = parseInt(msg);
+			res.writeHead(200, { 'Content-Type': 'application/json' }); 
+			res.end(msg);
+			console.log("Perc: " + msg);
+			generatorProcess.removeAllListeners('message');
 		});
-		return;
+		generatorProcess.send("Percentage Please");
+	 } else {
+		res.writeHead(200, { 'Content-Type': 'application/json' }); 
+		res.end('100');
+	 }
+	
+	return;
   }
   
   //if not a percentage call, start the generator
@@ -127,6 +136,12 @@ exports.generateMockData = function(req, res) {
   if (req.query.config) q.push("-c", req.query.config);
   function generate(path, callback) {
 		generatorProcess = childProcess.fork(path, q);
+		generatorProcess.on('exit',() =>{
+			generatorProcess.removeAllListeners('message');
+			generatorProcess = null;
+		});
+		
+		
 		var invoked = false;
 		
 		// listen for errors
