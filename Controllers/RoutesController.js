@@ -109,25 +109,23 @@ exports.getDataGenerator = function(req, res) {
 exports.generateMockData = function(req, res) {
   var q = [];
   var perc;
-	
-  
+
   //for ajax call to get percentage complete
   if (req.query.perc){
-	 if (generatorProcess != null){
+	if (generatorProcess != null){
+		generatorProcess.send("Percentage Please");			//message string is unimportant
 		//setup callback for message from child process
 		generatorProcess.on('message', (msg) => {
 			perc = parseInt(msg);
 			res.writeHead(200, { 'Content-Type': 'application/json' }); 
 			res.end(msg);
-			console.log("Perc: " + msg);
-			generatorProcess.removeAllListeners('message');
+			generatorProcess.removeAllListeners('message');	//remove listener to prevent duplicate AJAX responses
 		});
-		generatorProcess.send("Percentage Please");
-	 } else {
+		
+	} else {
 		res.writeHead(200, { 'Content-Type': 'application/json' }); 
 		res.end('100');
-	 }
-	
+	}
 	return;
   }
   
@@ -136,14 +134,8 @@ exports.generateMockData = function(req, res) {
   if (req.query.config) q.push("-c", req.query.config);
   function generate(path, callback) {
 		generatorProcess = childProcess.fork(path, q);
-		generatorProcess.on('exit',() =>{
-			generatorProcess.removeAllListeners('message');
-			generatorProcess = null;
-		});
-		
-		
 		var invoked = false;
-		
+
 		// listen for errors
 		generatorProcess.on("error", function(err) {
 		  if (invoked) return;
@@ -153,11 +145,13 @@ exports.generateMockData = function(req, res) {
 
 		// execute the callback
 		generatorProcess.on('exit', function (code) {
+			generatorProcess = null;
 			if (invoked) return;
 			invoked = true;
 			var err = code === 0 ? null : new Error('exit code ' + code);
 			callback(err);
 		});
+
 	}
 	
 	generate('./Resources/js/dataGenerator/rfmockdatacreator.js', function(err){
