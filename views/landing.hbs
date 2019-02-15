@@ -176,5 +176,13 @@
         selectedMetricsHtml += '<p>'+metric+'</p>';
     });
     document.getElementById('selectedMetrics').innerHTML = selectedMetricsHtml;
+    
+    let updateDashboardList = () => {
+        let selectedMetricsHtml = '';
+        selected.forEach(metric => {
+            selectedMetricsHtml += '<p>'+metric+'</p>';
+        });
+        document.getElementById('selectedMetrics').innerHTML = selectedMetricsHtml;
+    }
 </script>
 </html>
