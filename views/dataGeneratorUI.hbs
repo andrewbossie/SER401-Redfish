@@ -1,7 +1,20 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		
+		<style>
+		#progressBarBG {
+		  width: 25%;
+		  background-color: grey;
+		}
+
+		#progressBar {
+		  width: 0%;
+		  height: 20px;
+		  background-color: green;
+		  line-height: 20px; /* To center it vertically */
+		  color: white; 
+		}
+		</style>
 	</head>
 
 	<body>
@@ -16,9 +29,41 @@
 					<td><input type = "text" name = "config"></td>
 				</tr>
 			</table>
-			<input type="submit">
+			<input type="submit" onclick="return startAJAX()">
+			<div id="progressBarBG">
+			  <div id="progressBar"></div>
+			</div>
+			
 		</form>
 	</body>
 
+	
+	<script type="text/javascript">
+		var perc = 0;
+		var interval;
+		function startAJAX(){
+			interval = setInterval(getPerc, 100);
+		}
+		
+		
+		function getPerc() {
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+				   if (xmlhttp.status == 200) {
+						perc = parseInt(xmlhttp.responseText);
+						document.getElementById("progressBar").style.width = perc + '%';
+						document.getElementById("progressBar").innerHTML = perc * 1 + '%';
+						if(perc == 100){
+							clearInterval(interval);	//stop polling after receiving 100% from server
+						}
+				   }
+				}
+			};
+			xmlhttp.open("GET", "/generateMockData?perc=1", true);
+			xmlhttp.send();
+				
+		}
+	</script>
 
 <html>
