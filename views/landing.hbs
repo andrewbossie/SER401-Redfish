@@ -215,7 +215,9 @@
             method: "GET",
             url: 'api/config',
             success:  function(response){
-
+                console.log(response['selections'].length);
+                var parsed = JSON.parse(response);
+                console.log(parsed);
             },
             error: function(response){
 
