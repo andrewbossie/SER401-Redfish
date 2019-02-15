@@ -61,6 +61,8 @@
     </div>
 </body>
 <script>
+    get_existing();
+
    var selected = [];
    $('#view').prop('disabled', true);
 
@@ -180,12 +182,14 @@
 
         $('#view').prop('disabled', false);
 
+        // POST SUB TYPE
         $.ajax({
            type: "POST",
-           url: "",
+           url: "api/sub_type",
            data: {type: sub_type}
         });
 
+        // POST METRICS
         $.ajax({
             type: "POST",
             url: "api/metrics",
@@ -205,7 +209,21 @@
         // });
     });
 
-    let testSelectedMetrics = ['a','b','c']
+    // AJAX for current config
+    function get_existing(){
+        $.ajax({
+            method: "GET",
+            url: 'api/config',
+            success:  function(response){
+
+            },
+            error: function(response){
+
+            }
+        });
+    }
+
+    let testSelectedMetrics = ['a','b','c'];
     let selectedMetricsHtml = '';
     testSelectedMetrics.forEach(metric => {
         selectedMetricsHtml += '<p>'+metric+'</p>';
