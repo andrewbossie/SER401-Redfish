@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<link rel="stylesheet" href="/css/app.css" />
+   		<script src="../Resources/js/index.js"></script>
+	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+   		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+          crossorigin="anonymous" />
 		<style>
 		#progressBarBG {
 		  width: 25%;
@@ -16,8 +21,13 @@
 		}
 		</style>
 	</head>
-
 	<body>
+		<div id="menuContainer"></div>
+    	<div>
+        	<div class="header">
+            	<i class="fas fa-bars menuIcon"></i>
+        	</div>
+    	</div>
 		<form action="/generateMockData" method="get">
 			<table>
 				<tr>
@@ -37,7 +47,37 @@
 			
 		</form>
 	</body>
+	<script>
+		let menuOpened = false;
+		let onMenuClick = () => {
+			menuOpened = !menuOpened;
+			let menuId = menuOpened ? "menuSurface" : "menuSurfaceClosing";
+			let overlayId = menuOpened ? "overlay" : "overlayClosing";
+			let menuHtml = 
+				"<div id='" + menuId + "'>" +
+					"<h1 class='menuTitle'>Menu</h1>" +
+					"<div class='menuSeparator'></div>" +
+					"<a href='/' class='menuLink'>Metric Selections</a>" +
+					"<div class='menuSeparator'></div>" +
+					"<a href='/graphs' class='menuLink'>Panel Display</a>" +
+					"<div class='menuSeparator'></div>" +
+					"<a href='/datagenerator' class='menuLink selectedLink'>Data Generator</a>" +
+					"<div class='menuSeparator'></div>" +
+				"</div>" + 
+				"<div id='"+ overlayId +"' onclick='onMenuClick()'>"+
+				"</div>";
+			document.getElementById('menuContainer').innerHTML = menuHtml;
 
+			if (!menuOpened) {
+				setTimeout(() => {
+					document.getElementById('menuContainer').innerHTML = "";
+				}, 500)
+			}
+		}
+
+<<<<<<< HEAD
+   		$(".menuIcon").on("click", onMenuClick);
+=======
 	
 	<script type="text/javascript">
 		var perc = 0;
@@ -67,6 +107,7 @@
 			xmlhttp.send();
 				
 		}
+>>>>>>> sprint6-dev
 	</script>
 
 <html>
