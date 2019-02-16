@@ -90,13 +90,21 @@ config.MockupData.MockupPatterns.forEach(function(mockup, index) {
   if (!patternTimers[index]) patternTimers[index] = {};
 
   if (mockup.min) {
+    console.log("Min: ", mockup.min);
     p.min = mockup.min;
   }
   if (mockup.max) {
+    console.log("Max: ", mockup.max);
     p.max = mockup.max;
   }
   if (mockup.step) {
+    console.log("Step: ", mockup.step);
     p.step = mockup.step;
+  }
+  if (mockup.center) {
+    console.log("Center: ", mockup.center);
+    p.center = mockup.center;
+    p.value = mockup.center;
   }
 
   patternTimers[index].pfuncs = p;
