@@ -27,6 +27,7 @@
 				<tr>
 					<td>Config</td>
 					<td><input type = "text" name = "config"></td>
+					<td><div id = "configPath">{{ configPath }}</div></td> <!-- Rendered via hbs -->
 				</tr>
 			</table>
 			<input type="submit" onclick="return startAJAX()">
@@ -42,6 +43,8 @@
 		var perc = 0;
 		var interval;
 		function startAJAX(){
+			document.getElementById("progressBar").style.width = '0%';
+			document.getElementById("progressBar").innerHTML = '0%';
 			interval = setInterval(getPerc, 100);
 		}
 		
