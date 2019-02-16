@@ -82,7 +82,7 @@ function generate(){
 			percStr += "]";
 			percStr += (newPerc + "%");
 			
-			process.stdout.write(percStr);
+			//process.stdout.write(percStr);
 		}
 		
 		//start with a fresh line

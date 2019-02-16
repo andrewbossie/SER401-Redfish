@@ -87,7 +87,7 @@
     // Change the colors on the selection list
     $('.metrics-defs').on('click', function(){
 
-        var metric = $(this).attr('value').substr(53, this.length);
+        var metric = $(this).attr('value');
         // console.log(metric);
         if($(this).attr('data-opened') === 'closed') {
 
@@ -100,10 +100,10 @@
                 url: "./api/metrics/" + metric,
                 method: "GET",
                 success: function (response) {
-                    console.log(response['MetricProperties']);
+                    // console.log(response['MetricProperties']);
                     newData = response['MetricProperties'];
                     for(var i = 0; i < newData.length; i++){
-                        $(this).next().append('<li class="data" data-selected="no" style="color: red;">' + newData[i] + '</li>');
+                        $(this).next().append('<li class="data" data-selected="no" style="color: red;">' + newData[i].substr(60, newData[i].length) + '</li>');
                     }
                 },
                 error: function (error) {

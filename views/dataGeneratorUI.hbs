@@ -6,6 +6,20 @@
 	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
    		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
           crossorigin="anonymous" />
+		<style>
+		#progressBarBG {
+		  width: 25%;
+		  background-color: grey;
+		}
+
+		#progressBar {
+		  width: 0%;
+		  height: 20px;
+		  background-color: green;
+		  line-height: 20px; /* To center it vertically */
+		  color: white; 
+		}
+		</style>
 	</head>
 	<body>
 		<div id="menuContainer"></div>
@@ -23,9 +37,14 @@
 				<tr>
 					<td>Config</td>
 					<td><input type = "text" name = "config"></td>
+					<td><div id = "configPath">{{ configPath }}</div></td> <!-- Rendered via hbs -->
 				</tr>
 			</table>
-			<input type="submit">
+			<input type="submit" onclick="return startAJAX()">
+			<div id="progressBarBG">
+			  <div id="progressBar"></div>
+			</div>
+			
 		</form>
 	</body>
 	<script>
@@ -56,7 +75,39 @@
 			}
 		}
 
+<<<<<<< HEAD
    		$(".menuIcon").on("click", onMenuClick);
+=======
+	
+	<script type="text/javascript">
+		var perc = 0;
+		var interval;
+		function startAJAX(){
+			document.getElementById("progressBar").style.width = '0%';
+			document.getElementById("progressBar").innerHTML = '0%';
+			interval = setInterval(getPerc, 100);
+		}
+		
+		
+		function getPerc() {
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+				   if (xmlhttp.status == 200) {
+						perc = parseInt(xmlhttp.responseText);
+						document.getElementById("progressBar").style.width = perc + '%';
+						document.getElementById("progressBar").innerHTML = perc * 1 + '%';
+						if(perc == 100){
+							clearInterval(interval);	//stop polling after receiving 100% from server
+						}
+				   }
+				}
+			};
+			xmlhttp.open("GET", "/generateMockData?perc=1", true);
+			xmlhttp.send();
+				
+		}
+>>>>>>> sprint6-dev
 	</script>
 
 <html>
