@@ -104,7 +104,7 @@ exports.getMetric = function(req, res) {
 //TODO: build UI page since right now the generator gets run on page load
 exports.getDataGenerator = function(req, res) {
   res.render("dataGeneratorUI.hbs", {
-    configPath: "Config files located at: " + fs.realpathSync.native("./Resources/js/dataGenerator"),
+    configPath: "Config files located at: " + fs.realpathSync("./Resources/js/dataGenerator"),
     currentYear: new Date().getFullYear()
   });
 };
