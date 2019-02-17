@@ -112,7 +112,7 @@
             $(this).attr('data-opened', 'opened');
             $(this).next().show();
 
-            //AJAX get selected metrics
+            //AJAX get available metrics
             $.ajax({
                 context: this,
                 url: "./api/metrics/" + metric,
@@ -125,6 +125,7 @@
                     }
                 },
                 error: function (error) {
+                    alert("Error getting available metrics!");
                     console.log(error);
                 }
             });
@@ -186,14 +187,28 @@
         $.ajax({
            type: "POST",
            url: "api/sub_type",
-           data: {type: sub_type}
+           data: {type: sub_type},
+            success: function(response){
+               console.log(response);
+            },
+            error: function(error){
+               alert("Could not post subscription type.");
+               console.log(error);
+            }
         });
 
         // POST METRICS
         $.ajax({
             type: "POST",
             url: "api/metrics",
-            data: {payload: selected}
+            data: {payload: selected},
+            success: function(response){
+                console.log(response);
+            },
+            error: function(error){
+                alert("Could not post selected metrics.");
+                console.log(error);
+            }
         });
     });
 
@@ -219,8 +234,9 @@
                 var parsed = JSON.parse(response);
                 console.log(parsed);
             },
-            error: function(response){
-
+            error: function(error){
+                alert("Error getting existing config!");
+                console.log(error);
             }
         });
     }
