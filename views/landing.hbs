@@ -26,7 +26,7 @@
     <br />
     <br />
     <div>
-        <div style="margin-left: 15%; display: inline-block">
+        <div style="margin-left: 15%;">
             <h2>Please Select your Retrieval Method...</h2>
             <label for="polling">Polling (Default)</label>
             <input id="polling" name="type" type="radio" value="polling" checked="checked"/>
@@ -40,16 +40,18 @@
     </div>
     <br />
     <div>
-        <div style="margin-left: 15%; display: inline-block; float: left">
+        <div style="margin-left: 15%; float: left; width: 300px;">
             <input type="button" value="Start" id="run" />
             <input type="button" value="View Graphs" id="view" />
             <h2>Please select your metrics...</h2>
-            <ul class="list">
-                {{#each metrics }}
-                    <li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}</li>
-                    <ul class="metrics-indiv" data-parent="{{this}}"></ul>
-                {{/each}}
-            </ul>
+            <div class="list-div">
+                <ul class="list">
+                    {{#each metrics }}
+                        <li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}</li>
+                        <ul class="metrics-indiv" data-parent="{{this}}"></ul>
+                    {{/each}}
+                </ul>
+            </div>
         </div>
         <div id="dashboard">
             <span>Selected Metrics:</span>
