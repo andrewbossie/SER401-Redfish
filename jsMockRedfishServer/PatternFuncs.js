@@ -1,12 +1,18 @@
 "use strict";
 
-function PatternFuncs(min, max, step) {
-  //default to percent from 0 to 100
-  this.min = min || 0;
-  this.max = max || 100;
-  this.step = step || 1;
+function PatternFuncs({
+  min = 0,
+  max = 100,
+  step = 1,
+  center = 50,
+} = {}) {
 
-  this.value = this.min;
+  this.min = min;
+  this.max = max;
+  this.step = step;
+  this.center = center;
+
+  this.value = this.center;
   this.isRev = false;
 }
 
@@ -48,6 +54,37 @@ PatternFuncs.prototype.steprand = function() {
   var step = Math.floor(Math.random() * (this.step * 2 + 1)) - this.step;
 
   this.value += step;
+  if (this.value > this.max) {
+    this.value = this.max - (this.value - this.max);
+  } else if (this.value < this.min) {
+    this.value = this.min - (this.value - this.min);
+  }
+
+  return this.value;
+};
+
+PatternFuncs.prototype.rubberband = function() {
+  var rand = Math.random();
+  var oldv = this.value;
+
+  if (this.value < this.center) {
+    var percent = (this.value - this.min) / ((this.center - this.min) * 2);
+    if (rand < percent) {
+      this.value -= this.step * percent;
+    } else {
+      this.value += this.step * percent;
+    }
+//    console.log("> (", this.min, " < ", this.center, " < ", this.max, ") -- ", rand.toFixed(3), " <> ", percent.toFixed(3), " == ", oldv.toFixed(3), " -> ", this.value.toFixed(3));
+  } else {
+    var percent = 1 - (this.max - this.value) / ((this.max - this.center) * 2);
+    if (rand < percent) {
+      this.value -= this.step * percent;
+    } else {
+      this.value += this.step * percent;
+    }
+//    console.log("> (", this.min, " < ", this.center, " < ", this.max, ") -- ", rand.toFixed(3), " <> ", percent.toFixed(3), " == ", oldv.toFixed(3), " -> ", this.value.toFixed(3));
+  }
+
   if (this.value > this.max) {
     this.value = this.max - (this.value - this.max);
   } else if (this.value < this.min) {
