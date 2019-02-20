@@ -1,15 +1,15 @@
-# `jsMockServer` Overview
+# `rfModellerSuite` Overview
 
-`jsMockServer` is a set of scripts and patterns to create and optionally serve mockup [RedFish][RedFish] data. Note that it is *not* a full RedFish implementation. It uses templates from the `/redfish/v1/TelemetryService` portion of the RedFish API and a set of defined patterns to create mock data for visualization or other test cases.
+`rfModellerSuite` is a set of scripts and patterns to create and optionally serve mockup [RedFish][RedFish] data. Note that it is *not* a full RedFish implementation. It uses templates from the `/redfish/v1/TelemetryService` portion of the RedFish API and a set of defined patterns to create mock data for visualization or other test cases.
 
-# `rfmockserver`
+# `rfModelServer`
 
-The `rfmockserver` script without any arguments reads from the `config.js` file and writes out mock data according to the specifications listed in that file to an existing RedFish directory. Specifically, it modifies the files under the `TelemetryService` directory to simulate incoming telemetry data.
+The `rfModelServer` script without any arguments reads from the `config.js` file and writes out mock data according to the specifications listed in that file to an existing RedFish directory. Specifically, it modifies the files under the `TelemetryService` directory to simulate incoming telemetry data.
 
 ## Usage
 
 ```
-$ node rfmockserver \[-s\] \[-c \<config file\>\]
+$ node rfModelServer \[-s\] \[-c \<config file\>\]
 
 -s         Starts a server on port 8001 to serve up the /redfish/v1/TelemetryService directory
 -c <file>  A config file other than ./config.js
@@ -17,14 +17,14 @@ $ node rfmockserver \[-s\] \[-c \<config file\>\]
 -h         Display the inline help
 ```
 
-# `rfmockdatacreator`
+# `rfModeller`
 
-The `rfmockdatacreator` script uses the same `config.js` file but instead of writing to or serving up the RedFish directory it creates a CSV file suitable for replaying with the current Python RedFish mock server distributed by the DMTF organization.
+The `rfModeller` script uses the same `config.js` file but instead of writing to or serving up the RedFish directory it creates a CSV file suitable for replaying with the current Python RedFish mock server distributed by the DMTF organization.
 
 ## Usage
 
 ```
-$ node rfmockdatacreator \[-c \<config file\>\] \[-t\] \[-o\]
+$ node rfModeller \[-c \<config file\>\] \[-t\] \[-o\]
 
 -c <file>  A config file other than ./config.js
 -t         The number of iterations to calculate
@@ -63,10 +63,10 @@ var config = {
 module.exports = config;
 ```
 
-This is the main layout of the `jsMockServer` config file. Important bits:
+This is the main layout of the `rfModellerSuite` config file. Important bits:
 
 1. `path:` The path to the top level `redfish` used as inputs to the scripts. This includes the initial `/redfish` portion of the path, so the the variable should resolve as `__path__/v1/…`.
-1. `MockupPatterns:` A collection of patterns (described below) for use in the `jsMockServer` scripts. These will all be run in tandem on the same timeline.
+1. `MockupPatterns:` A collection of patterns (described below) for use in the `rfModellerSuite` scripts. These will all be run in tandem on the same timeline.
 1. `module.exports = config;` This is necessary in order for the main script to pull in the config file as a variable.
 
 ## Mockup Pattern JSON
