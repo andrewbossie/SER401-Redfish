@@ -26,16 +26,32 @@
     <br />
     <br />
     <div>
-        <div style="margin-left: 15%; display: inline-block; float: left">
+        <div style="margin-left: 15%;">
+            <h2>Please Select your Retrieval Method...</h2>
+            <label for="polling">Polling (Default)</label>
+            <input id="polling" name="type" type="radio" value="polling" checked="checked"/>
+            <br />
+            <label for="subscription">Subscription</label>
+            <input id="subscription" name="type" type="radio" value="subscription" />
+            <br />
+            <label for="SSE">SSE Streaming</label>
+            <input id="SSE" name="type" type="radio" value="sse" />
+        </div>
+    </div>
+    <br />
+    <div>
+        <div style="margin-left: 15%; float: left; width: 300px;">
             <input type="button" value="Start" id="run" />
             <input type="button" value="View Graphs" id="view" />
             <h2>Please select your metrics...</h2>
-            <ul class="list">
-                {{#each metrics }}
-                    <li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}</li>
-                    <ul class="metrics-indiv"></ul>
-                {{/each}}
-            </ul>
+            <div class="list-div">
+                <ul class="list">
+                    {{#each metrics }}
+                        <li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}</li>
+                        <ul class="metrics-indiv" data-parent="{{this}}"></ul>
+                    {{/each}}
+                </ul>
+            </div>
         </div>
         <div id="dashboard">
             <span>Selected Metrics:</span>
@@ -47,10 +63,13 @@
     </div>
 </body>
 <script>
+    get_existing();
+
    var selected = [];
    $('#view').prop('disabled', true);
 
     var selected = [];
+    var sub_type = [];
     var newData = "";
     $('#view').prop('disabled', true);
     $('.metrics-indiv').hide();
@@ -74,13 +93,14 @@
          "<div id='"+ overlayId +"' onclick='onMenuClick()'>"+
          "</div>";
       document.getElementById('menuContainer').innerHTML = menuHtml;
+   };
 
       if (!menuOpened) {
          setTimeout(() => {
             document.getElementById('menuContainer').innerHTML = "";
          }, 500)
       }
-   }
+   // }
 
    $(".menuIcon").on("click", onMenuClick);
 
@@ -94,7 +114,7 @@
             $(this).attr('data-opened', 'opened');
             $(this).next().show();
 
-            //AJAX get selected metrics
+            //AJAX get available metrics
             $.ajax({
                 context: this,
                 url: "./api/metrics/" + metric,
@@ -107,6 +127,7 @@
                     }
                 },
                 error: function (error) {
+                    alert("Error getting available metrics!");
                     console.log(error);
                 }
             });
@@ -119,12 +140,23 @@
 
     $('.metrics-indiv').on('click', '.data', function(e){
         e.preventDefault();
-        // console.log($(this).text());
+        var parent = $(this).parent().attr('data-parent');
+        var individual = $(this).parent().text();
 
         if($(this).attr('data-selected') === 'no'){
             $(this).attr('data-selected', 'yes');
             $(this).css('color', 'green');
-            selected.push($(this).text());
+
+            if(!(selected.includes(parent))){
+                selected.push(parent);
+                var loc = selected.indexOf(parent);
+                // console.log(loc);
+                if(!(selected[loc].includes(individual))){
+                    selected[loc].push(individual);
+                }
+            }
+            console.log(selected);
+            // selected.push($(this).text());
 
             //add to JSON
         } else{
@@ -139,6 +171,8 @@
     $('#run').on('click', function(e){
         e.preventDefault();
 
+        sub_type["type"] = $('input[name=type]:checked').val();
+
         $('.metrics-list').each(function(){
            if($(this).attr('sel') === "Not Enabled"){
                $(this).css('color', 'green');
@@ -152,10 +186,32 @@
 
         $('#view').prop('disabled', false);
 
+        // POST SUB TYPE
+        $.ajax({
+           type: "POST",
+           url: "api/sub_type",
+           data: {type: sub_type},
+            success: function(response){
+               console.log(response);
+            },
+            error: function(error){
+               alert("Could not post subscription type.");
+               console.log(error);
+            }
+        });
+
+        // POST METRICS
         $.ajax({
             type: "POST",
             url: "api/metrics",
-            data: {payload: selected}
+            data: {payload: selected},
+            success: function(response){
+                console.log(response);
+            },
+            error: function(error){
+                alert("Could not post selected metrics.");
+                console.log(error);
+            }
         });
     });
 
@@ -169,9 +225,26 @@
         //     url: "/something",
         //     data: {payload: selected}
         // });
-    })
+    });
 
-    let testSelectedMetrics = ['a','b','c']
+    // AJAX for current config
+    function get_existing(){
+        $.ajax({
+            method: "GET",
+            url: 'api/config',
+            success:  function(response){
+                console.log(response['selections'].length);
+                var parsed = JSON.parse(response);
+                console.log(parsed);
+            },
+            error: function(error){
+                alert("Error getting existing config!");
+                console.log(error);
+            }
+        });
+    }
+
+    let testSelectedMetrics = ['a','b','c'];
     let selectedMetricsHtml = '';
     testSelectedMetrics.forEach(metric => {
         selectedMetricsHtml += '<p>'+metric+'</p>';

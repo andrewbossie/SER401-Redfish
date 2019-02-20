@@ -248,6 +248,9 @@ body {
     cursor: pointer;
     list-style-type: square;
     /*margin-left: 15%;*/
+   /*columns: 2;*/
+   /*-webkit-columns: 2;*/
+   /*-moz-columns: 2;*/
 }
 
 .list li:hover{
@@ -292,10 +295,24 @@ body {
    background-color: #acccfc;
 }
 
+
+/*ul {*/
+   /*columns: 2;*/
+   /*-webkit-columns: 2;*/
+   /*-moz-columns: 2;*/
+/*}*/
+
 #dashboard {
    height: 500px;
    display: flex;
    border: 2px solid #212121;
    width: 25%;
    margin: 0 auto;
+}
+
+.list-div{
+   border: 1px solid #212121;
+   height: 400px;
+   overflow-y: scroll;
+   box-shadow: inset 0 -25px 50px -35px rgba(0, 0, 0, 1);
 }
