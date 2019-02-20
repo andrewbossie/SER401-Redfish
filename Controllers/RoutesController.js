@@ -205,14 +205,20 @@ exports.postSubType = function(req, res) {
   }
 };
 
+exports.handleEventIn = function(req, res) {
+  console.log(req.body);
+  res.json(req.body);
+};
+
 const subscribeToEvents = () => {
   request.post(
     {
       url: `http://localhost:8001/redfish/v1/EventService/Subscriptions`,
       json: true,
       body: {
-        target: "http://localhost:8080/api/event_in",
-        EventType: ["ResourceAdded"]
+        EventFormatType: "MetricReport",
+        SubscriptionType: "RedfishEvent",
+        Destination: "http://localhost:8080/api/event_in"
       }
     },
     (error, response, body) => {
