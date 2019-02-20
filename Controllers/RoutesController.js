@@ -104,7 +104,9 @@ exports.getMetric = function(req, res) {
 //TODO: build UI page since right now the generator gets run on page load
 exports.getDataGenerator = function(req, res) {
   res.render("dataGeneratorUI.hbs", {
-    configPath: "Config files located at: " + fs.realpathSync("./Resources/js/dataGenerator"),
+    configPath:
+      "Config files located at: " +
+      fs.realpathSync("./Resources/js/dataGenerator"),
     currentYear: new Date().getFullYear()
   });
 };
@@ -114,56 +116,54 @@ exports.generateMockData = function(req, res) {
   var perc;
 
   //for ajax call to get percentage complete
-  if (req.query.perc){
-	if (generatorProcess != null){
-		generatorProcess.send("Percentage Please");			//message string is unimportant
-		//setup callback for message from child process
-		generatorProcess.on('message', (msg) => {
-			perc = parseInt(msg);
-			res.writeHead(200, { 'Content-Type': 'application/json' }); 
-			res.end(msg);
-			generatorProcess.removeAllListeners('message');	//remove listener to prevent duplicate AJAX responses
-		});
-		
-	} else {
-		res.writeHead(200, { 'Content-Type': 'application/json' }); 
-		res.end('100');
-	}
-	return;
+  if (req.query.perc) {
+    if (generatorProcess != null) {
+      generatorProcess.send("Percentage Please"); //message string is unimportant
+      //setup callback for message from child process
+      generatorProcess.on("message", msg => {
+        perc = parseInt(msg);
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(msg);
+        generatorProcess.removeAllListeners("message"); //remove listener to prevent duplicate AJAX responses
+      });
+    } else {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end("100");
+    }
+    return;
   }
-  
+
   //if not a percentage call, start the generator
   if (req.query.time) q.push("-t", req.query.time);
   if (req.query.config) q.push("-c", req.query.config);
   function generate(path, callback) {
-		generatorProcess = childProcess.fork(path, q);
-		var invoked = false;
+    generatorProcess = childProcess.fork(path, q);
+    var invoked = false;
 
-		// listen for errors
-		generatorProcess.on("error", function(err) {
-		  if (invoked) return;
-		  invoked = true;
-		  callback(err);
-		});
+    // listen for errors
+    generatorProcess.on("error", function(err) {
+      if (invoked) return;
+      invoked = true;
+      callback(err);
+    });
 
-		// execute the callback
-		generatorProcess.on('exit', function (code) {
-			generatorProcess = null;
-			if (invoked) return;
-			invoked = true;
-			var err = code === 0 ? null : new Error('exit code ' + code);
-			callback(err);
-		});
+    // execute the callback
+    generatorProcess.on("exit", function(code) {
+      generatorProcess = null;
+      if (invoked) return;
+      invoked = true;
+      var err = code === 0 ? null : new Error("exit code " + code);
+      callback(err);
+    });
+  }
 
-	}
-	
-	generate('./Resources/js/dataGenerator/rfmockdatacreator.js', function(err){
-		if(!err){
-			res.download('./Resources/js/dataGenerator/output.csv');
-		}else{
-			console.log(err);
-		}
-	});
+  generate("./Resources/js/dataGenerator/rfmockdatacreator.js", function(err) {
+    if (!err) {
+      res.download("./Resources/js/dataGenerator/output.csv");
+    } else {
+      console.log(err);
+    }
+  });
 };
 
 exports.postSelectedMetrics = function(req, res) {
@@ -191,6 +191,9 @@ exports.postSubType = function(req, res) {
     ["sse", "sub", "poll"].includes(selectedSubType.type)
   ) {
     // TODO: Set up connection to Redfish accordingly
+    if (selectedSubType.type === "sub") {
+      subscribeToEvents();
+    }
     // TODO: Update metrics_config.json
     updateSubType(selectedSubType.type);
     res.json(selectedSubType);
@@ -200,6 +203,31 @@ exports.postSubType = function(req, res) {
         "POST body must include property 'type'. Acceptable values: poll, sse, or sub"
     });
   }
+};
+
+exports.handleEventIn = function(req, res) {
+  console.log(req.body);
+  res.json(req.body);
+};
+
+const subscribeToEvents = () => {
+  request.post(
+    {
+      url: `http://localhost:8001/redfish/v1/EventService/Subscriptions`,
+      json: true,
+      body: {
+        EventFormatType: "MetricReport",
+        SubscriptionType: "RedfishEvent",
+        Destination: "http://localhost:8080/api/event_in"
+      }
+    },
+    (error, response, body) => {
+      if (error) {
+        console.log(error);
+      }
+      console.log(response);
+    }
+  );
 };
 
 exports.getCurrentConfig = function(req, res) {
