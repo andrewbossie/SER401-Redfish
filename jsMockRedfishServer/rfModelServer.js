@@ -208,7 +208,7 @@ var writeDirtyFilesTimer = setInterval(function() {
 function usage() {
   console.log(`Usage:
 
-node jsmockserver [options]
+node jsModelServer [options]
 
 Options:
   -c file   Change from the default config.js config file
