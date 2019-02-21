@@ -308,6 +308,8 @@ body {
    border: 2px solid #212121;
    width: 25%;
    margin: 0 auto;
+   position: absolute;
+   right: 20%;
 }
 
 .list-div{
@@ -315,4 +317,17 @@ body {
    height: 400px;
    overflow-y: scroll;
    box-shadow: inset 0 -25px 50px -35px rgba(0, 0, 0, 1);
+}
+
+#metricsLabel {
+   padding: 10px;
+   font-family: arial;
+   font-weight: 600;
+   text-decoration: underline;
+}
+
+#selectedMetrics {
+   font-family: arial;
+   padding-top: 20px;
+   margin-left: -50px;
 }
