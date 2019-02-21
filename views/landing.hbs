@@ -54,9 +54,11 @@
             </div>
         </div>
         <div id="dashboard">
-            <span>Selected Metrics:</span>
-            <br/>
-            <div id="selectedMetrics"/>
+            <!--<span>Selected Metrics:</span>-->
+            <!--<br/>-->
+            <div id="selectedMetrics">
+                <ul class="selected-parent"></ul>
+            </div>
         </div>
         <!--<div style="width: 30%; display: inline-block">-->
         <!--</div>-->
@@ -219,13 +221,7 @@
         e.preventDefault();
 
         window.location.replace("/graphs");
-
-        // $.ajax({
-        //     type: "POST",
-        //     url: "/something",
-        //     data: {payload: selected}
-        // });
-    });
+            });
 
     // AJAX for current config
     function get_existing(){
@@ -234,8 +230,16 @@
             url: 'api/config',
             success:  function(response){
                 console.log(response['selections'].length);
-                var parsed = JSON.parse(response);
-                console.log(parsed);
+                // var parsed = JSON.parse(response);
+                console.log(response['selections']);
+                for(var i = 0; i < response['selections'].length; i++){
+                    console.log(response['selections'][i]['from']);
+                    $('.selected-parent').append('<li>'+response['selections'][i]['from']+'</li>');
+                    for(var j = 0; j < response['selections'][i]['metrics'].length; j++){
+                        $('.selected-parent').append('<ul class="selected_' +response['selections'][i]['from']+ '"></ul>');
+                        $('.selected_' + response['selections'][i]['from'] + '').append('<li>'+response['selections'][i]['metrics'][j]+'</li>');
+                    }
+                }
             },
             error: function(error){
                 alert("Error getting existing config!");
@@ -244,7 +248,7 @@
         });
     }
 
-    let testSelectedMetrics = ['a','b','c'];
+    // let testSelectedMetrics = ['a','b','c'];
     let selectedMetricsHtml = '';
     testSelectedMetrics.forEach(metric => {
         selectedMetricsHtml += '<p>'+metric+'</p>';
