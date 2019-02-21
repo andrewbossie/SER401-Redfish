@@ -56,7 +56,7 @@
         <div id="dashboard">
             <!--<span>Selected Metrics:</span>-->
             <!--<br/>-->
-            <div id="selectedMetrics">
+            <div id="selectedMetrics" style="margin-left: 10px;">
                 <ul class="selected-parent"></ul>
             </div>
         </div>
@@ -65,9 +65,8 @@
     </div>
 </body>
 <script>
-    get_existing();
-
    var selected = [];
+   var preselected = [];
    $('#view').prop('disabled', true);
 
     var selected = [];
@@ -125,7 +124,11 @@
                     // console.log(response['MetricProperties']);
                     newData = response['MetricProperties'];
                     for(var i = 0; i < newData.length; i++){
-                        $(this).next().append('<li class="data" data-selected="no" style="color: red;">' + newData[i].substr(60, newData[i].length) + '</li>');
+                        if($.inArray(newData[i].substr(60, newData[i].length), preselected)){
+                            $(this).next().append('<li class="data" id="'+newData[i].substr(60, newData[i].length)+'" data-selected="no" style="color: red;">' + newData[i].substr(60, newData[i].length) + '</li>');
+                        } else{
+                            $(this).next().append('<li class="data" id="'+newData[i].substr(60, newData[i].length)+'" data-selected="yes" style="color: green;">' + newData[i].substr(60, newData[i].length) + '</li>');
+                        }
                     }
                 },
                 error: function (error) {
@@ -142,6 +145,7 @@
 
     $('.metrics-indiv').on('click', '.data', function(e){
         e.preventDefault();
+        console.log(this);
         var parent = $(this).parent().attr('data-parent');
         var individual = $(this).parent().text();
 
@@ -223,23 +227,32 @@
         window.location.replace("/graphs");
             });
 
+   $(document).ready(function(){
+       get_existing();
+   });
     // AJAX for current config
     function get_existing(){
         $.ajax({
             method: "GET",
             url: 'api/config',
             success:  function(response){
-                console.log(response['selections'].length);
+                // console.log(response['selections'].length);
                 // var parsed = JSON.parse(response);
-                console.log(response['selections']);
+                // console.log(response['selections']);
                 for(var i = 0; i < response['selections'].length; i++){
-                    console.log(response['selections'][i]['from']);
+                    // console.log(response['selections'][i]['from']);
                     $('.selected-parent').append('<li>'+response['selections'][i]['from']+'</li>');
                     for(var j = 0; j < response['selections'][i]['metrics'].length; j++){
                         $('.selected-parent').append('<ul class="selected_' +response['selections'][i]['from']+ '"></ul>');
                         $('.selected_' + response['selections'][i]['from'] + '').append('<li>'+response['selections'][i]['metrics'][j]+'</li>');
+                        // console.log(response['selections'][i]['metrics'][j]);
+                        preselected.push(response['selections'][i]['metrics'][j]);
+                        // $('.metrics-indiv').find('#LogicalProcessor').attr('data-selected', 'yes');
+                        // $('#' + response['selections'][i]['metrics'][j] + '').attr('data-selected', 'yes');
+                        // $('#' + response['selections'][i]['metrics'][j] + '').css('color', 'green');
                     }
                 }
+                console.log(preselected);
             },
             error: function(error){
                 alert("Error getting existing config!");
