@@ -26,6 +26,11 @@
     <br />
     <br />
     <div>
+        <div id="dashboard">
+            <span id="metricsLabel">Selected Metrics:</span>
+            <br/>
+            <div id="selectedMetrics"></div>
+        </div>
         <div style="margin-left: 15%;">
             <h2>Please Select your Retrieval Method...</h2>
             <label for="polling">Polling (Default)</label>
@@ -53,11 +58,6 @@
                 </ul>
             </div>
         </div>
-        <div id="dashboard">
-            <span>Selected Metrics:</span>
-            <br/>
-            <div id="selectedMetrics"/>
-        </div>
         <!--<div style="width: 30%; display: inline-block">-->
         <!--</div>-->
     </div>
@@ -70,6 +70,7 @@
 
     var selected = [];
     var sub_type = [];
+    let selectedMetricsToDisplay = [];
     var newData = "";
     $('#view').prop('disabled', true);
     $('.metrics-indiv').hide();
@@ -146,6 +147,8 @@
         if($(this).attr('data-selected') === 'no'){
             $(this).attr('data-selected', 'yes');
             $(this).css('color', 'green');
+            selectedMetricsToDisplay.push($(this).text());
+            updateDashboardList();
 
             if(!(selected.includes(parent))){
                 selected.push(parent);
@@ -156,7 +159,6 @@
                 }
             }
             console.log(selected);
-            // selected.push($(this).text());
 
             //add to JSON
         } else{
@@ -164,8 +166,9 @@
             $(this).css('color', 'red');
             selected.splice(selected.indexOf($(this).text()), 1);
             //remove from JSON
+            selectedMetricsToDisplay.splice(selected.indexOf($(this).text()), 1);
+            updateDashboardList();
         }
-        updateDashboardList();
     });
 
     $('#run').on('click', function(e){
@@ -243,17 +246,10 @@
             }
         });
     }
-
-    let testSelectedMetrics = ['a','b','c'];
-    let selectedMetricsHtml = '';
-    testSelectedMetrics.forEach(metric => {
-        selectedMetricsHtml += '<p>'+metric+'</p>';
-    });
-    document.getElementById('selectedMetrics').innerHTML = selectedMetricsHtml;
     
     let updateDashboardList = () => {
         let selectedMetricsHtml = '';
-        selected.forEach(metric => {
+        selectedMetricsToDisplay.forEach(metric => {
             selectedMetricsHtml += '<p>'+metric+'</p>';
         });
         document.getElementById('selectedMetrics').innerHTML = selectedMetricsHtml;
