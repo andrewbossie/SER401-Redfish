@@ -151,25 +151,26 @@
 
     $('.metrics-indiv').on('click', '.data', function(e){
         e.preventDefault();
-        console.log(this);
+        // console.log(this);
         var parent = $(this).parent().attr('data-parent');
-        var individual = $(this).parent().text();
+        var individual = $(this).text();
 
         if($(this).attr('data-selected') === 'no'){
             $(this).attr('data-selected', 'yes');
             $(this).css('color', 'green');
             selectedMetricsToDisplay.push($(this).text());
-            updateDashboardList();
+            // updateDashboardList();
 
             if(!(selected.includes(parent))){
                 selected.push(parent);
                 var loc = selected.indexOf(parent);
-                // console.log(loc);
+                console.log(loc);
                 if(!(selected[loc].includes(individual))){
+                    console.log(individual);
                     selected[loc].push(individual);
                 }
             }
-            console.log(selected);
+            // console.log(selected);
 
             //add to JSON
         } else{
@@ -178,7 +179,7 @@
             selected.splice(selected.indexOf($(this).text()), 1);
             //remove from JSON
             selectedMetricsToDisplay.splice(selected.indexOf($(this).text()), 1);
-            updateDashboardList();
+            // updateDashboardList();
         }
     });
 
@@ -238,29 +239,28 @@
    $(document).ready(function(){
        get_existing();
    });
+
     // AJAX for current config
     function get_existing(){
         $.ajax({
             method: "GET",
             url: 'api/config',
             success:  function(response){
-                // console.log(response['selections'].length);
-                // var parsed = JSON.parse(response);
-                // console.log(response['selections']);
                 for(var i = 0; i < response['selections'].length; i++){
-                    // console.log(response['selections'][i]['from']);
                     $('.selected-parent').append('<li>'+response['selections'][i]['from']+'</li>');
+                    $('.selected-parent').append('<ul class="selected_' +response['selections'][i]['from']+ '"></ul>');
+                    selected[response['selections'][i]['from']] = [];
+                    console.log(selected[i]);
                     for(var j = 0; j < response['selections'][i]['metrics'].length; j++){
-                        $('.selected-parent').append('<ul class="selected_' +response['selections'][i]['from']+ '"></ul>');
                         $('.selected_' + response['selections'][i]['from'] + '').append('<li>'+response['selections'][i]['metrics'][j]+'</li>');
-                        // console.log(response['selections'][i]['metrics'][j]);
                         preselected.push(response['selections'][i]['metrics'][j]);
-                        // $('.metrics-indiv').find('#LogicalProcessor').attr('data-selected', 'yes');
-                        // $('#' + response['selections'][i]['metrics'][j] + '').attr('data-selected', 'yes');
-                        // $('#' + response['selections'][i]['metrics'][j] + '').css('color', 'green');
+                        // console.log(response['selections'][i]['metrics'][j]);
+                        // selected[selected.indexOf(response['selections'][i]['from'])].push(response['selections'][i]['metrics'][j]);
+                        // console.log(response['selections'][i]['metrics'][j]);
+                        selected[response['selections'][i]['from']][j] = response['selections'][i]['metrics'][j];
                     }
                 }
-                console.log(preselected);
+                console.log(selected);
             },
             error: function(error){
                 alert("Error getting existing config!");
@@ -268,18 +268,12 @@
             }
         });
     }
-
-    // let testSelectedMetrics = ['a','b','c'];
-    // let selectedMetricsHtml = '';
-    // testSelectedMetrics.forEach(metric => {
-    //     selectedMetricsHtml += '<p>'+metric+'</p>';
-    // });
-    // document.getElementById('selectedMetrics').innerHTML = selectedMetricsHtml;
     
     let updateDashboardList = () => {
         let selectedMetricsHtml = '';
         selectedMetricsToDisplay.forEach(metric => {
             selectedMetricsHtml += '<p>'+metric+'</p>';
+            // $('.selected_' + response['selections'][i]['from'] + '').append('<li>'+response['selections'][i]['metrics'][j]+'</li>');
         });
         document.getElementById('selectedMetrics').innerHTML = selectedMetricsHtml;
     }
