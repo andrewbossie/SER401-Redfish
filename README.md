@@ -18,6 +18,18 @@ to install other packages used by the application.
 - Navigate to project directory (cd ./SER401-Redfish)
 - Run `npm install` to install all necessary packages
 
+### 3. Run application
+
+- Start up the Redfish Mockup Server and ensure it's running on port 8001.
+- Navigate to Node project root directory and run `node index.js`.
+- Navigate to `http://localhost:8080` in browser.
+
+### NOTE
+
+- Application will soon be configured for Sailfish.
+- At this time, InfluxDB is not receiving data from the application, therefore
+  the Grafana panels will be empty.
+
 ## Code Styling Guidelines
 
 - Indentation is done with 3 spaces
