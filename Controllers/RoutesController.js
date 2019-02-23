@@ -166,6 +166,19 @@ exports.generateMockData = function(req, res) {
   });
 };
 
+exports.postRedfishIp = function(req, res) {
+  let body = req.body;
+  if (body.ip) {
+    let ip = body.ip;
+    updateIp(ip);
+    res.json(body);
+  } else {
+    res.json({
+      error: "POST body should only contain attribute 'ip'"
+    });
+  }
+};
+
 exports.postSelectedMetrics = function(req, res) {
   let selectedMetrics = req.body;
   if (selectedMetrics.from && selectedMetrics.metrics) {
@@ -312,7 +325,28 @@ const updateSubType = newSubType => {
         "metrics_config.json",
         JSON.stringify(configData, undefined, 3),
         "utf8",
-        (err, data) => {
+        err => {
+          if (err) {
+            console.log(err);
+          }
+        }
+      );
+    }
+  });
+};
+
+const updateIp = ip => {
+  fs.readFile("metrics_config.json", "utf8", (err, data) => {
+    if (err) {
+      throw err;
+    } else {
+      configData = JSON.parse(data);
+      configData.ip = ip;
+      fs.writeFile(
+        "metrics_config.json",
+        JSON.stringify(configData, undefined, 3),
+        "utf8",
+        err => {
           if (err) {
             console.log(err);
           }
