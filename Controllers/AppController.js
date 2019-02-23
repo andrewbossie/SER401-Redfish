@@ -168,7 +168,7 @@ exports.getInfluxData = function(req, res) {
     }
 
     res.render("chart.hbs", {
-      pageTitle: "Redfish Telemetry Client",
+      pageTitle: "Redfish Insight",
       cpu: cpu,
       temp: temp,
       cpu_time: cpu_time,
