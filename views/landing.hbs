@@ -190,6 +190,12 @@
         }
     });
 
+    $('#ip').on('keyup', function(e){
+        if(e.which == 13){
+            var ip = $('#ip').val();
+        }
+    });
+
     $('#run').on('click', function(e){
         e.preventDefault();
 
