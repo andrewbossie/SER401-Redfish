@@ -6,7 +6,7 @@ const test_controller = require("../Controllers/TestController");
 
 module.exports = (app, router) => {
   app.use(express.static("./Resources"));
-  app.use(bodyParser.urlencoded());
+  app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
 
   /*
@@ -16,7 +16,10 @@ module.exports = (app, router) => {
     .route("/metrics")
     .get(routes_controller.getDefinitionCollection)
     .post(routes_controller.postSelectedMetrics);
+  router.route("/event_in").post(routes_controller.handleEventIn);
+  router.route("/sub_type").post(routes_controller.postSubType);
   router.route("/metrics/:metric").get(routes_controller.getMetric);
+  router.route("/config").get(routes_controller.getCurrentConfig);
   router.route("/test").get(test_controller.testGo);
   app.use("/api", router);
 
