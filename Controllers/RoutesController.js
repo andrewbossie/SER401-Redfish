@@ -4,8 +4,16 @@ const _ = require("lodash");
 
 const childProcess = require("child_process");
 const config = require("../config/config");
-const def_path = `${config.host}${config.redfish_defs}`;
+const user_config = require("../metrics_config.json");
+
 var generatorProcess = null; //Global reference to generator child process
+
+let options = {
+  host: "http://127.0.0.1:8001",
+  redfish_defs: "/redfish/v1/TelemetryService/MetricReportDefinitions"
+};
+
+const def_path = `${options.host}${options.redfish_defs}`;
 
 // Render Static Panels in Grafana
 exports.getPanels = function(req, res) {
@@ -336,22 +344,23 @@ const updateSubType = newSubType => {
 };
 
 const updateIp = ip => {
-  fs.readFile("metrics_config.json", "utf8", (err, data) => {
-    if (err) {
-      throw err;
-    } else {
-      configData = JSON.parse(data);
-      configData.ip = ip;
-      fs.writeFile(
-        "metrics_config.json",
-        JSON.stringify(configData, undefined, 3),
-        "utf8",
-        err => {
-          if (err) {
-            console.log(err);
-          }
-        }
-      );
-    }
-  });
+  options.host = ip;
+  // fs.readFile("metrics_config.json", "utf8", (err, data) => {
+  //   if (err) {
+  //     throw err;
+  //   } else {
+  //     configData = JSON.parse(data);
+  //     configData.ip = ip;
+  //     fs.writeFile(
+  //       "metrics_config.json",
+  //       JSON.stringify(configData, undefined, 3),
+  //       "utf8",
+  //       err => {
+  //         if (err) {
+  //           console.log(err);
+  //         }
+  //       }
+  //     );
+  //   }
+  // });
 };
