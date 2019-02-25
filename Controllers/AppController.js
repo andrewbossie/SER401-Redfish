@@ -1,4 +1,4 @@
-const keys = require("../config/keys");
+// const keys = require("../config/keys");
 const request = require("request");
 const Influx = require("influx");
 const util = require("../Resources/js/util");
