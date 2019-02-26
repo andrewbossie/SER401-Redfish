@@ -13,7 +13,7 @@ let options = {
   redfish_defs: "/redfish/v1/TelemetryService/MetricReportDefinitions"
 };
 
-const def_path = `${options.host}${options.redfish_defs}`;
+let def_path = `${options.host}${options.redfish_defs}`;
 
 // Render Static Panels in Grafana
 exports.getPanels = function(req, res) {
@@ -174,15 +174,16 @@ exports.generateMockData = function(req, res) {
   });
 };
 
-exports.postRedfishIp = function(req, res) {
+exports.postRedfishHost = function(req, res) {
   let body = req.body;
-  if (body.ip) {
-    let ip = body.ip;
-    updateIp(ip);
+  if (body.host) {
+    let host = body.host;
+    updateHost(host);
+    console.log(host);
     res.json(body);
   } else {
     res.json({
-      error: "POST body should only contain attribute 'ip'"
+      error: "POST body should only contain attribute 'host'"
     });
   }
 };
@@ -343,8 +344,9 @@ const updateSubType = newSubType => {
   });
 };
 
-const updateIp = ip => {
-  options.host = ip;
+const updateHost = host => {
+  options.host = host;
+  def_path = `${options.host}${options.redfish_defs}`;
   // fs.readFile("metrics_config.json", "utf8", (err, data) => {
   //   if (err) {
   //     throw err;

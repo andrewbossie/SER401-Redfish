@@ -18,7 +18,7 @@ module.exports = (app, router) => {
     .post(routes_controller.postSelectedMetrics);
   router.route("/event_in").post(routes_controller.handleEventIn);
   router.route("/sub_type").post(routes_controller.postSubType);
-  router.route("/redfish_ip").post(routes_controller.postRedfishIp);
+  router.route("/redfish_host").post(routes_controller.postRedfishHost);
   router.route("/metrics/:metric").get(routes_controller.getMetric);
   router.route("/config").get(routes_controller.getCurrentConfig);
   router.route("/test").get(test_controller.testGo);

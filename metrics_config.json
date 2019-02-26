@@ -1,24 +1,15 @@
 {
-   "enabledReports": [
-      "CPUConfig",
-      "FanStatus"
-   ],
-   "selections": [
-      {
-         "from": "CPUConfig",
-         "metrics": [
-            "LogicalProcessor",
-            "Brand"
-         ]
-      },
-      {
-         "from": "FanStatus",
-         "metrics": [
-            "Status",
-            "CurrentSpeedPWM"
-         ]
-      }
-   ],
-   "sub_method": "sub",
-   "ip": "localhost"
+  "enabledReports": ["CPUConfig", "FanStatus"],
+  "selections": [
+    {
+      "from": "CPUConfig",
+      "metrics": ["LogicalProcessor", "Brand"]
+    },
+    {
+      "from": "FanStatus",
+      "metrics": ["Status", "CurrentSpeedPWM"]
+    }
+  ],
+  "sub_method": "sub",
+  "host": "localhost"
 }
