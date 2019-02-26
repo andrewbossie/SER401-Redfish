@@ -192,7 +192,9 @@
 
     $('#ip').on('keyup', function(e){
         if(e.which == 13){
+            var payload = [];
             var ip = $('#ip').val();
+            payload['host'] = ip;
         }
     });
 
