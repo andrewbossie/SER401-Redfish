@@ -10,7 +10,7 @@ var fs = require("fs");
 var PFuncs = require("./PatternFuncs");
 var config;
 var iterations = 60*60*10; //default to 10 hours unless specified otherwise
-var outputPath = "./Resources/js/dataGenerator/output.csv"; //default. override with -o switch
+var outputPath = "./resources/js/dataGenerator/output.csv"; //default. override with -o switch
 var newPerc = 0;
 //-c switch to specify config file
 if (process.argv.indexOf("-c") != -1) {

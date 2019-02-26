@@ -1,11 +1,11 @@
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
-const routes_controller = require("../Controllers/RoutesController");
-const test_controller = require("../Controllers/TestController");
+const routes_controller = require("../controllers/RoutesController");
+const test_controller = require("../controllers/TestController");
 
 module.exports = (app, router) => {
-  app.use(express.static("./Resources"));
+  app.use(express.static("./resources"));
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
 
