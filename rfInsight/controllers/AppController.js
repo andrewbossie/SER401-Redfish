@@ -1,7 +1,7 @@
 const request = require("request");
 const Influx = require("influx");
-const util = require("../Resources/js/util");
-const rTools = require("../Resources/js/redfishTools");
+const util = require("../resources/js/util");
+const rTools = require("../resources/js/redfishTools");
 
 // Get CPU data
 let metrics = {
