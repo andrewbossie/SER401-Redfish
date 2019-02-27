@@ -4,8 +4,14 @@ const _ = require("lodash");
 
 const childProcess = require("child_process");
 const config = require("../config/config");
-const def_path = `${config.host}${config.redfish_defs}`;
-var generatorProcess = {process: null, perc: 0}; //Global reference to generator child process
+var generatorProcess = { process: null, perc: 0 }; //Global reference to generator child process
+
+let options = {
+  host: "http://127.0.0.1:8001",
+  redfish_defs: "/redfish/v1/TelemetryService/MetricReportDefinitions"
+};
+
+let def_path = `${options.host}${options.redfish_defs}`;
 
 // Render Static Panels in Grafana
 exports.getPanels = function(req, res) {
@@ -115,12 +121,12 @@ exports.generateMockData = function(req, res) {
 
   //for ajax call to get percentage complete
   if (req.query.perc) {
-	  res.writeHead(200, { "Content-Type": "application/json" });
-	  if(generatorProcess.process != null){
-		  res.end(""+generatorProcess.perc);
-	  }else{
-		  res.end("100");
-	  }
+    res.writeHead(200, { "Content-Type": "application/json" });
+    if (generatorProcess.process != null) {
+      res.end("" + generatorProcess.perc);
+    } else {
+      res.end("100");
+    }
     return;
   }
 
@@ -128,9 +134,11 @@ exports.generateMockData = function(req, res) {
   if (req.query.time) q.push("-t", req.query.time);
   if (req.query.config) q.push("-c", req.query.config);
   function generate(path, callback) {
-    generatorProcess.process = childProcess.fork("rfmockdatacreator.js", q, {cwd: path});
-	
-	generatorProcess.perc = 0;
+    generatorProcess.process = childProcess.fork("rfmockdatacreator.js", q, {
+      cwd: path
+    });
+
+    generatorProcess.perc = 0;
     var invoked = false;
 
     // listen for errors
@@ -139,11 +147,11 @@ exports.generateMockData = function(req, res) {
       invoked = true;
       callback(err);
     });
-	
-	//update perc variable when received from child process
-	generatorProcess.process.on("message", msg => {
-        generatorProcess.perc = parseInt(msg);
-	});
+
+    //update perc variable when received from child process
+    generatorProcess.process.on("message", msg => {
+      generatorProcess.perc = parseInt(msg);
+    });
 
     // execute the callback
     generatorProcess.process.on("exit", function(code) {
@@ -153,8 +161,6 @@ exports.generateMockData = function(req, res) {
       var err = code === 0 ? null : new Error("exit code " + code);
       callback(err);
     });
-	
-	
   }
 
   generate("./Resources/js/dataGenerator/", function(err) {
@@ -166,14 +172,29 @@ exports.generateMockData = function(req, res) {
   });
 };
 
+exports.postRedfishHost = function(req, res) {
+  let body = req.body.payload;
+  if (body.host) {
+    let host = body.host;
+    updateHost(host);
+    console.log(host);
+    res.json(body);
+  } else {
+    res.json({
+      error: "POST body should only contain attribute 'host'"
+    });
+  }
+};
+
 exports.postSelectedMetrics = function(req, res) {
-  let selectedMetrics = req.body;
+  console.log("POST from client...");
+  console.log(req.body);
+  let selectedMetrics = req.body.payload;
   if (selectedMetrics.from && selectedMetrics.metrics) {
     let metricReport = selectedMetrics.from;
     let metrics = selectedMetrics.metrics;
 
-    // patchMetricToEnabled(metricReport); ENABLE ONCE WE HAVE THE RIGHT ENDPOINT
-    // saveSelectionToDisk(req.body);
+    patchMetricToEnabled(metricReport);
     updateConfig(selectedMetrics);
 
     res.json(selectedMetrics);
@@ -185,7 +206,7 @@ exports.postSelectedMetrics = function(req, res) {
 };
 
 exports.postSubType = function(req, res) {
-  let selectedSubType = req.body;
+  let selectedSubType = req.body.payload;
   if (
     selectedSubType.type &&
     ["sse", "sub", "poll"].includes(selectedSubType.type)
@@ -206,7 +227,7 @@ exports.postSubType = function(req, res) {
 };
 
 exports.handleEventIn = function(req, res) {
-  console.log(req.body);
+  console.log("Received a metric report from Redfish service.");
   res.json(req.body);
 };
 
@@ -251,9 +272,7 @@ const patchMetricToEnabled = report => {
       body: {
         // This is temporary and will need to be changed upon schema update.
         // Status.State is read-only.
-        Status: {
-          State: "Enabled"
-        }
+        MetricReportDefinitionEnabled: true
       }
     },
     (error, response, body) => {
@@ -312,7 +331,7 @@ const updateSubType = newSubType => {
         "metrics_config.json",
         JSON.stringify(configData, undefined, 3),
         "utf8",
-        (err, data) => {
+        err => {
           if (err) {
             console.log(err);
           }
@@ -320,4 +339,27 @@ const updateSubType = newSubType => {
       );
     }
   });
+};
+
+const updateHost = host => {
+  options.host = host;
+  def_path = `${options.host}${options.redfish_defs}`;
+  // fs.readFile("metrics_config.json", "utf8", (err, data) => {
+  //   if (err) {
+  //     throw err;
+  //   } else {
+  //     configData = JSON.parse(data);
+  //     configData.ip = ip;
+  //     fs.writeFile(
+  //       "metrics_config.json",
+  //       JSON.stringify(configData, undefined, 3),
+  //       "utf8",
+  //       err => {
+  //         if (err) {
+  //           console.log(err);
+  //         }
+  //       }
+  //     );
+  //   }
+  // });
 };
