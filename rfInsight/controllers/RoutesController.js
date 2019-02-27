@@ -111,7 +111,7 @@ exports.getDataGenerator = function(req, res) {
   res.render("dataGeneratorUI.hbs", {
     configPath:
       "Config files located at: " +
-      fs.realpathSync("./Resources/js/dataGenerator"),
+      fs.realpathSync("./resources/js/dataGenerator"),
     currentYear: new Date().getFullYear()
   });
 };
@@ -163,9 +163,9 @@ exports.generateMockData = function(req, res) {
     });
   }
 
-  generate("./Resources/js/dataGenerator/", function(err) {
+  generate("./resources/js/dataGenerator/", function(err) {
     if (!err) {
-      res.download("./Resources/js/dataGenerator/output.csv");
+      res.download("./resources/js/dataGenerator/output.csv");
     } else {
       console.log(err);
     }
