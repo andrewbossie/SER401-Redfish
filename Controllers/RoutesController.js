@@ -192,8 +192,7 @@ exports.postSelectedMetrics = function(req, res) {
     let metricReport = selectedMetrics.from;
     let metrics = selectedMetrics.metrics;
 
-    // patchMetricToEnabled(metricReport); ENABLE ONCE WE HAVE THE RIGHT ENDPOINT
-    // saveSelectionToDisk(req.body);
+    patchMetricToEnabled(metricReport);
     updateConfig(selectedMetrics);
 
     res.json(selectedMetrics);
@@ -271,9 +270,7 @@ const patchMetricToEnabled = report => {
       body: {
         // This is temporary and will need to be changed upon schema update.
         // Status.State is read-only.
-        Status: {
-          State: "Enabled"
-        }
+        MetricReportDefinitionEnabled: true
       }
     },
     (error, response, body) => {
