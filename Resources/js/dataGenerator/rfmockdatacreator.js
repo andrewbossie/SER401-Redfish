@@ -1,16 +1,12 @@
 "use strict";
 
-process.on('message', (msg) => {
-	process.send(""+newPerc); //send percentage to parent process
-});
-
 
 var util = require("util");
 var fs = require("fs");
 var PFuncs = require("./PatternFuncs");
 var config;
 var iterations = 60*60*10; //default to 10 hours unless specified otherwise
-var outputPath = "./Resources/js/dataGenerator/output.csv"; //default. override with -o switch
+var outputPath = "./output.csv"; //default. override with -o switch
 var newPerc = 0;
 //-c switch to specify config file
 if (process.argv.indexOf("-c") != -1) {
@@ -63,7 +59,6 @@ function generate(){
 	var percLen = 50;			//the length, in characters, of the percentage loading bar
 	var stream = fs.createWriteStream(outputPath);
 	stream.write("");
-	//console.log("Generating " + secondsToString(iterations) + " of data... ");
 
 	//calculate GCD of iterations for iteration optimazation
 	config.MockupData.MockupPatterns.forEach(function(mockup, index) {
@@ -81,6 +76,7 @@ function generate(){
 		newPerc = Math.floor(i / iterations * 100);
 		if (newPerc > oldPerc){
 			oldPerc = newPerc;
+			process.send(""+newPerc); //send percentage to parent process
 			
 		}
 		
@@ -93,7 +89,7 @@ function generate(){
 			if (i % mockup.timedelay == 0) {
 				
 				//check if template has been parsed
-				let path = config.RedFishData.path + mockup.path + "index.json";
+				let path = './' + config.RedFishData.path + mockup.path + "index.json";
 				
 				//if its not loaded yet, load and parse the template
 				if(parsedPaths.indexOf(path) < 0){
@@ -171,9 +167,10 @@ function generate(){
 
 	//wrap up
 	str += "0,END";
-	stream.write(str);
-	//console.log("\nCompleted in " + (Date.now() - isoDTG) + "ms");
-	process.exit();
+	stream.write(str, function(){
+		process.exit();
+	});
+	
 	})();
 }
 

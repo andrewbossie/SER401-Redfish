@@ -4,9 +4,14 @@ const _ = require("lodash");
 
 const childProcess = require("child_process");
 const config = require("../config/config");
+<<<<<<< HEAD
 const user_config = require("../metrics_config.json");
 
 var generatorProcess = null; //Global reference to generator child process
+=======
+const def_path = `${config.host}${config.redfish_defs}`;
+var generatorProcess = {process: null, perc: 0}; //Global reference to generator child process
+>>>>>>> sprint7-dev
 
 let options = {
   host: "http://127.0.0.1:8001",
@@ -109,7 +114,6 @@ exports.getMetric = function(req, res) {
 };
 
 //Route handler for /dataGenerator
-//TODO: build UI page since right now the generator gets run on page load
 exports.getDataGenerator = function(req, res) {
   res.render("dataGeneratorUI.hbs", {
     configPath:
@@ -121,23 +125,15 @@ exports.getDataGenerator = function(req, res) {
 
 exports.generateMockData = function(req, res) {
   var q = [];
-  var perc;
 
   //for ajax call to get percentage complete
   if (req.query.perc) {
-    if (generatorProcess != null) {
-      generatorProcess.send("Percentage Please"); //message string is unimportant
-      //setup callback for message from child process
-      generatorProcess.on("message", msg => {
-        perc = parseInt(msg);
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(msg);
-        generatorProcess.removeAllListeners("message"); //remove listener to prevent duplicate AJAX responses
-      });
-    } else {
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end("100");
-    }
+	  res.writeHead(200, { "Content-Type": "application/json" });
+	  if(generatorProcess.process != null){
+		  res.end(""+generatorProcess.perc);
+	  }else{
+		  res.end("100");
+	  }
     return;
   }
 
@@ -145,27 +141,36 @@ exports.generateMockData = function(req, res) {
   if (req.query.time) q.push("-t", req.query.time);
   if (req.query.config) q.push("-c", req.query.config);
   function generate(path, callback) {
-    generatorProcess = childProcess.fork(path, q);
+    generatorProcess.process = childProcess.fork("rfmockdatacreator.js", q, {cwd: path});
+	
+	generatorProcess.perc = 0;
     var invoked = false;
 
     // listen for errors
-    generatorProcess.on("error", function(err) {
+    generatorProcess.process.on("error", function(err) {
       if (invoked) return;
       invoked = true;
       callback(err);
     });
+	
+	//update perc variable when received from child process
+	generatorProcess.process.on("message", msg => {
+        generatorProcess.perc = parseInt(msg);
+	});
 
     // execute the callback
-    generatorProcess.on("exit", function(code) {
-      generatorProcess = null;
+    generatorProcess.process.on("exit", function(code) {
+      generatorProcess.process = null;
       if (invoked) return;
       invoked = true;
       var err = code === 0 ? null : new Error("exit code " + code);
       callback(err);
     });
+	
+	
   }
 
-  generate("./Resources/js/dataGenerator/rfmockdatacreator.js", function(err) {
+  generate("./Resources/js/dataGenerator/", function(err) {
     if (!err) {
       res.download("./Resources/js/dataGenerator/output.csv");
     } else {
