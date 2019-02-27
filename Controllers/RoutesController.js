@@ -173,7 +173,7 @@ exports.generateMockData = function(req, res) {
 };
 
 exports.postRedfishHost = function(req, res) {
-  let body = req.body;
+  let body = req.body.payload;
   if (body.host) {
     let host = body.host;
     updateHost(host);
@@ -187,7 +187,9 @@ exports.postRedfishHost = function(req, res) {
 };
 
 exports.postSelectedMetrics = function(req, res) {
-  let selectedMetrics = req.body;
+  console.log("POST from client...");
+  console.log(req.body);
+  let selectedMetrics = req.body.payload;
   if (selectedMetrics.from && selectedMetrics.metrics) {
     let metricReport = selectedMetrics.from;
     let metrics = selectedMetrics.metrics;
@@ -204,7 +206,7 @@ exports.postSelectedMetrics = function(req, res) {
 };
 
 exports.postSubType = function(req, res) {
-  let selectedSubType = req.body;
+  let selectedSubType = req.body.payload;
   if (
     selectedSubType.type &&
     ["sse", "sub", "poll"].includes(selectedSubType.type)
@@ -225,7 +227,7 @@ exports.postSubType = function(req, res) {
 };
 
 exports.handleEventIn = function(req, res) {
-  console.log(req.body);
+  console.log("Received a metric report from Redfish service.");
   res.json(req.body);
 };
 
