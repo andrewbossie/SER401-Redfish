@@ -189,26 +189,6 @@
         }
     });
 
-    $('#ip').on('keyup', function(e){
-        if(e.which == 13){
-            var payload = [];
-            var ip = $('#ip').val();
-            payload['host'] = ip;
-
-            $.ajax({
-                url: "./api/redfish_host",
-                method: "POST",
-                data: {'host': ip},
-                success: function (response) {
-                    console.log(response);
-                },
-                error: function(error){
-                    Alert('Could not post ip!');
-                }
-            });
-        }
-    });
-
     $('#run').on('click', function(e){
         e.preventDefault();
 
@@ -252,6 +232,23 @@
             error: function(error){
                 alert("Could not post selected metrics.");
                 console.log(error);
+            }
+        });
+
+        // Post Ip
+        var payload = [];
+        var ip = $('#ip').val();
+        payload['host'] = ip;
+
+        $.ajax({
+            url: "./api/redfish_host",
+            method: "POST",
+            data: {'host': ip},
+            success: function (response) {
+                console.log(response);
+            },
+            error: function(error){
+                Alert('Could not post ip!');
             }
         });
     });

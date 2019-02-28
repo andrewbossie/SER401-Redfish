@@ -61,7 +61,7 @@ exports.getAvailableMetrics = function(req, res) {
           error: "Could not retrieve metrics"
         });
       } else if (error) {
-        // console.log(error);
+        console.log(error);
       } else {
         let metrics = [];
         for (var i = 0; i < body.Members.length; i++) {
