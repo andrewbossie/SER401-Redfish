@@ -5,9 +5,11 @@ var util = require("util");
 var fs = require("fs");
 var PFuncs = require("./PatternFuncs");
 var config;
-var iterations = 60*60*10; //default to 10 hours unless specified otherwise
-var outputPath = "./output.csv"; //default. override with -o switch
+var iterations = 60*60*10; 			//default to 10 hours unless specified otherwise
+var outputPath = "./output.csv"; 	//default. override with -o switch
+var interval = 10;					//number of seconds to wait before producing a report
 var newPerc = 0;
+
 //-c switch to specify config file
 if (process.argv.indexOf("-c") != -1) {
    if (process.argv[process.argv.indexOf("-c") + 1] != -1) {
@@ -35,6 +37,13 @@ if (process.argv.indexOf("-o") != -1) {
    }
 }
 
+//look for -i interval switch
+if (process.argv.indexOf("-i") != -1) {
+   if (process.argv[process.argv.indexOf("-i") + 1] != -1) {
+      interval = process.argv[process.argv.indexOf("-i") + 1]
+   }
+}
+
 //import config 
 if (!config) {
    config = require("./config");
@@ -53,7 +62,7 @@ function generate(){
 	var parsedPaths = [];		//cached json template paths
 	var parsedTemplates = [];	//cached json templates
 	var isoDTG = Date.now();
-	var str = "#\n";
+	var str = "#";
 	var gcd = 0;
 	var oldPerc = 0;
 	var percLen = 50;			//the length, in characters, of the percentage loading bar
@@ -67,7 +76,9 @@ function generate(){
 		else
 			gcd = getGCD(gcd,mockup.timedelay);
 	});
-
+	
+	
+	gcd = getGCD(gcd, interval);	//need to ensure the loop checks on interval
 
 	(async() => {
 	for (var i = 0; i <= iterations; i+=gcd) {
@@ -76,7 +87,8 @@ function generate(){
 		newPerc = Math.floor(i / iterations * 100);
 		if (newPerc > oldPerc){
 			oldPerc = newPerc;
-			process.send(""+newPerc); //send percentage to parent process
+			if(!(process.send === undefined))
+				process.send(""+newPerc); //send percentage to parent process
 			
 		}
 		
@@ -146,14 +158,19 @@ function generate(){
 				line += template.MetricProperty + ",";
 			}
 		});
+		if(i % interval == 0){
+			str += "\n";
+			str += i+ ",Metric,";
+		}
 		
 		//if the line is not empty, add some boilerplate and add to master string
 		if (line != "") {
-			str += i + ",";
-			str += "Metric,";
+			//str += ",";
 			str += line;
-			str += "\n";
+			
 		}
+		
+		
 		
 		//write to stream periodically to prevent memory overflow
 		if (str.length > 1000000){

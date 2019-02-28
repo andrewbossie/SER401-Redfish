@@ -22,7 +22,7 @@ var config = {
         //NOTE: If using -f switch to generate data for the event sequencer, only
         //whole seconds (i.e. an integer for timedelay) are supported.
         //Attempting to use partial seconds will likely result in severely malformed data
-        timedelay: 3,
+        timedelay: 1,
         // The pattern in the PatternFuncs.js file. Currently, these
         // are:
         //
@@ -59,35 +59,6 @@ var config = {
           MetricValue: "#value",
           TimeStamp: "#timestamp",
           MetricProperty: "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/1/CPUUtil"
-        }
-      },
-      {
-        name: "Pingpong CPU(2) Percent",
-        path: "/v1/TelemetryService/MetricReports/CPUMetrics/",
-        timedelay: 5,
-        pattern: "fullrand",
-        min: 70,
-        max: 80,
-        step: 1,
-        MetricValueTemplate: {
-          MemberID: "CPUPercentUtil",
-          MetricValue: "#value",
-          TimeStamp: "#timestamp",
-          MetricProperty: "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/2/CPUUtil"
-        }
-      },
-      {
-        name: "Random CPU(3) Percent",
-        path: "/v1/TelemetryService/MetricReports/CPUMetrics/",
-        timedelay: 10,
-        pattern: "fullrand",
-        min: 45,
-        max: 90,
-        MetricValueTemplate: {
-          MemberID: "CPUPercentUtil",
-          MetricValue: "#value",
-          TimeStamp: "#timestamp",
-          MetricProperty: "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/3/CPUUtil"
         }
       },
       {
