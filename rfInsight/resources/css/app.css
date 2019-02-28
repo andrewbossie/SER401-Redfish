@@ -12,6 +12,10 @@ h1 {
    font-family: "Roboto", sans-serif;
 }
 
+html{
+   font-family: "Roboto", sans-serif;
+}
+
 .themeLight h1 {
    color: #f3f3f3;
 }
@@ -302,18 +306,18 @@ body {
    /*-moz-columns: 2;*/
 /*}*/
 
-#dashboard {
-   height: 500px;
-   display: flex;
-   border: 2px solid #212121;
-   width: 25%;
-   margin: 0 auto;
-   position: absolute;
-   right: 20%;
-}
+/*.dashboard {*/
+   /*height: 500px;*/
+   /*!*display: flex;*!*/
+   /*border: 2px solid #212121;*/
+   /*!*width: 25%;*!*/
+   /*margin: 0 auto;*/
+   /*position: absolute;*/
+   /*!*right: 20%;*!*/
+/*}*/
 
 .list-div{
-   border: 1px solid #212121;
+   border: 1px solid lightgrey;
    height: 400px;
    overflow-y: scroll;
    box-shadow: inset 0 -25px 50px -35px rgba(0, 0, 0, 1);

@@ -25,13 +25,8 @@
     <!--<h1>{{ pageTitle }}</h1><a href="/">(testing) proceed to graphs page</a>-->
     <br />
     <br />
-    <div>
-        <div id="dashboard">
-            <span id="metricsLabel">Selected Metrics:</span>
-            <br/>
-            <div id="selectedMetrics"></div>
-        </div>
-        <div style="margin-left: 15%;">
+    <div id="methods" style="width: 33%; float: left; display: inline-block;">
+        <div style="margin-left: 20%;">
             <h2>Select Retrieval Method</h2>
             <label for="polling">Polling (Default)</label>
             <input id="polling" name="type" type="radio" value="polling" checked="checked"/>
@@ -42,20 +37,19 @@
             <label for="SSE">SSE Streaming</label>
             <input id="SSE" name="type" type="radio" value="sse" />
         </div>
-    </div>
-    <div>
-        <div id="ip-dash" style="margin-left: 15%; float: left; width: 300px;">
+        <div id="ip-dash" style="margin-left: 20%; width: 300px;">
             <h2>Enter an ip-address</h2>
             <input id="ip" placeholder="eg. 000.000.000.000" />
         </div>
-    </div>
-    <br />
-    <br />
-    <div>
-        <div style="margin-left: 15%; float: left; width: 300px;">
+        <br />
+        <div id="buttons" style="margin-left: 20%">
             <input type="button" value="Start" id="run" />
             <input type="button" value="View Graphs" id="view" />
-            <h2>Select Metrics</h2>
+        </div>
+    </div>
+    <div id="metrics" style="width: 33%; display: inline-block">
+        <div style="margin-left: 15%; width: 300px;">
+            <h2 style="text-align: center;: ;">Available Metrics</h2>
             <div class="list-div">
                 <ul class="list">
                     {{#each metrics }}
@@ -65,12 +59,18 @@
                 </ul>
             </div>
         </div>
-        <div id="dashboard">
+    </div>
+    <div id="selectedParent" style="width: 33%; float: right; display: inline-block;">
+        <div class="dashboard">
+            <h2>Selected Metrics:</h2>
+        </div>
+        <div class="dashboard">
             <!--<span>Selected Metrics:</span>-->
             <!--<br/>-->
             <div id="selectedMetrics" style="margin-left: 10px;">
                 <ul class="selected-parent"></ul>
             </div>
+            <div id="selectedMetrics"></div>
         </div>
         <!--<div style="width: 30%; display: inline-block">-->
         <!--</div>-->
