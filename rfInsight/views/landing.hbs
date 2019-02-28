@@ -25,7 +25,35 @@
     <!--<h1>{{ pageTitle }}</h1><a href="/">(testing) proceed to graphs page</a>-->
     <br />
     <br />
-    <div id="methods" style="width: 33%; float: left; display: inline-block;">
+    <div id="metrics" style="float: left; width: 33%; display: inline-block">
+        <div style="margin-left: 15%; width: 300px;">
+            <h2 style="text-align: center;">Available Metrics</h2>
+            <div class="list-div">
+                <ul class="list">
+                    {{#each metrics }}
+                        <li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}</li>
+                        <ul class="metrics-indiv" data-parent="{{this}}"></ul>
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="selectedParent" style="width: 33%; display: inline-block;">
+        <div class="dashboard">
+            <h2 style="text-align: center">Selected Metrics:</h2>
+        </div>
+        <div class="dashboard">
+            <!--<span>Selected Metrics:</span>-->
+            <!--<br/>-->
+            <div id="selectedMetrics" style="margin-left: 10px;">
+                <ul class="selected-parent"></ul>
+            </div>
+            <div id="selectedMetrics"></div>
+        </div>
+        <!--<div style="width: 30%; display: inline-block">-->
+        <!--</div>-->
+    </div>
+    <div id="methods" style="width: 33%; float: right; display: inline-block;">
         <div style="margin-left: 20%;">
             <h2>Select Retrieval Method</h2>
             <label for="polling">Polling (Default)</label>
@@ -46,34 +74,6 @@
             <input type="button" value="Start" id="run" />
             <input type="button" value="View Graphs" id="view" />
         </div>
-    </div>
-    <div id="metrics" style="width: 33%; display: inline-block">
-        <div style="margin-left: 15%; width: 300px;">
-            <h2 style="text-align: center;: ;">Available Metrics</h2>
-            <div class="list-div">
-                <ul class="list">
-                    {{#each metrics }}
-                        <li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}</li>
-                        <ul class="metrics-indiv" data-parent="{{this}}"></ul>
-                    {{/each}}
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div id="selectedParent" style="width: 33%; float: right; display: inline-block;">
-        <div class="dashboard">
-            <h2>Selected Metrics:</h2>
-        </div>
-        <div class="dashboard">
-            <!--<span>Selected Metrics:</span>-->
-            <!--<br/>-->
-            <div id="selectedMetrics" style="margin-left: 10px;">
-                <ul class="selected-parent"></ul>
-            </div>
-            <div id="selectedMetrics"></div>
-        </div>
-        <!--<div style="width: 30%; display: inline-block">-->
-        <!--</div>-->
     </div>
 </body>
 <script>
