@@ -134,6 +134,7 @@ exports.generateMockData = function(req, res) {
   //if not a percentage call, start the generator
   if (req.query.time) q.push("-t", req.query.time);
   if (req.query.config) q.push("-c", req.query.config);
+  if (req.query.interval) q.push("-i", req.query.interval);
   function generate(path, callback) {
     generatorProcess.process = childProcess.fork("rfmockdatacreator.js", q, {
       cwd: path
