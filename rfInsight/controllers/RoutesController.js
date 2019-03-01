@@ -190,12 +190,16 @@ exports.postRedfishHost = function(req, res) {
 exports.postSelectedMetrics = function(req, res) {
   console.log("POST from client...");
   console.log(req.body);
-  let selectedMetrics = req.body.payload;
-  if (selectedMetrics.from && selectedMetrics.metrics) {
-    let metricReport = selectedMetrics.from;
-    let metrics = selectedMetrics.metrics;
+  let selectedMetrics = req.body;
+  if (!_.isEmpty(selectedMetrics.payload)) {
+    // let metricReport = selectedMetrics.from;
+    // let metrics = selectedMetrics.metrics;
+    _.forOwn(selectedMetrics.payload, (val, key) => {
+      // TODO: Handle each key
+      // TODO: fix updateConfig to adhere
+      patchMetricToEnabled(key);
+    });
 
-    patchMetricToEnabled(metricReport);
     updateConfig(selectedMetrics);
 
     res.json(selectedMetrics);
