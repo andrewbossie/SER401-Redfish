@@ -62,7 +62,7 @@
         </div>
         <div id="ip-dash" style="margin-left: 20%; width: 300px;">
             <h2>Enter an ip-address</h2>
-            <input id="ip" placeholder="eg. 000.000.000.000" />
+            <input id="ip" placeholder="http://{host}:{port}" />
         </div>
         <br />
         <div id="buttons" style="margin-left: 20%">
@@ -180,7 +180,6 @@
             }
             updateDashboardList();
 
-            // console.log(selected);
         } else{
             $(this).attr('data-selected', 'no');
             $(this).css('color', 'red');
@@ -229,6 +228,15 @@
             }
         });
 
+        // Build Metrics
+        // console.log(selected);
+        // console.log(JSON.stringify(selected));
+        var p = new Object();
+        for(var key in selected){
+            p[key] = selected[key];
+        }
+        console.log(JSON.stringify(p));
+
         // POST METRICS
         $.ajax({
             type: "POST",
@@ -256,7 +264,7 @@
                 // console.log(response);
             },
             error: function(error){
-                Alert('Could not post ip!');
+                alert('Could not post ip!');
             }
         });
     });
