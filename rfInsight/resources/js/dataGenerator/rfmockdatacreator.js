@@ -18,7 +18,8 @@ if (process.argv.indexOf("-c") != -1) {
       try {
          config = require(configFile);
       } catch (e) {
-         //console.log("Error opening " + configFile + ": " + e);
+         console.log("Error opening " + configFile + ": " + e);
+		 process.exit(10);
       }
    }
 }
@@ -46,10 +47,15 @@ if (process.argv.indexOf("-i") != -1) {
 
 //import config 
 if (!config) {
-   config = require("./config");
+	try{
+		config = require("./config");
+	} catch(e){
+		console.log("Error opening default config: " + e);
+		process.exit(10);
+	}
 }
 
-
+ 
 
 generate();
 
@@ -105,7 +111,13 @@ function generate(){
 				
 				//if its not loaded yet, load and parse the template
 				if(parsedPaths.indexOf(path) < 0){
-					let file = fs.readFileSync(path,"utf-8")
+					try{
+						var file = fs.readFileSync(path,"utf-8")
+					}catch(e){
+						console.log("\nError opening template reports: " + e);
+						console.log("\nEnsure RedFishData.path property is correct in your specified config.js");
+						process.exit(11);
+					}
 					var currJSON = JSON.parse(file);
 					//push template to loaded templates
 					parsedTemplates.push(file);
