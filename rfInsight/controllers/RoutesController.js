@@ -61,14 +61,14 @@ exports.getAvailableMetrics = function(req, res) {
           error: "Could not retrieve metrics"
         });
       } else if (error) {
-        // console.log(error);
+        console.log(error);
       } else {
         let metrics = [];
         for (var i = 0; i < body.Members.length; i++) {
           let uri = body.Members[i]["@odata.id"];
           metrics.push(uri.substr(53, uri.length));
         }
-        console.log(metrics);
+        // console.log(metrics);
         res.render("landing.hbs", {
           pageTitle: "Redfish Insight",
           metrics: metrics
@@ -83,7 +83,7 @@ exports.getAvailableMetrics = function(req, res) {
 // bad requests. This is why !body is checked after the request is made.
 exports.getMetric = function(req, res) {
   let metric = req.params.metric;
-  console.log(typeof metric);
+  // console.log(typeof metric);
   request(
     {
       url: `${def_path}/${metric}`,

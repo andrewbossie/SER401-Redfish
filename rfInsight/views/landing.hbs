@@ -11,7 +11,7 @@
     <script src="../resources/js/index.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
           crossorigin="anonymous" />
-    <title>Redfish Insight</title>
+    <title>Redfish Insight | Home</title>
 </head>
 <body>
     <div id="menuContainer"></div>
@@ -25,13 +25,31 @@
     <!--<h1>{{ pageTitle }}</h1><a href="/">(testing) proceed to graphs page</a>-->
     <br />
     <br />
-    <div>
-        <div id="dashboard">
-            <span id="metricsLabel">Selected Metrics:</span>
-            <br/>
-            <div id="selectedMetrics"></div>
+    <div id="metrics" style="float: left; width: 33%; display: inline-block">
+        <div style="margin-left: 15%; width: 300px;">
+            <h2 style="text-align: center;">Available Metrics</h2>
+            <div class="list-div">
+                <ul class="list">
+                    {{#each metrics }}
+                        <li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}</li>
+                        <ul class="metrics-indiv" data-parent="{{this}}"></ul>
+                    {{/each}}
+                </ul>
+            </div>
         </div>
-        <div style="margin-left: 15%;">
+    </div>
+    <div id="selectedParent" style="width: 33%; display: inline-block;">
+        <div class="dashboard">
+            <h2 style="text-align: center">Selected Metrics:</h2>
+        </div>
+        <div class="dashboard">
+            <div id="selectedMetrics" style="margin-left: 100px;">
+                <ul class="selected-parent"></ul>
+            </div>
+        </div>
+    </div>
+    <div id="methods" style="width: 33%; float: right; display: inline-block;">
+        <div style="margin-left: 20%;">
             <h2>Select Retrieval Method</h2>
             <label for="polling">Polling (Default)</label>
             <input id="polling" name="type" type="radio" value="polling" checked="checked"/>
@@ -42,35 +60,20 @@
             <label for="SSE">SSE Streaming</label>
             <input id="SSE" name="type" type="radio" value="sse" />
         </div>
-    </div>
-    <br />
-    <div>
-        <div style="margin-left: 15%; float: left; width: 300px;">
+        <div id="ip-dash" style="margin-left: 20%; width: 300px;">
+            <h2>Enter an ip-address</h2>
+            <input id="ip" placeholder="http://{host}:{port}" />
+        </div>
+        <br />
+        <div id="buttons" style="margin-left: 20%">
             <input type="button" value="Start" id="run" />
             <input type="button" value="View Graphs" id="view" />
-            <h2>Select Metrics</h2>
-            <div class="list-div">
-                <ul class="list">
-                    {{#each metrics }}
-                        <li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}</li>
-                        <ul class="metrics-indiv" data-parent="{{this}}"></ul>
-                    {{/each}}
-                </ul>
-            </div>
         </div>
-        <div id="dashboard">
-            <!--<span>Selected Metrics:</span>-->
-            <!--<br/>-->
-            <div id="selectedMetrics" style="margin-left: 10px;">
-                <ul class="selected-parent"></ul>
-            </div>
-        </div>
-        <!--<div style="width: 30%; display: inline-block">-->
-        <!--</div>-->
     </div>
 </body>
 <script>
    var selected = [];
+   var size = 0;
    var preselected = [];
    $('#view').prop('disabled', true);
 
@@ -81,6 +84,7 @@
     $('#view').prop('disabled', true);
     $('.metrics-indiv').hide();
 
+    // Open Menu on CLick
     var menuOpened = false;
     let onMenuClick = () => {
       menuOpened = !menuOpened;
@@ -105,8 +109,8 @@
          setTimeout(() => {
             document.getElementById('menuContainer').innerHTML = "";
          }, 500)
-      };
-   }
+      }
+   };
 
    $(".menuIcon").on("click", onMenuClick);
 
@@ -148,9 +152,10 @@
         }
     });
 
+    // After select of individual metrics
     $('.metrics-indiv').on('click', '.data', function(e){
+
         e.preventDefault();
-        // console.log(this);
         var parent = $(this).parent().attr('data-parent');
         var individual = $(this).text();
 
@@ -158,30 +163,39 @@
             $(this).attr('data-selected', 'yes');
             $(this).css('color', 'green');
             selectedMetricsToDisplay.push($(this).text());
-            updateDashboardList();
 
-            if(!(selected.includes(parent))){
-                selected.push(parent);
-                var loc = selected.indexOf(parent);
-                console.log(loc);
-                if(!(selected[loc].includes(individual))){
-                    console.log(individual);
-                    selected[loc].push(individual);
+            // if the parent has not already been selected, create parent node and append metric
+            if(!(parent in selected)){
+                selected[parent] = [];
+                if(!(individual in selected[parent])){
+                    selected[parent].push(individual);
+                    size++;
                 }
             }
-            // console.log(selected);
+            // If the parent has been selected, find parent node then append metric
+            else{
+                if(!(individual in selected[parent])){
+                    selected[parent].push(individual);
+                }
+            }
+            updateDashboardList();
 
-            //add to JSON
         } else{
             $(this).attr('data-selected', 'no');
             $(this).css('color', 'red');
-            selected.splice(selected.indexOf($(this).text()), 1);
-            //remove from JSON
-            selectedMetricsToDisplay.splice(selected.indexOf($(this).text()), 1);
+            selected[parent].splice(selected[parent].indexOf(individual), 1);
+            console.log(selected);
+            if(selected[parent].length == 0){
+                console.log(selected);
+                // selected.splice(parent, parent.length);
+                delete selected[parent];
+                size--;
+            }
             updateDashboardList();
         }
     });
 
+    // Ready to send top back end an move on to graphs page
     $('#run').on('click', function(e){
         e.preventDefault();
 
@@ -214,21 +228,48 @@
             }
         });
 
+        // Build Metrics
+        // console.log(selected);
+        // console.log(JSON.stringify(selected));
+        var p = new Object();
+        for(var key in selected){
+            p[key] = selected[key];
+        }
+        console.log(JSON.stringify(p));
+
         // POST METRICS
         $.ajax({
             type: "POST",
             url: "api/metrics",
             data: {payload: selected},
             success: function(response){
-                console.log(response);
+                // console.log(response);
             },
             error: function(error){
                 alert("Could not post selected metrics.");
                 console.log(error);
             }
         });
+
+        // POST ip
+        var payload = [];
+        var ip = $('#ip').val();
+        payload['host'] = ip;
+
+        $.ajax({
+            url: "./api/redfish_host",
+            method: "POST",
+            data: {'host': ip},
+            success: function (response) {
+                // console.log(response);
+            },
+            error: function(error){
+                alert('Could not post ip!');
+            }
+        });
     });
 
+    // Go to Graphs Page
     $('#view').on('click', function(e){
         e.preventDefault();
 
@@ -245,21 +286,30 @@
             method: "GET",
             url: 'api/config',
             success:  function(response){
+
+                // For each response selection
                 for(var i = 0; i < response['selections'].length; i++){
+
+                    // Add parent node (from)
                     $('.selected-parent').append('<li>'+response['selections'][i]['from']+'</li>');
                     $('.selected-parent').append('<ul class="selected_' +response['selections'][i]['from']+ '"></ul>');
+
+                    // Make each parent node an array
                     selected[response['selections'][i]['from']] = [];
-                    console.log(selected[i]);
+                    size++;
+
+                    // For each metric (metrics)
                     for(var j = 0; j < response['selections'][i]['metrics'].length; j++){
+
+                        // Append metrics to the parent UL in the html
                         $('.selected_' + response['selections'][i]['from'] + '').append('<li>'+response['selections'][i]['metrics'][j]+'</li>');
                         preselected.push(response['selections'][i]['metrics'][j]);
-                        // console.log(response['selections'][i]['metrics'][j]);
-                        // selected[selected.indexOf(response['selections'][i]['from'])].push(response['selections'][i]['metrics'][j]);
-                        // console.log(response['selections'][i]['metrics'][j]);
+
+                        // Add to selected array
                         selected[response['selections'][i]['from']][j] = response['selections'][i]['metrics'][j];
                     }
                 }
-                console.log(selected);
+                // console.log(selected);
             },
             error: function(error){
                 alert("Error getting existing config!");
@@ -267,14 +317,21 @@
             }
         });
     }
-    
+
+    // Update dashboard on select of individual metrics
     let updateDashboardList = () => {
-        let selectedMetricsHtml = '';
-        selectedMetricsToDisplay.forEach(metric => {
-            selectedMetricsHtml += '<p>'+metric+'</p>';
-            // $('.selected_' + response['selections'][i]['from'] + '').append('<li>'+response['selections'][i]['metrics'][j]+'</li>');
-        });
-        document.getElementById('selectedMetrics').innerHTML = selectedMetricsHtml;
+        $('.selected-parent').empty();
+        // console.log(parents);
+        for(var key in selected){
+            // console.log(key);
+            $('.selected-parent').append('<li>'+key+'</li>');
+            $('.selected-parent').append('<ul class="selected_' +key+'"></ul>');
+
+            for(var k in selected[key]){
+                // console.log(k);
+                $('.selected_' + key + '').append('<li>'+selected[key][k]+'</li>');
+            }
+        }
     }
 </script>
 </html>
