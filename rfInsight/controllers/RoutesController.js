@@ -112,7 +112,8 @@ exports.getDataGenerator = function(req, res) {
     configPath:
       "Config files located at: " +
       fs.realpathSync("./resources/js/dataGenerator"),
-    currentYear: new Date().getFullYear()
+    currentYear: new Date().getFullYear(),
+    pageTitle: "Redfish Modeler"
   });
 };
 
