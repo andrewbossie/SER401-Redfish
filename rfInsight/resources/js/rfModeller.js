@@ -5,7 +5,15 @@ $.ajax({
   url: "/api/modeller_config",
   method: "GET",
 	success: function (response) {
+    console.log(response);
 		patternData = response['MetricProperties'];
+	},
+	error: function (error) {
+		alert("Error getting available metrics!");
+		console.log(error);
+	}
+});
+/*
 		for(var i = 0; i < newData.length; i++){
 			if($.inArray(newData[i].substr(60, newData[i].length), preselected)){
 				$(this).next().append('<li class="data" id="'+newData[i].substr(60, newData[i].length)+'" data-selected="no" style="color: red;">' + newData[i].substr(60, newData[i].length) + '</li>');
@@ -13,12 +21,7 @@ $.ajax({
 				$(this).next().append('<li class="data" id="'+newData[i].substr(60, newData[i].length)+'" data-selected="yes" style="color: green;">' + newData[i].substr(60, newData[i].length) + '</li>');
 			}
 		}
-	},
-	error: function (error) {
-		alert("Error getting available metrics!");
-		console.log(error);
-	}
-});
+*/
 
 /*
 var count = 0;

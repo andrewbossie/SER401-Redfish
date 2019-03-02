@@ -266,8 +266,17 @@ exports.getCurrentConfig = function(req, res) {
   });
 };
 
+exports.getRfModeller = function(req, res) {
+  res.render("rfModeller.hbs", {
+    pageTitle: "Redfish Modeller",
+    currentYear: new Date().getFullYear()
+  });
+};
+
+
 exports.getModellerConfig = function(req, res) {
   let modellerConfig;
+//  let modellerConfig = require("resources/js/dataGenerator/config.json");
 
   fs.readFile("resources/js/dataGenerator/config.js", "utf8", (err, data) => {
     if (err) {
@@ -279,11 +288,11 @@ exports.getModellerConfig = function(req, res) {
   });
 };
 
-exports.putModellerConfig = function(req, res) {
+exports.postModellerConfig = function(req, res) {
   let modellerConfig = JSON.parse(data);
 
   fs.writeFile(
-    "resources/js/dataGenerator/config.js",
+    "resources/js/dataGenerator/config.json",
     modellerConfig,
     "utf8",
     (err, data) => {

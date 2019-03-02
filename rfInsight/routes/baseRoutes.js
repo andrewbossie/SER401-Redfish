@@ -32,6 +32,7 @@ module.exports = (app, router) => {
   app.get("/graphs", routes_controller.getPanels);
   app.get("/datagenerator", routes_controller.getDataGenerator);
   app.get("/generateMockData", routes_controller.generateMockData);
+  app.get("/rfModeller", routes_controller.getRfModeller);
   app.get("/", routes_controller.getAvailableMetrics);
   app.get("/:metric", routes_controller.getMetric);
 
