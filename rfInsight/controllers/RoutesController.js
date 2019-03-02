@@ -266,6 +266,34 @@ exports.getCurrentConfig = function(req, res) {
   });
 };
 
+exports.getModellerConfig = function(req, res) {
+  let modellerConfig;
+
+  fs.readFile("resources/js/dataGenerator/config.js", "utf8", (err, data) => {
+    if (err) {
+      throw err;
+    } else {
+      modellerConfig = JSON.parse(data);
+      res.json(modellerConfig);
+    }
+  });
+};
+
+exports.putModellerConfig = function(req, res) {
+  let modellerConfig = JSON.parse(data);
+
+  fs.writeFile(
+    "resources/js/dataGenerator/config.js",
+    modellerConfig,
+    "utf8",
+    (err, data) => {
+      if (err) {
+        console.log(err);
+      }
+    }
+  );
+};
+
 const patchMetricToEnabled = report => {
   request.patch(
     {
