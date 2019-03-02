@@ -175,8 +175,9 @@ exports.generateMockData = function(req, res) {
 };
 
 exports.postRedfishHost = function(req, res) {
+  console.log(`Host POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let body = req.body.payload;
-  if (body.host) {
+  if (!_.isEmpty(body)) {
     let host = body.host;
     updateHost(host);
     console.log(host);
@@ -189,8 +190,7 @@ exports.postRedfishHost = function(req, res) {
 };
 
 exports.postSelectedMetrics = function(req, res) {
-  console.log("POST from client...");
-  console.log(req.body);
+  console.log(`Metrics POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let selectedMetrics = req.body;
   if (!_.isEmpty(selectedMetrics.payload)) {
     // let metricReport = selectedMetrics.from;
@@ -201,7 +201,7 @@ exports.postSelectedMetrics = function(req, res) {
       patchMetricToEnabled(key);
     });
 
-    updateConfig(selectedMetrics);
+    updateConfig(selectedMetrics.payload);
 
     res.json(selectedMetrics);
   } else {
@@ -211,8 +211,40 @@ exports.postSelectedMetrics = function(req, res) {
   }
 };
 
+const updateConfig = newSelection => {
+  fs.readFile("metrics_config.json", "utf8", (err, data) => {
+    if (err) {
+      throw err;
+    } else {
+      configData = JSON.parse(data);
+      // !configData.enabledReports.includes(newSelection.from) &&
+      //   configData.enabledReports.push(newSelection.from) &&
+      //   configData.selections.push(newSelection);
+      _.forOwn(newSelection, (val, key) => {
+        !configData.enabledReports.includes(key) &&
+          configData.enabledReports.push(key) &&
+          configData.selections.push({
+            from: key,
+            metrics: val
+          });
+      });
+      fs.writeFile(
+        "metrics_config.json",
+        JSON.stringify(configData, undefined, 3),
+        "utf8",
+        (err, data) => {
+          if (err) {
+            console.log(err);
+          }
+        }
+      );
+    }
+  });
+};
+
 exports.postSubType = function(req, res) {
-  let selectedSubType = req.body.payload;
+  console.log(`Sub type POST: ${JSON.stringify(req.body, undefined, 3)}`);
+  let selectedSubType = req.body;
   if (
     selectedSubType.type &&
     ["sse", "sub", "poll"].includes(selectedSubType.type)
@@ -300,30 +332,6 @@ const saveSelectionToDisk = selection => {
       }
     }
   );
-};
-
-const updateConfig = newSelection => {
-  fs.readFile("metrics_config.json", "utf8", (err, data) => {
-    if (err) {
-      throw err;
-    } else {
-      configData = JSON.parse(data);
-      !configData.enabledReports.includes(newSelection.from) &&
-        configData.enabledReports.push(newSelection.from) &&
-        configData.selections.push(newSelection);
-
-      fs.writeFile(
-        "metrics_config.json",
-        JSON.stringify(configData, undefined, 3),
-        "utf8",
-        (err, data) => {
-          if (err) {
-            console.log(err);
-          }
-        }
-      );
-    }
-  });
 };
 
 const updateSubType = newSubType => {
