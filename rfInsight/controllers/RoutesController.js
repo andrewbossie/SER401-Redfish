@@ -278,7 +278,7 @@ exports.getModellerConfig = function(req, res) {
   let modellerConfig;
 //  let modellerConfig = require("resources/js/dataGenerator/config.json");
 
-  fs.readFile("resources/js/dataGenerator/config.js", "utf8", (err, data) => {
+  fs.readFile("./resources/js/dataGenerator/config.json", "utf8", (err, data) => {
     if (err) {
       throw err;
     } else {
@@ -292,7 +292,7 @@ exports.postModellerConfig = function(req, res) {
   let modellerConfig = JSON.parse(data);
 
   fs.writeFile(
-    "resources/js/dataGenerator/config.json",
+    "./resources/js/dataGenerator/config.json",
     modellerConfig,
     "utf8",
     (err, data) => {

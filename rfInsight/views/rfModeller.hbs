@@ -1,132 +1,131 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<link rel="stylesheet" href="/css/app.css" />
-	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-      <script src="../js/rfModeller.js"></script>
-   		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
-          crossorigin="anonymous" />
-		<style>
-		#progressBarBG {
-		  width: 25%;
-		  background-color: grey;
-		}
+  <head>
+    <link rel="stylesheet" href="/css/app.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="../js/rfModeller.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous" />
+    <style>
+#progressBarBG {
+  width: 25%;
+  background-color: grey;
+}
 
-		#progressBar {
-		  width: 0%;
-		  height: 20px;
-		  background-color: green;
-		  line-height: 20px; /* To center it vertically */
-		  color: white; 
-		}
-		</style>
-	</head>
-	<body>
-		<div id="menuContainer"></div>
-    	<div>
-        	<div class="header">
-            	<i class="fas fa-bars menuIcon"></i>
-        	</div>
-			<h1 class="text">{{ pageTitle }}</h1>
-        	<div class="separator"></div>
-    	</div>
-      <div id="patterns" style="width: 33%; float: right; display: inline-block;">
-        <div style="margin-left: 20%;">
-          <h2>Select Retrieval Method</h2>
-          <div id="patternContainer">
-          </div>
-          <div id="newPattern">
-            <input type="button" value="+" id="newPattern" />
-          </div>
-          <div id="savePattern">
-            <input type="button" value="Save" id="savePattern" />
-          </div>
+    #progressBar {
+      width: 0%;
+      height: 20px;
+      background-color: green;
+      line-height: 20px; /* To center it vertically */
+      color: white; 
+    }
+    </style>
+  </head>
+  <body>
+    <div id="menuContainer"></div>
+    <div>
+      <div class="header">
+        <i class="fas fa-bars menuIcon"></i>
+      </div>
+      <h1 class="text">{{ pageTitle }}</h1>
+      <div class="separator"></div>
+    </div>
+    <div id="patterns">
+      <div style="margin-left: 20%;">
+        <h2>Patterns</h2>
+        <div id="patternContainer">
+        </div>
+        <div id="newPattern">
+          <input type="button" value="+" id="newPattern" />
+        </div>
+        <div id="savePattern">
+          <input type="button" value="Save" id="savePattern" />
         </div>
       </div>
-      <hr />
-		<form action="/generateMockData" method="get">
-			<table>
-				<tr>
-					<td>Time (seconds)</td>
-					<td><input type = "text" name = "time"></td>
-				</tr>
-				<tr>
-					<td>Config</td>
-					<td><input type = "text" name = "config"></td>
-					
-					<td><div id = "configPath">{{ configPath }}</div></td> <!-- Rendered via hbs -->
-				</tr>
-				<tr>
-					<td>Reporting Interval</td>
-					<td><input type = "text" name = "interval"></td>
-				</tR>
-			</table>
-			<input type="submit" onclick="return startAJAX()">
-			<div id="progressBarBG">
-			  <div id="progressBar"></div>
-			</div>
-			
-		</form>
-	</body>
-	<script>
-		let menuOpened = false;
-		let onMenuClick = () => {
-			menuOpened = !menuOpened;
-			let menuId = menuOpened ? "menuSurface" : "menuSurfaceClosing";
-			let overlayId = menuOpened ? "overlay" : "overlayClosing";
-			let menuHtml = 
-				"<div id='" + menuId + "'>" +
-					"<h1 class='menuTitle'>Menu</h1>" +
-					"<div class='menuSeparator'></div>" +
-					"<a href='/' class='menuLink'>Metric Selections</a>" +
-					"<div class='menuSeparator'></div>" +
-					"<a href='/graphs' class='menuLink'>Panel Display</a>" +
-					"<div class='menuSeparator'></div>" +
-					"<a href='/datagenerator' class='menuLink selectedLink'>Data Generator</a>" +
-					"<div class='menuSeparator'></div>" +
-				"</div>" + 
-				"<div id='"+ overlayId +"' onclick='onMenuClick()'>"+
-				"</div>";
-			document.getElementById('menuContainer').innerHTML = menuHtml;
+    </div>
+    <hr />
+    <form action="/generateMockData" method="get">
+      <table>
+        <tr>
+          <td>Time (seconds)</td>
+          <td><input type = "text" name = "time"></td>
+        </tr>
+        <tr>
+          <td>Config</td>
+          <td><input type = "text" name = "config"></td>
 
-			if (!menuOpened) {
-				setTimeout(() => {
-					document.getElementById('menuContainer').innerHTML = "";
-				}, 500)
-			}
-		}
-   		$(".menuIcon").on("click", onMenuClick);
-	</script>
-	
-	<script type="text/javascript">
-		var perc = 0;
-		var interval;
-		function startAJAX(){
-			document.getElementById("progressBar").style.width = '0%';
-			document.getElementById("progressBar").innerHTML = '0%';
-			interval = setInterval(getPerc, 100);
-		}
-		
-		
-		function getPerc() {
-			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.onreadystatechange = function() {
-				if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
-				   if (xmlhttp.status == 200) {
-						perc = parseInt(xmlhttp.responseText);
-						document.getElementById("progressBar").style.width = perc + '%';
-						document.getElementById("progressBar").innerHTML = perc * 1 + '%';
-						if(perc == 100){
-							clearInterval(interval);	//stop polling after receiving 100% from server
-						}
-				   }
-				}
-			};
-			xmlhttp.open("GET", "/generateMockData?perc=1", true);
-			xmlhttp.send();
-				
-		}
+          <td><div id = "configPath">{{ configPath }}</div></td> <!-- Rendered via hbs -->
+        </tr>
+        <tr>
+          <td>Reporting Interval</td>
+          <td><input type = "text" name = "interval"></td>
+          </tR>
+      </table>
+      <input type="submit" onclick="return startAJAX()">
+      <div id="progressBarBG">
+        <div id="progressBar"></div>
+      </div>
 
-	</script>
+    </form>
+  </body>
+  <script>
+    let menuOpened = false;
+let onMenuClick = () => {
+  menuOpened = !menuOpened;
+  let menuId = menuOpened ? "menuSurface" : "menuSurfaceClosing";
+  let overlayId = menuOpened ? "overlay" : "overlayClosing";
+  let menuHtml = 
+    "<div id='" + menuId + "'>" +
+    "<h1 class='menuTitle'>Menu</h1>" +
+    "<div class='menuSeparator'></div>" +
+    "<a href='/' class='menuLink'>Metric Selections</a>" +
+    "<div class='menuSeparator'></div>" +
+    "<a href='/graphs' class='menuLink'>Panel Display</a>" +
+    "<div class='menuSeparator'></div>" +
+    "<a href='/datagenerator' class='menuLink selectedLink'>Data Generator</a>" +
+    "<div class='menuSeparator'></div>" +
+    "</div>" + 
+    "<div id='"+ overlayId +"' onclick='onMenuClick()'>"+
+    "</div>";
+  document.getElementById('menuContainer').innerHTML = menuHtml;
 
-<html>
+  if (!menuOpened) {
+    setTimeout(() => {
+      document.getElementById('menuContainer').innerHTML = "";
+    }, 500)
+  }
+}
+$(".menuIcon").on("click", onMenuClick);
+  </script>
+
+  <script type="text/javascript">
+    var perc = 0;
+var interval;
+function startAJAX(){
+  document.getElementById("progressBar").style.width = '0%';
+  document.getElementById("progressBar").innerHTML = '0%';
+  interval = setInterval(getPerc, 100);
+}
+
+
+function getPerc() {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+      if (xmlhttp.status == 200) {
+        perc = parseInt(xmlhttp.responseText);
+        document.getElementById("progressBar").style.width = perc + '%';
+        document.getElementById("progressBar").innerHTML = perc * 1 + '%';
+        if(perc == 100){
+          clearInterval(interval);	//stop polling after receiving 100% from server
+        }
+      }
+    }
+  };
+  xmlhttp.open("GET", "/generateMockData?perc=1", true);
+  xmlhttp.send();
+
+}
+
+  </script>
+
+  <html>
