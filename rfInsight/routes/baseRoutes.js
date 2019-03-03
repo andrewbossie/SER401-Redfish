@@ -22,6 +22,8 @@ module.exports = (app, router) => {
   router.route("/metrics/:metric").get(routes_controller.getMetric);
   router.route("/config").get(routes_controller.getCurrentConfig);
   router.route("/test").get(test_controller.testGo);
+  router.route("/modeller_config").get(routes_controller.getModellerConfig);
+  router.route("/modeller_config").post(routes_controller.postModellerConfig);
   app.use("/api", router);
 
   /*
@@ -30,6 +32,7 @@ module.exports = (app, router) => {
   app.get("/graphs", routes_controller.getPanels);
   app.get("/datagenerator", routes_controller.getDataGenerator);
   app.get("/generateMockData", routes_controller.generateMockData);
+  app.get("/rfModeller", routes_controller.getRfModeller);
   app.get("/", routes_controller.getAvailableMetrics);
   app.get("/:metric", routes_controller.getMetric);
 

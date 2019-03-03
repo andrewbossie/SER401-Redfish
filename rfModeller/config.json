@@ -1,0 +1,67 @@
+{
+  "RedFishData": {
+    "path": "../../DCSimTools/Redfish-Mockup-Server/redfish"
+  },
+  "MockupData": {
+    "MockupPatterns": [
+      {
+        "name": "Sawtooth CPU(1) Percent",
+        "path": "/v1/TelemetryService/MetricReports/CPUMetrics/",
+
+        "timedelay": 3,
+        "pattern": "sawtooth",
+
+
+        "MetricValueTemplate": {
+          "MemberID": "CPUPercentUtil",
+          "MetricValue": "#value",
+          "TimeStamp": "#timestamp",
+          "MetricProperty": "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/1/CPUUtil"
+        }
+      },
+      {
+        "name": "Pingpong CPU(2) Percent",
+        "path": "/v1/TelemetryService/MetricReports/CPUMetrics/",
+        "timedelay": 5,
+        "pattern": "fullrand",
+        "min": 70,
+        "max": 80,
+        "step": 1,
+        "MetricValueTemplate": {
+          "MemberID": "CPUPercentUtil",
+          "MetricValue": "#value",
+          "TimeStamp": "#timestamp",
+          "MetricProperty": "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/2/CPUUtil"
+        }
+      },
+      {
+        "name": "Random CPU(3) Percent",
+        "path": "/v1/TelemetryService/MetricReports/CPUMetrics/",
+        "timedelay": 10,
+        "pattern": "fullrand",
+        "min": 45,
+        "max": 90,
+        "MetricValueTemplate": {
+          "MemberID": "CPUPercentUtil",
+          "MetricValue": "#value",
+          "TimeStamp": "#timestamp",
+          "MetricProperty": "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/3/CPUUtil"
+        }
+      },
+      {
+        "name": "Rubberband Memory Util Tray 2",
+        "path": "/v1/TelemetryService/MetricReports/MemoryMetrics/",
+        "timedelay": 2,
+        "pattern": "rubberband",
+        "center": 70,
+        "step": 5,
+        "MetricValueTemplate": {
+          "MemberID": "MemoryPercentUtil",
+          "MetricValue": "#value",
+          "TimeStamp": "#timestamp",
+          "MetricProperty": "/redfish/v1/Chassis/Tray_2/Memory/MemoryControl/1/MemoryUtil"
+        }
+      }
+    ]
+  }
+}
