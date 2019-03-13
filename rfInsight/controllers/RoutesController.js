@@ -4,8 +4,14 @@ const _ = require("lodash");
 
 const childProcess = require("child_process");
 const config = require("../config/config");
-const def_path = `${config.host}${config.redfish_defs}`;
-var generatorProcess = null; //Global reference to generator child process
+var generatorProcess = { process: null, perc: 0 }; //Global reference to generator child process
+
+let options = {
+  host: "http://127.0.0.1:8001",
+  redfish_defs: "/redfish/v1/TelemetryService/MetricReportDefinitions"
+};
+
+let def_path = `${options.host}${options.redfish_defs}`;
 
 // Render Static Panels in Grafana
 exports.getPanels = function(req, res) {
@@ -55,14 +61,14 @@ exports.getAvailableMetrics = function(req, res) {
           error: "Could not retrieve metrics"
         });
       } else if (error) {
-        // console.log(error);
+        console.log(error);
       } else {
         let metrics = [];
         for (var i = 0; i < body.Members.length; i++) {
           let uri = body.Members[i]["@odata.id"];
           metrics.push(uri.substr(53, uri.length));
         }
-        console.log(metrics);
+        // console.log(metrics);
         res.render("landing.hbs", {
           pageTitle: "Redfish Insight",
           metrics: metrics
@@ -77,7 +83,7 @@ exports.getAvailableMetrics = function(req, res) {
 // bad requests. This is why !body is checked after the request is made.
 exports.getMetric = function(req, res) {
   let metric = req.params.metric;
-  console.log(typeof metric);
+  // console.log(typeof metric);
   request(
     {
       url: `${def_path}/${metric}`,
@@ -101,33 +107,25 @@ exports.getMetric = function(req, res) {
 };
 
 //Route handler for /dataGenerator
-//TODO: build UI page since right now the generator gets run on page load
 exports.getDataGenerator = function(req, res) {
   res.render("dataGeneratorUI.hbs", {
     configPath:
       "Config files located at: " +
-      fs.realpathSync("./Resources/js/dataGenerator"),
-    currentYear: new Date().getFullYear()
+      fs.realpathSync("./resources/js/dataGenerator"),
+    currentYear: new Date().getFullYear(),
+    pageTitle: "Redfish Modeler"
   });
 };
 
 exports.generateMockData = function(req, res) {
   var q = [];
-  var perc;
 
   //for ajax call to get percentage complete
   if (req.query.perc) {
-    if (generatorProcess != null) {
-      generatorProcess.send("Percentage Please"); //message string is unimportant
-      //setup callback for message from child process
-      generatorProcess.on("message", msg => {
-        perc = parseInt(msg);
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(msg);
-        generatorProcess.removeAllListeners("message"); //remove listener to prevent duplicate AJAX responses
-      });
+    res.writeHead(200, { "Content-Type": "application/json" });
+    if (generatorProcess.process != null) {
+      res.end("" + generatorProcess.perc);
     } else {
-      res.writeHead(200, { "Content-Type": "application/json" });
       res.end("100");
     }
     return;
@@ -136,20 +134,30 @@ exports.generateMockData = function(req, res) {
   //if not a percentage call, start the generator
   if (req.query.time) q.push("-t", req.query.time);
   if (req.query.config) q.push("-c", req.query.config);
+  if (req.query.interval) q.push("-i", req.query.interval);
   function generate(path, callback) {
-    generatorProcess = childProcess.fork(path, q);
+    generatorProcess.process = childProcess.fork("rfmockdatacreator.js", q, {
+      cwd: path
+    });
+
+    generatorProcess.perc = 0;
     var invoked = false;
 
     // listen for errors
-    generatorProcess.on("error", function(err) {
+    generatorProcess.process.on("error", function(err) {
       if (invoked) return;
       invoked = true;
       callback(err);
     });
 
+    //update perc variable when received from child process
+    generatorProcess.process.on("message", msg => {
+      generatorProcess.perc = parseInt(msg);
+    });
+
     // execute the callback
-    generatorProcess.on("exit", function(code) {
-      generatorProcess = null;
+    generatorProcess.process.on("exit", function(code) {
+      generatorProcess.process = null;
       if (invoked) return;
       invoked = true;
       var err = code === 0 ? null : new Error("exit code " + code);
@@ -157,24 +165,43 @@ exports.generateMockData = function(req, res) {
     });
   }
 
-  generate("./Resources/js/dataGenerator/rfmockdatacreator.js", function(err) {
+  generate("./resources/js/dataGenerator/", function(err) {
     if (!err) {
-      res.download("./Resources/js/dataGenerator/output.csv");
+      res.download("./resources/js/dataGenerator/output.csv");
     } else {
       console.log(err);
     }
   });
 };
 
-exports.postSelectedMetrics = function(req, res) {
-  let selectedMetrics = req.body;
-  if (selectedMetrics.from && selectedMetrics.metrics) {
-    let metricReport = selectedMetrics.from;
-    let metrics = selectedMetrics.metrics;
+exports.postRedfishHost = function(req, res) {
+  console.log(`Host POST: ${JSON.stringify(req.body, undefined, 3)}`);
+  let body = req.body.payload;
+  if (!_.isEmpty(body)) {
+    let host = body.host;
+    updateHost(host);
+    console.log(host);
+    res.json(body);
+  } else {
+    res.json({
+      error: "POST body should only contain attribute 'host'"
+    });
+  }
+};
 
-    // patchMetricToEnabled(metricReport); ENABLE ONCE WE HAVE THE RIGHT ENDPOINT
-    // saveSelectionToDisk(req.body);
-    updateConfig(selectedMetrics);
+exports.postSelectedMetrics = function(req, res) {
+  console.log(`Metrics POST: ${JSON.stringify(req.body, undefined, 3)}`);
+  let selectedMetrics = req.body;
+  if (!_.isEmpty(selectedMetrics.payload)) {
+    // let metricReport = selectedMetrics.from;
+    // let metrics = selectedMetrics.metrics;
+    _.forOwn(selectedMetrics.payload, (val, key) => {
+      // TODO: Handle each key
+      // TODO: fix updateConfig to adhere
+      patchMetricToEnabled(key);
+    });
+
+    updateConfig(selectedMetrics.payload);
 
     res.json(selectedMetrics);
   } else {
@@ -184,7 +211,39 @@ exports.postSelectedMetrics = function(req, res) {
   }
 };
 
+const updateConfig = newSelection => {
+  fs.readFile("metrics_config.json", "utf8", (err, data) => {
+    if (err) {
+      throw err;
+    } else {
+      configData = JSON.parse(data);
+      // !configData.enabledReports.includes(newSelection.from) &&
+      //   configData.enabledReports.push(newSelection.from) &&
+      //   configData.selections.push(newSelection);
+      _.forOwn(newSelection, (val, key) => {
+        !configData.enabledReports.includes(key) &&
+          configData.enabledReports.push(key) &&
+          configData.selections.push({
+            from: key,
+            metrics: val
+          });
+      });
+      fs.writeFile(
+        "metrics_config.json",
+        JSON.stringify(configData, undefined, 3),
+        "utf8",
+        (err, data) => {
+          if (err) {
+            console.log(err);
+          }
+        }
+      );
+    }
+  });
+};
+
 exports.postSubType = function(req, res) {
+  console.log(`Sub type POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let selectedSubType = req.body;
   if (
     selectedSubType.type &&
@@ -206,7 +265,7 @@ exports.postSubType = function(req, res) {
 };
 
 exports.handleEventIn = function(req, res) {
-  console.log(req.body);
+  console.log("Received a metric report from Redfish service.");
   res.json(req.body);
 };
 
@@ -243,6 +302,43 @@ exports.getCurrentConfig = function(req, res) {
   });
 };
 
+exports.getRfModeller = function(req, res) {
+  res.render("rfModeller.hbs", {
+    pageTitle: "Redfish Modeller",
+    currentYear: new Date().getFullYear()
+  });
+};
+
+
+exports.getModellerConfig = function(req, res) {
+  let modellerConfig;
+//  let modellerConfig = require("resources/js/dataGenerator/config.json");
+
+  fs.readFile("./resources/js/dataGenerator/config.json", "utf8", (err, data) => {
+    if (err) {
+      throw err;
+    } else {
+      modellerConfig = JSON.parse(data);
+      res.json(modellerConfig);
+    }
+  });
+};
+
+exports.postModellerConfig = function(req, res) {
+  let modellerConfig = JSON.parse(data);
+
+  fs.writeFile(
+    "./resources/js/dataGenerator/config.json",
+    modellerConfig,
+    "utf8",
+    (err, data) => {
+      if (err) {
+        console.log(err);
+      }
+    }
+  );
+};
+
 const patchMetricToEnabled = report => {
   request.patch(
     {
@@ -251,9 +347,7 @@ const patchMetricToEnabled = report => {
       body: {
         // This is temporary and will need to be changed upon schema update.
         // Status.State is read-only.
-        Status: {
-          State: "Enabled"
-        }
+        MetricReportDefinitionEnabled: true
       }
     },
     (error, response, body) => {
@@ -277,30 +371,6 @@ const saveSelectionToDisk = selection => {
   );
 };
 
-const updateConfig = newSelection => {
-  fs.readFile("metrics_config.json", "utf8", (err, data) => {
-    if (err) {
-      throw err;
-    } else {
-      configData = JSON.parse(data);
-      !configData.enabledReports.includes(newSelection.from) &&
-        configData.enabledReports.push(newSelection.from) &&
-        configData.selections.push(newSelection);
-
-      fs.writeFile(
-        "metrics_config.json",
-        JSON.stringify(configData, undefined, 3),
-        "utf8",
-        (err, data) => {
-          if (err) {
-            console.log(err);
-          }
-        }
-      );
-    }
-  });
-};
-
 const updateSubType = newSubType => {
   fs.readFile("metrics_config.json", "utf8", (err, data) => {
     if (err) {
@@ -312,7 +382,7 @@ const updateSubType = newSubType => {
         "metrics_config.json",
         JSON.stringify(configData, undefined, 3),
         "utf8",
-        (err, data) => {
+        err => {
           if (err) {
             console.log(err);
           }
@@ -320,4 +390,27 @@ const updateSubType = newSubType => {
       );
     }
   });
+};
+
+const updateHost = host => {
+  options.host = host;
+  def_path = `${options.host}${options.redfish_defs}`;
+  // fs.readFile("metrics_config.json", "utf8", (err, data) => {
+  //   if (err) {
+  //     throw err;
+  //   } else {
+  //     configData = JSON.parse(data);
+  //     configData.ip = ip;
+  //     fs.writeFile(
+  //       "metrics_config.json",
+  //       JSON.stringify(configData, undefined, 3),
+  //       "utf8",
+  //       err => {
+  //         if (err) {
+  //           console.log(err);
+  //         }
+  //       }
+  //     );
+  //   }
+  // });
 };

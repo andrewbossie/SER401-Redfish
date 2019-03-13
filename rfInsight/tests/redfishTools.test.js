@@ -1,4 +1,4 @@
-const rTools = require("../Resources/js/redfishTools");
+const rTools = require("../resources/js/redfishTools");
 
 const mockup = rTools.mockupMetricReport;
 

@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="/css/app.css" />
-   		<script src="../Resources/js/index.js"></script>
+   		<script src="../resources/js/index.js"></script>
 	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
    		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
           crossorigin="anonymous" />
@@ -27,6 +27,8 @@
         	<div class="header">
             	<i class="fas fa-bars menuIcon"></i>
         	</div>
+			<h1 class="text">{{ pageTitle }}</h1>
+        	<div class="separator"></div>
     	</div>
 		<form action="/generateMockData" method="get">
 			<table>
@@ -37,8 +39,13 @@
 				<tr>
 					<td>Config</td>
 					<td><input type = "text" name = "config"></td>
+					
 					<td><div id = "configPath">{{ configPath }}</div></td> <!-- Rendered via hbs -->
 				</tr>
+				<tr>
+					<td>Reporting Interval</td>
+					<td><input type = "text" name = "interval"></td>
+				</tR>
 			</table>
 			<input type="submit" onclick="return startAJAX()">
 			<div id="progressBarBG">
@@ -83,7 +90,7 @@
 		function startAJAX(){
 			document.getElementById("progressBar").style.width = '0%';
 			document.getElementById("progressBar").innerHTML = '0%';
-			interval = setInterval(getPerc, 250);
+			interval = setInterval(getPerc, 100);
 		}
 		
 		

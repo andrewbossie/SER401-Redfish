@@ -1,4 +1,4 @@
-const util = require("../Resources/js/util");
+const util = require("../resources/js/util");
 
 // Valid input, needs conversion
 test("Converts 20161108T142504-0500 to 2016-11-08T14:25:04-0500", () => {

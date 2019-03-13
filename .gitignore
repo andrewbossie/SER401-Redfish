@@ -4,4 +4,4 @@ node_modules/
 .idea
 .swp
 config/keys.js
-jsMockRedfishServer/data.csv
+rfInsight/resources/js/dataGenerator/output.csv
