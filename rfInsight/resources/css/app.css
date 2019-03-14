@@ -153,6 +153,11 @@ p {
    cursor: pointer;
 }
 
+.expand {
+   cursor: pointer;
+   padding-left: 15px;
+}
+
 .header {
    height: 50px;
    background-color: #212121;
