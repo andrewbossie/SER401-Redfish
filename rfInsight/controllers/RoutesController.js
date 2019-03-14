@@ -270,16 +270,20 @@ exports.handleEventIn = function(req, res) {
 };
 
 const subscribeToEvents = () => {
+  /*
+  * The post body for the subscription is based on the EventDestination
+  * schema. A POST to redfish/v1/EventService/Subscriptions with this body
+  * should result in a 201 response code. Verify POST success by doing a GET
+  * on redfish/v1/EventService/Subscriptions.
+  */
   request.post(
     {
       url: `http://localhost:8001/redfish/v1/EventService/Subscriptions`,
       json: true,
       body: {
-        EventDestination: {
-          EventFormatType: "MetricReport",
-          SubscriptionType: "RedfishEvent",
-          Destination: "http://localhost:8080/api/event_in"
-        }
+        EventFormatType: "MetricReport",
+        SubscriptionType: "RedfishEvent",
+        Destination: "http://localhost:8080/api/event_in"
       }
     },
     (error, response, body) => {
