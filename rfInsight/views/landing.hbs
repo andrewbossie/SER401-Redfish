@@ -241,9 +241,9 @@
         $.ajax({
             type: "POST",
             url: "api/metrics",
-            data: {payload: selected},
+            data: {payload: JSON.stringify(p)},
             success: function(response){
-                // console.log(response);
+                console.log(response);
             },
             error: function(error){
                 alert("Could not post selected metrics.");
