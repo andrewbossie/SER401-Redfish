@@ -275,9 +275,11 @@ const subscribeToEvents = () => {
       url: `http://localhost:8001/redfish/v1/EventService/Subscriptions`,
       json: true,
       body: {
-        EventFormatType: "MetricReport",
-        SubscriptionType: "RedfishEvent",
-        Destination: "http://localhost:8080/api/event_in"
+        EventDestination: {
+          EventFormatType: "MetricReport",
+          SubscriptionType: "RedfishEvent",
+          Destination: "http://localhost:8080/api/event_in"
+        }
       }
     },
     (error, response, body) => {
@@ -309,19 +311,22 @@ exports.getRfModeller = function(req, res) {
   });
 };
 
-
 exports.getModellerConfig = function(req, res) {
   let modellerConfig;
-//  let modellerConfig = require("resources/js/dataGenerator/config.json");
+  //  let modellerConfig = require("resources/js/dataGenerator/config.json");
 
-  fs.readFile("./resources/js/dataGenerator/config.json", "utf8", (err, data) => {
-    if (err) {
-      throw err;
-    } else {
-      modellerConfig = JSON.parse(data);
-      res.json(modellerConfig);
+  fs.readFile(
+    "./resources/js/dataGenerator/config.json",
+    "utf8",
+    (err, data) => {
+      if (err) {
+        throw err;
+      } else {
+        modellerConfig = JSON.parse(data);
+        res.json(modellerConfig);
+      }
     }
-  });
+  );
 };
 
 exports.postModellerConfig = function(req, res) {
