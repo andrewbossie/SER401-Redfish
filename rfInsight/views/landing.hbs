@@ -214,11 +214,13 @@
 
         $('#view').prop('disabled', false);
 
+        var s = JSON.stringify(sub_type);
+
         // POST SUB TYPE
         $.ajax({
            type: "POST",
            url: "api/sub_type",
-           data: {type: sub_type},
+           data: {type: s},
             success: function(response){
                console.log(response);
             },

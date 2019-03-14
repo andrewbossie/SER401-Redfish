@@ -201,7 +201,7 @@ exports.postSelectedMetrics = function(req, res) {
       patchMetricToEnabled(key);
     });
 
-    updateConfig(selectedMetrics.payload);
+    // updateConfig(selectedMetrics.payload);
 
     res.json(selectedMetrics);
   } else {
@@ -252,10 +252,10 @@ exports.postSubType = function(req, res) {
   ) {
     // TODO: Set up connection to Redfish accordingly
     if (selectedSubType.type === "sub") {
-      subscribeToEvents();
+      // subscribeToEvents();
     }
     // TODO: Update metrics_config.json
-    updateSubType(selectedSubType.type);
+    // updateSubType(selectedSubType.type);
     res.json(selectedSubType);
   } else {
     res.json({
