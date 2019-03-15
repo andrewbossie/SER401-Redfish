@@ -35,7 +35,7 @@ function populatePatterns() {
     html += `  <div class="pattFormRow"><label>MemberID</label><input name="patMemberID" value="` + value["MetricValueTemplate"]["MemberID"] + `" type="text" required=true size=80 unique/></div>`;
     html += `  <div class="pattFormRow"><label>MetricProperty</label><input name="patMetricProp" value="` + value["MetricValueTemplate"]["MetricProperty"] + `" type="text" required=true size=80 unique/></div>`;
     html += `<div><input type="button" value="-" id=value["name"] /></div>`
-    html += `</div><br /><hr />`;
+    html += `</div>`;
   });
 
   $("#patternContainer").empty();
