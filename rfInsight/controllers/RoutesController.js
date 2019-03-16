@@ -176,13 +176,13 @@ exports.generateMockData = function(req, res) {
 
 exports.postRedfishHost = function(req, res) {
   console.log(`Host POST: ${JSON.stringify(req.body, undefined, 3)}`);
-  let body = req.body.payload;
-  if (!_.isEmpty(body)) {
+  let body = req.body;
+  if (body) {
     let host = body.host;
     updateHost(host);
-    console.log(host);
     res.json(body);
   } else {
+    console.log("Host not updated...");
     res.json({
       error: "POST body should only contain attribute 'host'"
     });
@@ -278,7 +278,7 @@ const subscribeToEvents = () => {
   */
   request.post(
     {
-      url: `http://localhost:8001/redfish/v1/EventService/Subscriptions`,
+      url: `${options.host}/redfish/v1/EventService/Subscriptions`,
       json: true,
       body: {
         EventFormatType: "MetricReport",
@@ -404,22 +404,5 @@ const updateSubType = newSubType => {
 const updateHost = host => {
   options.host = host;
   def_path = `${options.host}${options.redfish_defs}`;
-  // fs.readFile("metrics_config.json", "utf8", (err, data) => {
-  //   if (err) {
-  //     throw err;
-  //   } else {
-  //     configData = JSON.parse(data);
-  //     configData.ip = ip;
-  //     fs.writeFile(
-  //       "metrics_config.json",
-  //       JSON.stringify(configData, undefined, 3),
-  //       "utf8",
-  //       err => {
-  //         if (err) {
-  //           console.log(err);
-  //         }
-  //       }
-  //     );
-  //   }
-  // });
+  console.log(options.host);
 };
