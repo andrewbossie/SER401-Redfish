@@ -176,13 +176,13 @@ exports.generateMockData = function(req, res) {
 
 exports.postRedfishHost = function(req, res) {
   console.log(`Host POST: ${JSON.stringify(req.body, undefined, 3)}`);
-  let body = req.body.payload;
-  if (!_.isEmpty(body)) {
+  let body = req.body;
+  if (body) {
     let host = body.host;
     updateHost(host);
-    console.log(host);
     res.json(body);
   } else {
+    console.log("Host not updated...");
     res.json({
       error: "POST body should only contain attribute 'host'"
     });
@@ -270,9 +270,15 @@ exports.handleEventIn = function(req, res) {
 };
 
 const subscribeToEvents = () => {
+  /*
+  * The post body for the subscription is based on the EventDestination
+  * schema. A POST to redfish/v1/EventService/Subscriptions with this body
+  * should result in a 201 response code. Verify POST success by doing a GET
+  * on redfish/v1/EventService/Subscriptions.
+  */
   request.post(
     {
-      url: `http://localhost:8001/redfish/v1/EventService/Subscriptions`,
+      url: `${options.host}/redfish/v1/EventService/Subscriptions`,
       json: true,
       body: {
         EventFormatType: "MetricReport",
@@ -309,19 +315,22 @@ exports.getRfModeller = function(req, res) {
   });
 };
 
-
 exports.getModellerConfig = function(req, res) {
   let modellerConfig;
-//  let modellerConfig = require("resources/js/dataGenerator/config.json");
+  //  let modellerConfig = require("resources/js/dataGenerator/config.json");
 
-  fs.readFile("./resources/js/dataGenerator/config.json", "utf8", (err, data) => {
-    if (err) {
-      throw err;
-    } else {
-      modellerConfig = JSON.parse(data);
-      res.json(modellerConfig);
+  fs.readFile(
+    "./resources/js/dataGenerator/config.json",
+    "utf8",
+    (err, data) => {
+      if (err) {
+        throw err;
+      } else {
+        modellerConfig = JSON.parse(data);
+        res.json(modellerConfig);
+      }
     }
-  });
+  );
 };
 
 exports.postModellerConfig = function(req, res) {
@@ -395,22 +404,5 @@ const updateSubType = newSubType => {
 const updateHost = host => {
   options.host = host;
   def_path = `${options.host}${options.redfish_defs}`;
-  // fs.readFile("metrics_config.json", "utf8", (err, data) => {
-  //   if (err) {
-  //     throw err;
-  //   } else {
-  //     configData = JSON.parse(data);
-  //     configData.ip = ip;
-  //     fs.writeFile(
-  //       "metrics_config.json",
-  //       JSON.stringify(configData, undefined, 3),
-  //       "utf8",
-  //       err => {
-  //         if (err) {
-  //           console.log(err);
-  //         }
-  //       }
-  //     );
-  //   }
-  // });
+  console.log(options.host);
 };
