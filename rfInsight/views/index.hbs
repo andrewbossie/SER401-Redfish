@@ -217,7 +217,7 @@
                html +=
                   "<i class='fa fa-trash del' aria-hidden='true' id='" +
                   index +
-                  "'></i>";
+                  "'></i><i class='fa fa-expand expand'></i>";
                html += "<h2>" + labels[index] + "</h2>";
                html += "</span>";
                html += "</div>";
@@ -246,7 +246,7 @@
          html +=
             "<br /><i class='fa fa-trash del' aria-hidden='true' id='" +
             value +
-            "'></i><h2 class='text'>" +
+            "'></i><i class='fa fa-expand expand'></i><h2 class='text'>" +
             label +
             "</h2></div>";
          $(".main_container").append(html);
