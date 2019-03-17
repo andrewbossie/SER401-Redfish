@@ -108,7 +108,7 @@ exports.getMetric = function(req, res) {
 
 //Route handler for /dataGenerator
 exports.getDataGenerator = function(req, res) {
-  res.render("dataGeneratorUI.hbs", {
+  res.render("rfModeller.hbs", {
     configPath:
       "Config files located at: " +
       fs.realpathSync("./resources/js/dataGenerator"),
