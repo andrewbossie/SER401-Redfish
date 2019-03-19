@@ -133,9 +133,12 @@
                     // console.log(response['MetricProperties']);
                     newData = response['MetricProperties'];
                     for(var i = 0; i < newData.length; i++){
-                        if($.inArray(newData[i].substr(60, newData[i].length), preselected)){
+                        // console.log(newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length).toString());
+                        if( $.inArray(newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length).toString(), preselected) === -1 ){
+                            console.log("false");
                             $(this).next().append('<li class="data" id="'+newData[i].substr(60, newData[i].length)+'" data-selected="no" style="color: red;">' + newData[i].substr(60, newData[i].length) + '</li>');
                         } else{
+                            console.log("true");
                             $(this).next().append('<li class="data" id="'+newData[i].substr(60, newData[i].length)+'" data-selected="yes" style="color: green;">' + newData[i].substr(60, newData[i].length) + '</li>');
                         }
                     }
@@ -178,6 +181,7 @@
                     selected[parent].push(individual);
                 }
             }
+            // console.log(selected);
             updateDashboardList();
 
         } else{
@@ -186,7 +190,7 @@
             selected[parent].splice(selected[parent].indexOf(individual), 1);
             console.log(selected);
             if(selected[parent].length == 0){
-                console.log(selected);
+                // console.log(selected);
                 // selected.splice(parent, parent.length);
                 delete selected[parent];
                 size--;
@@ -214,11 +218,13 @@
 
         $('#view').prop('disabled', false);
 
+        var s = JSON.stringify(sub_type);
+
         // POST SUB TYPE
         $.ajax({
            type: "POST",
            url: "api/sub_type",
-           data: {type: sub_type},
+           data: {type: s},
             success: function(response){
                console.log(response);
             },
@@ -241,9 +247,9 @@
         $.ajax({
             type: "POST",
             url: "api/metrics",
-            data: {payload: selected},
+            data: {payload: JSON.stringify(p)},
             success: function(response){
-                // console.log(response);
+                console.log(response);
             },
             error: function(error){
                 alert("Could not post selected metrics.");
@@ -309,7 +315,8 @@
                         selected[response['selections'][i]['from']][j] = response['selections'][i]['metrics'][j];
                     }
                 }
-                // console.log(selected);
+                console.log(preselected);
+                console.log(selected);
             },
             error: function(error){
                 alert("Error getting existing config!");
