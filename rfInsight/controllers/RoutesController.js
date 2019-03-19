@@ -281,6 +281,7 @@ const subscribeToEvents = () => {
     {
       url: `${options.host}/redfish/v1/EventService/Subscriptions`,
       json: true,
+      rejectUnauthorized: false,
       body: {
         EventFormatType: "MetricReport",
         SubscriptionType: "RedfishEvent",
