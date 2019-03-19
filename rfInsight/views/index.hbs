@@ -308,6 +308,11 @@
             "<iframe src='" +
             panelData.url +
             "' class='panelFrameFullScreen' frameborder='0'></iframe>";
+      html +=
+            '<div class="fullScreenInfo ' + themeClass + '">' +
+               "<h2 class='text'>" + panelData.label + "</h2>" +
+               "<i class='fa fa-expand expand' id='"+ fullScreenPanel +"-expand'></i>" +
+            "</div>";
       $(".main_container").append(html);
       $('body').addClass('noScroll');
    }
