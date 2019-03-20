@@ -220,20 +220,6 @@
 
         var s = JSON.stringify(sub_type);
 
-        // POST SUB TYPE
-        $.ajax({
-           type: "POST",
-           url: "api/sub_type",
-           data: {type: s},
-            success: function(response){
-               console.log(response);
-            },
-            error: function(error){
-               alert("Could not post subscription type.");
-               console.log(error);
-            }
-        });
-
         // Build Metrics
         // console.log(selected);
         // console.log(JSON.stringify(selected));
@@ -242,20 +228,6 @@
             p[key] = selected[key];
         }
         console.log(JSON.stringify(p));
-
-        // POST METRICS
-        $.ajax({
-            type: "POST",
-            url: "api/metrics",
-            data: {payload: JSON.stringify(p)},
-            success: function(response){
-                console.log(response);
-            },
-            error: function(error){
-                alert("Could not post selected metrics.");
-                console.log(error);
-            }
-        });
 
         // POST ip
         var payload = [];
@@ -271,6 +243,34 @@
             },
             error: function(error){
                 alert('Could not post ip!');
+            }
+        });
+
+        // POST METRICS
+        $.ajax({
+            type: "POST",
+            url: "api/metrics",
+            data: {payload: JSON.stringify(p)},
+            success: function(response){
+                console.log(response);
+            },
+            error: function(error){
+                alert("Could not post selected metrics.");
+                console.log(error);
+            }
+        });
+
+        // POST SUB TYPE
+        $.ajax({
+            type: "POST",
+            url: "api/sub_type",
+            data: {type: s},
+            success: function(response){
+                console.log(response);
+            },
+            error: function(error){
+                alert("Could not post subscription type.");
+                console.log(error);
             }
         });
     });
