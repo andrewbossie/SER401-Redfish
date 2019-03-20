@@ -85,6 +85,30 @@ p {
    height: 94%;
 }
 
+.fullScreenInfo {
+   position: absolute;
+   top: 94%;
+   display: inline;
+   text-align: center;
+   right: 0;
+   left: 0;
+   margin: auto;
+}
+
+.fullScreenInfo > * {
+   display: inline-block;
+}
+
+.darkInfo {
+   background-color: #f3f3f3;
+   z-index: 90;
+}
+
+.lightInfo {
+   background-color: #222222;
+   z-index: 90;
+}
+
 .noScroll {
    overflow: hidden;
 }
