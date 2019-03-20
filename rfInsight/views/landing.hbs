@@ -52,10 +52,10 @@
         <div style="margin-left: 20%;">
             <h2>Select Retrieval Method</h2>
             <label for="polling">Polling (Default)</label>
-            <input id="polling" name="type" type="radio" value="polling" checked="checked"/>
+            <input id="polling" name="type" type="radio" value="poll" checked="checked"/>
             <br />
             <label for="subscription">Subscription</label>
-            <input id="subscription" name="type" type="radio" value="subscription" />
+            <input id="subscription" name="type" type="radio" value="sub" />
             <br />
             <label for="SSE">SSE Streaming</label>
             <input id="SSE" name="type" type="radio" value="sse" />
@@ -188,7 +188,7 @@
             $(this).attr('data-selected', 'no');
             $(this).css('color', 'red');
             selected[parent].splice(selected[parent].indexOf(individual), 1);
-            console.log(selected);
+            // console.log(selected);
             if(selected[parent].length == 0){
                 // console.log(selected);
                 // selected.splice(parent, parent.length);
@@ -219,6 +219,7 @@
         $('#view').prop('disabled', false);
 
         var s = JSON.stringify(sub_type);
+        console.log(sub_type['type']);
 
         // Build Metrics
         // console.log(selected);
@@ -227,7 +228,7 @@
         for(var key in selected){
             p[key] = selected[key];
         }
-        console.log(JSON.stringify(p));
+        // console.log(JSON.stringify(p));
 
         // POST ip
         var payload = [];
@@ -266,7 +267,7 @@
         $.ajax({
             type: "POST",
             url: "api/sub_type",
-            data: {type: s},
+            data: {"type": sub_type['type']},
             async: false,
             success: function(response){
                 console.log(response);
@@ -318,8 +319,8 @@
                         selected[response['selections'][i]['from']][j] = response['selections'][i]['metrics'][j];
                     }
                 }
-                console.log(preselected);
-                console.log(selected);
+                // console.log(preselected);
+                // console.log(selected);
             },
             error: function(error){
                 alert("Error getting existing config!");
