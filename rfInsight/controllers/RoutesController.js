@@ -99,7 +99,6 @@ exports.getMetric = function(req, res) {
       } else if (error) {
         console.log(error);
       } else {
-        console.log(body);
         res.json(body);
       }
     }
@@ -193,12 +192,8 @@ exports.postSelectedMetrics = function(req, res) {
   console.log(`Metrics POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let selectedMetrics = req.body;
   if (!_.isEmpty(selectedMetrics.payload)) {
-    // let metricReport = selectedMetrics.from;
-    // let metrics = selectedMetrics.metrics;
     _.forOwn(selectedMetrics.payload, (val, key) => {
-      // TODO: Handle each key
-      // TODO: fix updateConfig to adhere
-      patchMetricToEnabled(key);
+      // patchMetricToEnabled(key);
     });
 
     // updateConfig(selectedMetrics.payload);
@@ -217,9 +212,6 @@ const updateConfig = newSelection => {
       throw err;
     } else {
       configData = JSON.parse(data);
-      // !configData.enabledReports.includes(newSelection.from) &&
-      //   configData.enabledReports.push(newSelection.from) &&
-      //   configData.selections.push(newSelection);
       _.forOwn(newSelection, (val, key) => {
         !configData.enabledReports.includes(key) &&
           configData.enabledReports.push(key) &&
@@ -250,9 +242,8 @@ exports.postSubType = function(req, res) {
     selectedSubType.type &&
     ["sse", "sub", "poll"].includes(selectedSubType.type)
   ) {
-    // TODO: Set up connection to Redfish accordingly
     if (selectedSubType.type === "sub") {
-      // subscribeToEvents();
+      subscribeToEvents();
     }
     // TODO: Update metrics_config.json
     // updateSubType(selectedSubType.type);
@@ -282,9 +273,12 @@ const subscribeToEvents = () => {
       url: `${options.host}/redfish/v1/EventService/Subscriptions`,
       json: true,
       rejectUnauthorized: false,
+      /*
+      * See DMTF RMS github issue #53 for conversation regarding this format.
+      */
       body: {
         EventFormatType: "MetricReport",
-        SubscriptionType: "RedfishEvent",
+        EventTypes: ["MetricReport"],
         Destination: "http://localhost:8080/api/event_in"
       }
     },
@@ -292,7 +286,7 @@ const subscribeToEvents = () => {
       if (error) {
         console.log(error);
       }
-      console.log(response);
+      // console.log(response);
     }
   );
 };
@@ -362,7 +356,7 @@ const patchMetricToEnabled = report => {
       }
     },
     (error, response, body) => {
-      console.log(response);
+      // console.log(response);
     }
   );
 };
