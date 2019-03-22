@@ -313,6 +313,9 @@
                "<h2 class='text'>" + panelData.label + "</h2>" +
                "<i class='fa fa-expand expand' id='"+ fullScreenPanel +"-expand'></i>" +
             "</div>";
+      html += '<div class="leftArrow"><i class="fa fa-3x fa-arrow-left arrow" id="'+ fullScreenPanel +'-arrow-left"></i></div>';
+      html += '<div class="rightArrow"><i class="fa fa-3x fa-arrow-right arrow" id="'+ fullScreenPanel +'-arrow-right"></i></div>';
+
       $(".main_container").append(html);
       $('body').addClass('noScroll');
    }

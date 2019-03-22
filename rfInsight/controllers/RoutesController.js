@@ -235,7 +235,7 @@ const updateConfig = newSelection => {
 };
 
 exports.postSubType = function(req, res) {
-  // console.log("Sub type POST: " + req.body);
+  // console.log("Sub type POST: " + req.body.type);
   console.log(`Sub type POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let selectedSubType = req.body;
   if (
