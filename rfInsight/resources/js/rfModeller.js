@@ -21,7 +21,7 @@ function populatePatterns() {
 
   $.each(patternData["MockupData"]["MockupPatterns"], function(index, value) {
     console.log(value);
-    html += `<div class="pattern">`;
+    html += `<div class="pattern" id="pattern` + index + `">`;
     html += `  <div class="pattFormRow"><label>Name</label><input name="patName" value="` + value["name"] + `" type="text" required=true size=80 unique/></div>`;
     html += `  <div class="pattFormRow"><label>Path</label><input name="patPath" value="` + value["path"] + `" type="text" required=true size=80 /></div>`;
     html += `  <div class="pattFormRow"><label>Pattern</label><input name="patPatt" value="` + value["pattern"] + `" type="text" required=true size=80 /></div>`;
@@ -34,7 +34,7 @@ function populatePatterns() {
     html += `  <div class="pattFormRow"><label>Maximum</label><input name="patMax" value="` + (typeof value["max"] === "undefined" ? "0" : value["max"]) + `" type="number" required=true size=20 /></div>`;
     html += `  <div class="pattFormRow"><label>MemberID</label><input name="patMemberID" value="` + value["MetricValueTemplate"]["MemberID"] + `" type="text" required=true size=80 unique/></div>`;
     html += `  <div class="pattFormRow"><label>MetricProperty</label><input name="patMetricProp" value="` + value["MetricValueTemplate"]["MetricProperty"] + `" type="text" required=true size=80 unique/></div>`;
-    html += `<div><input type="button" value="-" id=value["name"] /></div>`
+    html += `<div><input type="button" value="-" id=value["name"] onClick="function rm(){$('#pattern` + index + `').remove()}; rm()" /></div>`
     html += `</div>`;
   });
 
