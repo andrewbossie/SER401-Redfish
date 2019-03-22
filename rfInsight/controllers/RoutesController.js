@@ -173,6 +173,10 @@ exports.generateMockData = function(req, res) {
   });
 };
 
+/*
+* Updates host in memory.
+* TODO: Update host before anything else happens.
+*/
 exports.postRedfishHost = function(req, res) {
   console.log(`Host POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let body = req.body;
@@ -188,6 +192,9 @@ exports.postRedfishHost = function(req, res) {
   }
 };
 
+// TODO - this isn't actually doing anything at the moment.
+// We need it to update some data so the app knows what to
+// get and send to Influx.
 exports.postSelectedMetrics = function(req, res) {
   console.log(`Metrics POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let selectedMetrics = req.body;
@@ -234,8 +241,11 @@ const updateConfig = newSelection => {
   });
 };
 
+/*
+* Handler for front-end POST subscription type. If 'sub', it is set up
+* to run the subscription workflow, which is currently working.
+*/
 exports.postSubType = function(req, res) {
-  // console.log("Sub type POST: " + req.body.type);
   console.log(`Sub type POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let selectedSubType = req.body;
   if (
@@ -245,8 +255,6 @@ exports.postSubType = function(req, res) {
     if (selectedSubType.type === "sub") {
       subscribeToEvents();
     }
-    // TODO: Update metrics_config.json
-    // updateSubType(selectedSubType.type);
     res.json(selectedSubType);
   } else {
     res.json({
@@ -256,6 +264,12 @@ exports.postSubType = function(req, res) {
   }
 };
 
+/*
+* This is the handler for events coming from Redfish service.
+* So far, no simulator has been able to send events to rfInsight.
+*
+* TODO test on Linux?
+*/
 exports.handleEventIn = function(req, res) {
   console.log("Received a metric report from Redfish service.");
   res.json(req.body);
