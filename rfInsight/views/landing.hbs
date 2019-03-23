@@ -84,6 +84,16 @@
     $('#view').prop('disabled', true);
     $('.metrics-indiv').hide();
 
+    //disable run until after hostname
+   $('#run').prop('disabled', true);
+
+   $('#ip').on('keyup', function(e){
+       e.preventDefault();
+       if(e.which === 13) {
+           $('#run').prop('disabled', false);
+       }
+   });
+
     // Open Menu on CLick
     var menuOpened = false;
     let onMenuClick = () => {
