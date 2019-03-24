@@ -213,80 +213,86 @@
     $('#run').on('click', function(e){
         e.preventDefault();
 
-        sub_type["type"] = $('input[name=type]:checked').val();
+        var valid = false;
 
-        $('.metrics-list').each(function(){
-           if($(this).attr('sel') === "Not Enabled"){
-               $(this).css('color', 'green');
+        if($('#ip').val())
 
-               var text = $(this).attr('value');
-               var newText = text + " (Running)";
 
-               $(this).text(newText);
-           }
-        });
+        if(valid) {
+            sub_type["type"] = $('input[name=type]:checked').val();
 
-        $('#view').prop('disabled', false);
+            $('.metrics-list').each(function () {
+                if ($(this).attr('sel') === "Not Enabled") {
+                    $(this).css('color', 'green');
 
-        var s = JSON.stringify(sub_type);
-        console.log(sub_type['type']);
+                    var text = $(this).attr('value');
+                    var newText = text + " (Running)";
 
-        // Build Metrics
-        // console.log(selected);
-        // console.log(JSON.stringify(selected));
-        var p = new Object();
-        for(var key in selected){
-            p[key] = selected[key];
+                    $(this).text(newText);
+                }
+            });
+
+            $('#view').prop('disabled', false);
+
+            var s = JSON.stringify(sub_type);
+            console.log(sub_type['type']);
+
+            // Build Metrics
+            var p = new Object();
+            for (var key in selected) {
+                p[key] = selected[key];
+            }
+
+            // POST ip
+            var payload = [];
+            var ip = $('#ip').val();
+            payload['host'] = ip;
+
+            $.ajax({
+                url: "./api/redfish_host",
+                method: "POST",
+                data: {'host': ip},
+                async: false,
+                success: function (response) {
+                    // console.log(response);
+                },
+                error: function (error) {
+                    alert('Could not post ip!');
+                }
+            });
+
+            // POST METRICS
+            $.ajax({
+                type: "POST",
+                url: "api/metrics",
+                data: {payload: JSON.stringify(p)},
+                async: false,
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (error) {
+                    alert("Could not post selected metrics.");
+                    console.log(error);
+                }
+            });
+
+            // POST SUB TYPE
+            $.ajax({
+                type: "POST",
+                url: "api/sub_type",
+                data: {"type": sub_type['type']},
+                async: false,
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (error) {
+                    alert("Could not post subscription type.");
+                    console.log(error);
+                }
+            });
+        } else{
+            alert('Destination IP invalid!');
         }
-        // console.log(JSON.stringify(p));
-
-        // POST ip
-        var payload = [];
-        var ip = $('#ip').val();
-        payload['host'] = ip;
-
-        $.ajax({
-            url: "./api/redfish_host",
-            method: "POST",
-            data: {'host': ip},
-            async: false,
-            success: function (response) {
-                // console.log(response);
-            },
-            error: function(error){
-                alert('Could not post ip!');
-            }
-        });
-
-        // POST METRICS
-        $.ajax({
-            type: "POST",
-            url: "api/metrics",
-            data: {payload: JSON.stringify(p)},
-            async: false,
-            success: function(response){
-                console.log(response);
-            },
-            error: function(error){
-                alert("Could not post selected metrics.");
-                console.log(error);
-            }
-        });
-
-        // POST SUB TYPE
-        $.ajax({
-            type: "POST",
-            url: "api/sub_type",
-            data: {"type": sub_type['type']},
-            async: false,
-            success: function(response){
-                console.log(response);
-            },
-            error: function(error){
-                alert("Could not post subscription type.");
-                console.log(error);
-            }
-        });
 
         $('#run').val('Running');
         $('#run').prop('disabled', true);
