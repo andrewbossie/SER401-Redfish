@@ -34,7 +34,7 @@ function populatePatterns() {
     html += `  <div class="pattFormRow"><label>Maximum</label><input name="patMax" value="` + (typeof value["max"] === "undefined" ? "0" : value["max"]) + `" type="number" required=true size=20 /></div>`;
     html += `  <div class="pattFormRow"><label>MemberID</label><input name="patMemberID" value="` + value["MetricValueTemplate"]["MemberID"] + `" type="text" required=true size=80 unique/></div>`;
     html += `  <div class="pattFormRow"><label>MetricProperty</label><input name="patMetricProp" value="` + value["MetricValueTemplate"]["MetricProperty"] + `" type="text" required=true size=80 unique/></div>`;
-    html += `<div><input type="button" value="-" id=value["name"] onClick="function rm(){$('#pattern` + index + `').remove()}; rm()" /></div>`
+    html += `<div><input type="button" value="Remove" id=value["name"] onClick="function rm(){$('#pattern` + index + `').remove()}; rm()" /></div>`
     html += `</div>`;
   });
 
