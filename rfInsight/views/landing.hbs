@@ -91,6 +91,7 @@
        e.preventDefault();
        if(e.which === 13) {
            $('#run').prop('disabled', false);
+           get_existing();
        }
    });
 
@@ -305,9 +306,9 @@
         window.location.replace("/graphs");
             });
 
-   $(document).ready(function(){
+   /*$(document).ready(function(){
        get_existing();
-   });
+   });*/
 
     // AJAX for current config
     function get_existing(){
