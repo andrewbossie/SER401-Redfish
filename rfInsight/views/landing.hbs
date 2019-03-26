@@ -25,7 +25,29 @@
     <!--<h1>{{ pageTitle }}</h1><a href="/">(testing) proceed to graphs page</a>-->
     <br />
     <br />
-    <div id="metrics" style="float: left; width: 33%; display: inline-block">
+    <div id="methods" style="width: 33%; float: left; display: inline-block;">
+        <div id="ip-dash" style="margin-left: 20%; width: 300px;">
+            <h2>Enter an ip-address</h2>
+            <input id="ip" placeholder="http://{host}:{port}" />
+        </div>
+        <div style="margin-left: 20%;">
+            <h2>Select Retrieval Method</h2>
+            <label for="polling">Polling (Default)</label>
+            <input id="polling" name="type" type="radio" value="poll" checked="checked"/>
+            <br />
+            <label for="subscription">Subscription</label>
+            <input id="subscription" name="type" type="radio" value="sub" />
+            <br />
+            <label for="SSE">SSE Streaming</label>
+            <input id="SSE" name="type" type="radio" value="sse" />
+        </div>
+        <br />
+        <div id="buttons" style="margin-left: 20%">
+            <input type="button" value="Start" id="run" />
+            <input type="button" value="View Graphs" id="view" />
+        </div>
+    </div>
+    <div id="metrics" style="width: 33%; display: inline-block">
         <div style="margin-left: 15%; width: 300px;">
             <h2 style="text-align: center;">Available Metrics</h2>
             <div class="list-div">
@@ -38,7 +60,7 @@
             </div>
         </div>
     </div>
-    <div id="selectedParent" style="width: 33%; display: inline-block;">
+    <div id="selectedParent" style="float: right; width: 33%; display: inline-block;">
         <div class="dashboard">
             <h2 style="text-align: center">Selected Metrics:</h2>
         </div>
@@ -46,28 +68,6 @@
             <div id="selectedMetrics" style="margin-left: 100px;">
                 <ul class="selected-parent"></ul>
             </div>
-        </div>
-    </div>
-    <div id="methods" style="width: 33%; float: right; display: inline-block;">
-        <div style="margin-left: 20%;">
-            <h2>Select Retrieval Method</h2>
-            <label for="polling">Polling (Default)</label>
-            <input id="polling" name="type" type="radio" value="poll" checked="checked"/>
-            <br />
-            <label for="subscription">Subscription</label>
-            <input id="subscription" name="type" type="radio" value="sub" />
-            <br />
-            <label for="SSE">SSE Streaming</label>
-            <input id="SSE" name="type" type="radio" value="sse" />
-        </div>
-        <div id="ip-dash" style="margin-left: 20%; width: 300px;">
-            <h2>Enter an ip-address</h2>
-            <input id="ip" placeholder="http://{host}:{port}" />
-        </div>
-        <br />
-        <div id="buttons" style="margin-left: 20%">
-            <input type="button" value="Start" id="run" />
-            <input type="button" value="View Graphs" id="view" />
         </div>
     </div>
 </body>
@@ -83,6 +83,16 @@
     var newData = "";
     $('#view').prop('disabled', true);
     $('.metrics-indiv').hide();
+
+    //disable run until after hostname
+   $('#run').prop('disabled', true);
+
+   $('#ip').on('keyup', function(e){
+       e.preventDefault();
+       if(e.which === 13) {
+           $('#run').prop('disabled', false);
+       }
+   });
 
     // Open Menu on CLick
     var menuOpened = false;
@@ -203,80 +213,86 @@
     $('#run').on('click', function(e){
         e.preventDefault();
 
-        sub_type["type"] = $('input[name=type]:checked').val();
+        var valid = false;
 
-        $('.metrics-list').each(function(){
-           if($(this).attr('sel') === "Not Enabled"){
-               $(this).css('color', 'green');
+        if($('#ip').val())
 
-               var text = $(this).attr('value');
-               var newText = text + " (Running)";
 
-               $(this).text(newText);
-           }
-        });
+        if(valid) {
+            sub_type["type"] = $('input[name=type]:checked').val();
 
-        $('#view').prop('disabled', false);
+            $('.metrics-list').each(function () {
+                if ($(this).attr('sel') === "Not Enabled") {
+                    $(this).css('color', 'green');
 
-        var s = JSON.stringify(sub_type);
-        console.log(sub_type['type']);
+                    var text = $(this).attr('value');
+                    var newText = text + " (Running)";
 
-        // Build Metrics
-        // console.log(selected);
-        // console.log(JSON.stringify(selected));
-        var p = new Object();
-        for(var key in selected){
-            p[key] = selected[key];
+                    $(this).text(newText);
+                }
+            });
+
+            $('#view').prop('disabled', false);
+
+            var s = JSON.stringify(sub_type);
+            console.log(sub_type['type']);
+
+            // Build Metrics
+            var p = new Object();
+            for (var key in selected) {
+                p[key] = selected[key];
+            }
+
+            // POST ip
+            var payload = [];
+            var ip = $('#ip').val();
+            payload['host'] = ip;
+
+            $.ajax({
+                url: "./api/redfish_host",
+                method: "POST",
+                data: {'host': ip},
+                async: false,
+                success: function (response) {
+                    // console.log(response);
+                },
+                error: function (error) {
+                    alert('Could not post ip!');
+                }
+            });
+
+            // POST METRICS
+            $.ajax({
+                type: "POST",
+                url: "api/metrics",
+                data: {payload: JSON.stringify(p)},
+                async: false,
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (error) {
+                    alert("Could not post selected metrics.");
+                    console.log(error);
+                }
+            });
+
+            // POST SUB TYPE
+            $.ajax({
+                type: "POST",
+                url: "api/sub_type",
+                data: {"type": sub_type['type']},
+                async: false,
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (error) {
+                    alert("Could not post subscription type.");
+                    console.log(error);
+                }
+            });
+        } else{
+            alert('Destination IP invalid!');
         }
-        // console.log(JSON.stringify(p));
-
-        // POST ip
-        var payload = [];
-        var ip = $('#ip').val();
-        payload['host'] = ip;
-
-        $.ajax({
-            url: "./api/redfish_host",
-            method: "POST",
-            data: {'host': ip},
-            async: false,
-            success: function (response) {
-                // console.log(response);
-            },
-            error: function(error){
-                alert('Could not post ip!');
-            }
-        });
-
-        // POST METRICS
-        $.ajax({
-            type: "POST",
-            url: "api/metrics",
-            data: {payload: JSON.stringify(p)},
-            async: false,
-            success: function(response){
-                console.log(response);
-            },
-            error: function(error){
-                alert("Could not post selected metrics.");
-                console.log(error);
-            }
-        });
-
-        // POST SUB TYPE
-        $.ajax({
-            type: "POST",
-            url: "api/sub_type",
-            data: {"type": sub_type['type']},
-            async: false,
-            success: function(response){
-                console.log(response);
-            },
-            error: function(error){
-                alert("Could not post subscription type.");
-                console.log(error);
-            }
-        });
 
         $('#run').val('Running');
         $('#run').prop('disabled', true);
