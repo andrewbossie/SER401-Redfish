@@ -99,6 +99,18 @@ p {
    display: inline-block;
 }
 
+.placeholder {
+   position: absolute;
+   width: 100vw;
+   height: 100vh;
+   top: 0;
+   bottom: 0;
+   right: 0;
+   left: 0;
+   background-color: #212124;
+   z-index: 80;
+}
+
 .leftArrow {
    height: 100px;
    width: 100px;
