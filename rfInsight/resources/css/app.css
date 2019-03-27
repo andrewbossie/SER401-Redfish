@@ -99,6 +99,70 @@ p {
    display: inline-block;
 }
 
+.placeholder {
+   position: absolute;
+   width: 100vw;
+   height: 100vh;
+   top: 0;
+   bottom: 0;
+   right: 0;
+   left: 0;
+   background-color: #212124;
+   z-index: 80;
+}
+
+.leftArrow {
+   height: 100px;
+   width: 100px;
+   position: absolute;
+   background-color: #f3f3f3;
+   z-index: 200;
+   top: 0%;
+   bottom: 6%;
+   margin: auto;
+   left: -90px;
+   border-top-right-radius: 15px;
+   border-bottom-right-radius: 15px;
+}
+
+.leftArrow:hover {
+   left: 0px;
+   transition: 200ms
+}
+
+.rightArrow {
+   height: 100px;
+   width: 100px;
+   position: absolute;
+   background-color: #f3f3f3;
+   z-index: 200;
+   top: 0%;
+   bottom: 6%;
+   margin: auto;
+   right: -90px;
+   border-top-left-radius: 15px;
+   border-bottom-left-radius: 15px;
+}
+
+.rightArrow:hover {
+   right: 0px;
+   transition: 200ms
+}
+
+.fa-arrow-left {
+   position: absolute;
+   opacity: 0.75;
+   right: 35px;
+   top: 23px;
+}
+
+.fa-arrow-right {
+   position: absolute;
+   opacity: 0.75;
+   left: 35px;
+   top: 23px;
+}
+
 .darkInfo {
    background-color: #f3f3f3;
    z-index: 90;

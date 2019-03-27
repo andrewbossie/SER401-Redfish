@@ -314,11 +314,30 @@
                "<i class='fa fa-expand expand' id='"+ fullScreenPanel +"-expand'></i>" +
             "</div>";
       html += '<div class="leftArrow"><i class="fa fa-3x fa-arrow-left arrow" id="'+ fullScreenPanel +'-arrow-left"></i></div>';
-      html += '<div class="rightArrow"><i class="fa fa-3x fa-arrow-right arrow" id="'+ fullScreenPanel +'-arrow-right"></i></div>';
-
+      html += '<div class="rightArrow"><i class="fa fa-3x fa-arrow-right arrow" id="'+ fullScreenPanel +'-arrow-right"></i></div>'
       $(".main_container").append(html);
       $('body').addClass('noScroll');
    }
+
+   $("body").on("click", ".arrow", function () {
+      let currentPanelInArray = allAddedPanels.indexOf(fullScreenPanel);
+      let leftArrow = this.id.split("-")[2] === 'left';
+      if (leftArrow) {
+         let newIndex = currentPanelInArray-1
+         if (newIndex < 0) {
+            newIndex = allAddedPanels.length -1;
+         }
+         fullScreenPanel = allAddedPanels[newIndex];
+      } else {
+         let newIndex = currentPanelInArray+1
+         if (newIndex > allAddedPanels.length -1) {
+            newIndex = 0;
+         }
+         fullScreenPanel = allAddedPanels[newIndex];
+      }
+      $("#fullscreenPlaceholder").append("<div class='placeholder'></div>")
+      updatePanels();
+   });
 </script>
 
 </html>
