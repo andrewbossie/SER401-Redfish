@@ -214,12 +214,12 @@
     $('#run').on('click', function(e){
         e.preventDefault();
 
-        var valid = false;
+        // var valid = false;
 
         if($('#ip').val())
 
 
-        if(valid) {
+        // if(valid) {
             sub_type["type"] = $('input[name=type]:checked').val();
 
             $('.metrics-list').each(function () {
@@ -291,9 +291,10 @@
                     console.log(error);
                 }
             });
-        } else{
-            alert('Destination IP invalid!');
-        }
+        // }
+        // else{
+        //     alert('Destination IP invalid!');
+        // }
 
         $('#run').val('Running');
         $('#run').prop('disabled', true);
