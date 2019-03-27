@@ -27,7 +27,7 @@
       </form>
       <div class="separator"></div>
    </div>
-
+   <div id="fullscreenPlaceholder"></div>
    <!-- Sidebar -->
    <div class="sidenav">
       <h4>
@@ -58,7 +58,10 @@
 <script>
    var count = 0;
    var displayed = [];
+   var allAddedPanels = [];
    var menuOpened = false;
+   var fullScreenMode = false;
+   var fullScreenPanel = -1;
 
    $("#add").click(function (e) {
       e.preventDefault();
@@ -116,6 +119,72 @@
       updatePanels();
    }
 
+   var panel1URL =
+      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB" +
+      themeURLParam;
+   var panel2URL =
+      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA" +
+      themeURLParam;
+   var panel3URL =
+      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6" +
+      themeURLParam;
+   var panel4URL =
+      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB" +
+      themeURLParam;
+   var panel5URL =
+      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1" +
+      themeURLParam;
+   var panel6URL =
+      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1" +
+      themeURLParam;
+   var panel1Label = "Static Grafana Panel 1";
+   var panel2Label = "Static Grafana Panel 2";
+   var panel3Label = "Static Grafana Panel 3";
+   var panel4Label = "Static Grafana Panel 4";
+   var panel5Label = "TestDash Custom Panel 1 (New Plugin)";
+   var panel6Label = "TestDash Custom Panel 2 (New Plugin)";
+
+   let getPanelData = (value) => {
+      switch (value) {
+         case 0:
+            return {
+               url: panel1URL,
+               label: panel1Label
+            }
+         case 1:
+            return {
+               url: panel2URL,
+               label: panel2Label
+            }
+            
+
+         case 2:
+            return {
+               url: panel3URL,
+               label: panel3Label
+            }
+
+         case 3:
+            return {
+               url: panel4URL,
+               label: panel4Label
+            }
+
+         case 4:
+            return {
+               url: panel5URL,
+               label: panel5Label
+            }
+
+         case 5:
+            return {
+               url: panel6URL,
+               label: panel6Label
+            }
+      }
+      return {};
+   }
+
    let updatePanel = panelElement => {
       var value;
       if (panelElement.type === "") {
@@ -123,120 +192,63 @@
       } else {
          value = parseInt(panelElement, 10);
       }
-      var url = "";
-      var label = "";
+      let panelData = getPanelData(value);
+      var url = panelData.url;
+      var label = panelData.label;
 
-      var panel1URL =
-         "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB" +
-         themeURLParam;
-      var panel2URL =
-         "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA" +
-         themeURLParam;
-      var panel3URL =
-         "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6" +
-         themeURLParam;
-      var panel4URL =
-         "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB" +
-         themeURLParam;
-      var panel5URL =
-         "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1" +
-         themeURLParam;
-      var panel6URL =
-         "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1" +
-         themeURLParam;
-      var panel1Label = "Static Grafana Panel 1";
-      var panel2Label = "Static Grafana Panel 2";
-      var panel3Label = "Static Grafana Panel 3";
-      var panel4Label = "Static Grafana Panel 4";
-      var panel5Label = "TestDash Custom Panel 1 (New Plugin)";
-      var panel6Label = "TestDash Custom Panel 2 (New Plugin)";
+      if (value == 6) {
+         let urls = [
+            panel1URL,
+            panel2URL,
+            panel3URL,
+            panel4URL,
+            panel5URL,
+            panel6URL
+         ];
 
-      switch (value) {
-         case 0:
-            url = panel1URL;
-            label = panel1Label;
-            break;
+         let labels = [
+            panel1Label,
+            panel2Label,
+            panel3Label,
+            panel4Label,
+            panel5Label,
+            panel6Label
+         ];
+         allAddedPanels = [0,1,2,3,4,5];
+         let html = "";
 
-         case 1:
-            url = panel2URL;
-            label = panel2Label;
-            break;
+         for (var index in urls) {
+            html += '<td class="panelCell">';
+            html +=
+               "<div id='panel_area_" +
+               index +
+               "'><iframe src=\"" +
+               urls[index] +
+               '" class="panelFrame" frameborder="0"></iframe>';
+            html += '<div class="labelContainer text">';
+            html += "<span>";
+            html +=
+               "<i class='fa fa-trash del' aria-hidden='true' id='" +
+               index +
+               "'></i><i class='fa fa-expand expand' id='"+ index +"-expand'></i>";
+            html += "<h2>" + labels[index] + "</h2>";
+            html += "</span>";
+            html += "</div>";
+            html += "</td>";
+         }
 
-         case 2:
-            url = panel3URL;
-            label = panel3Label;
-            break;
-
-         case 3:
-            url = panel4URL;
-            label = panel4Label;
-            break;
-
-         case 4:
-            url = panel5URL;
-            label = panel5Label;
-            break;
-
-         case 5:
-            url = panel6URL;
-            label = panel6Label;
-            break;
-
-         case 6:
-            let urls = [
-               panel1URL,
-               panel2URL,
-               panel3URL,
-               panel4URL,
-               panel5URL,
-               panel6URL
-            ];
-
-            let labels = [
-               panel1Label,
-               panel2Label,
-               panel3Label,
-               panel4Label,
-               panel5Label,
-               panel6Label
-            ];
-
-            // let html = "<table class=\"panelTable\">";
-            let html = "";
-
-            for (var index in urls) {
-               html += '<td class="panelCell">';
-               html +=
-                  "<div id='panel_area_" +
-                  index +
-                  "'><iframe src=\"" +
-                  urls[index] +
-                  '" class="panelFrame" frameborder="0"></iframe>';
-               html += '<div class="labelContainer text">';
-               html += "<span>";
-               html +=
-                  "<i class='fa fa-trash del' aria-hidden='true' id='" +
-                  index +
-                  "'></i>";
-               html += "<h2>" + labels[index] + "</h2>";
-               html += "</span>";
-               html += "</div>";
-               html += "</td>";
-            }
-
-            // html += "</table>";
-
-            $(".main_container").empty();
-            $(".main_container").html(html);
-            return;
+         $(".main_container").empty();
+         $(".main_container").html(html);
+         return;
       }
 
       if ($.inArray(value, displayed) !== -1) {
          alert("Panel already added!!");
       } else {
-         console.log(value);
          displayed.push(value);
-         console.log(displayed);
+         if (!allAddedPanels.includes(value)) {
+            allAddedPanels.push(value);
+         }
          let html =
             '<td class="panelCell"><div id=\'panel_area_' +
             value +
@@ -246,7 +258,7 @@
          html +=
             "<br /><i class='fa fa-trash del' aria-hidden='true' id='" +
             value +
-            "'></i><h2 class='text'>" +
+            "'></i><i class='fa fa-expand expand' id='"+ value +"-expand'></i><h2 class='text'>" +
             label +
             "</h2></div>";
          $(".main_container").append(html);
@@ -256,19 +268,76 @@
    $("body").on("click", ".del", function () {
       var index = displayed.indexOf(this.id);
       displayed.splice(index, 1);
+      allAddedPanels.splice(index, 1);
       $("#panel_area_" + this.id).remove();
    });
 
+   $("body").on("click", ".expand", function () {
+      if (fullScreenMode) {
+         fullScreenMode = false;
+         fullScreenPanel = -1;
+      } else {
+         fullScreenMode = true;
+         fullScreenPanel = parseInt(this.id.split("-")[0]);
+      }
+      $("#fullscreenPlaceholder").empty()
+      displayed = allAddedPanels;
+      updatePanels();
+   });
+
    let updatePanels = () => {
-      var tmp = displayed;
-      // console.log(displayed);
-      displayed = [];
       $(".main_container").empty();
-      // console.log(tmp);
+
+      if (fullScreenMode) {
+         renderFullScreen();
+      } else {
+         $('body').removeClass('noScroll');
+      }
+      var tmp = displayed;
+      displayed = [];
       for (var i = 0; i < tmp.length; i++) {
          updatePanel(tmp[i]);
       }
    };
+
+   let renderFullScreen = () => {
+      let panelData = getPanelData(fullScreenPanel);
+      let themeClass = isThemeDark ? "darkInfo" : "lightInfo"
+      $(window).scrollTop(0);
+      let html =
+            "<iframe src='" +
+            panelData.url +
+            "' class='panelFrameFullScreen' frameborder='0'></iframe>";
+      html +=
+            '<div class="fullScreenInfo ' + themeClass + '">' +
+               "<h2 class='text'>" + panelData.label + "</h2>" +
+               "<i class='fa fa-expand expand' id='"+ fullScreenPanel +"-expand'></i>" +
+            "</div>";
+      html += '<div class="leftArrow"><i class="fa fa-3x fa-arrow-left arrow" id="'+ fullScreenPanel +'-arrow-left"></i></div>';
+      html += '<div class="rightArrow"><i class="fa fa-3x fa-arrow-right arrow" id="'+ fullScreenPanel +'-arrow-right"></i></div>'
+      $(".main_container").append(html);
+      $('body').addClass('noScroll');
+   }
+
+   $("body").on("click", ".arrow", function () {
+      let currentPanelInArray = allAddedPanels.indexOf(fullScreenPanel);
+      let leftArrow = this.id.split("-")[2] === 'left';
+      if (leftArrow) {
+         let newIndex = currentPanelInArray-1
+         if (newIndex < 0) {
+            newIndex = allAddedPanels.length -1;
+         }
+         fullScreenPanel = allAddedPanels[newIndex];
+      } else {
+         let newIndex = currentPanelInArray+1
+         if (newIndex > allAddedPanels.length -1) {
+            newIndex = 0;
+         }
+         fullScreenPanel = allAddedPanels[newIndex];
+      }
+      $("#fullscreenPlaceholder").append("<div class='placeholder'></div>")
+      updatePanels();
+   });
 </script>
 
 </html>
