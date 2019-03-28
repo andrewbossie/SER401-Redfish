@@ -5,36 +5,36 @@
   "MockupData": {
     "MockupPatterns": [
       {
+		"enabled": true,
         "name": "Sawtooth CPU(1) Percent",
-        "path": "/v1/TelemetryService/MetricReports/CPUMetrics/",
-
+        "path": "/v1/TelemetryService/MetricReportDefinitions/CPUSensor/",
         "timedelay": 3,
         "pattern": "sawtooth",
-
-
         "MetricValueTemplate": {
-          "MemberID": "CPUPercentUtil",
+          "MemberID": "Temperature",
           "MetricValue": "#value",
           "TimeStamp": "#timestamp",
-          "MetricProperty": "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/1/CPUUtil"
+          "MetricProperty": "/redfish/v1/Chassis/System.Embedded.1/CPU/{PWild}/CPUSensor/Temperature"
         }
       },
       {
+	    "enabled": true,
         "name": "Pingpong CPU(2) Percent",
-        "path": "/v1/TelemetryService/MetricReports/CPUMetrics/",
+        "path": "/v1/TelemetryService/MetricReportDefinitions/CPUSensor/",
         "timedelay": 5,
         "pattern": "fullrand",
         "min": 70,
         "max": 80,
         "step": 1,
         "MetricValueTemplate": {
-          "MemberID": "CPUPercentUtil",
+          "MemberID": "PowerConsumption",
           "MetricValue": "#value",
           "TimeStamp": "#timestamp",
-          "MetricProperty": "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/2/CPUUtil"
+          "MetricProperty": "/redfish/v1/Chassis/System.Embedded.1/CPU/{PWild}/CPUSensor/PowerConsumption"
         }
       },
       {
+	    "enabled": false,
         "name": "Random CPU(3) Percent",
         "path": "/v1/TelemetryService/MetricReports/CPUMetrics/",
         "timedelay": 10,
@@ -49,6 +49,7 @@
         }
       },
       {
+	    "enabled": false,
         "name": "Rubberband Memory Util Tray 2",
         "path": "/v1/TelemetryService/MetricReports/MemoryMetrics/",
         "timedelay": 2,

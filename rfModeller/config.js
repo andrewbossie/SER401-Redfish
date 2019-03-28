@@ -1,4 +1,4 @@
 var config = require("./config.json");
-console.log(config);
+//console.log(config);
 
 module.exports = config;
