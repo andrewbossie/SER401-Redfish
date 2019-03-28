@@ -22,13 +22,13 @@
         <h1 class="text">{{ pageTitle }}</h1>
         <div class="separator"></div>
     </div>
-    {{ pageTitle }}
     <br />
     <br />
     <div id="methods" style="width: 33%; float: left; display: inline-block;">
         <div id="ip-dash" style="margin-left: 20%; width: 300px;">
             <h2>Enter a Host</h2>
             <input id="ip" placeholder="http(s)://{host}:{port}" />
+            <button id="continue">Continue</button>
         </div>
         <div style="margin-left: 20%;">
             <h2>Select Retrieval Method</h2>
@@ -93,6 +93,12 @@
            $('#run').prop('disabled', false);
            get_existing();
        }
+   });
+
+   $('#continue').on('click', function(e){
+       e.preventDefault();
+       $('#run').prop('disabled', false);
+       get_existing();
    });
 
     // Open Menu on CLick
