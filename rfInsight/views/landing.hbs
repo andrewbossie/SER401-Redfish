@@ -153,10 +153,12 @@
                         // console.log(newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length).toString());
                         if( $.inArray(newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length).toString(), preselected) === -1 ){
                             console.log("false");
-                            $(this).next().append('<li class="data" id="'+newData[i].substr(60, newData[i].length)+'" data-selected="no" style="color: red;">' + newData[i].substr(60, newData[i].length) + '</li>');
+                            // $(this).next().append('<li class="data" id="'+newData[i].substr(60, newData[i].length)+'" data-selected="no" style="color: red;">' + newData[i].substr(60, newData[i].length) + '</li>');
+                            $(this).next().append('<li class="data" id="'+newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length)+'" data-selected="no" style="color: red;">' + newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length) + '</li>');
                         } else{
                             console.log("true");
-                            $(this).next().append('<li class="data" id="'+newData[i].substr(60, newData[i].length)+'" data-selected="yes" style="color: green;">' + newData[i].substr(60, newData[i].length) + '</li>');
+                            // $(this).next().append('<li class="data" id="'+newData[i].substr(60, newData[i].length)+'" data-selected="yes" style="color: green;">' + newData[i].substr(60, newData[i].length) + '</li>');
+                            $(this).next().append('<li class="data" id="'+newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length)+'" data-selected="yes" style="color: green;">' + newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length) + '</li>');
                         }
                     }
                 },
