@@ -26,12 +26,13 @@
     <br />
     <div id="methods" style="width: 33%; float: left; display: inline-block;">
         <div id="ip-dash" style="margin-left: 20%; width: 300px;">
-            <h2>Enter a Host</h2>
+            <h2>1. Enter a Host</h2>
             <input id="ip" placeholder="http(s)://{host}:{port}" />
+            <br />
             <button id="continue">Continue</button>
         </div>
         <div style="margin-left: 20%;">
-            <h2>Select Retrieval Method</h2>
+            <h2>2. Select Retrieval Method</h2>
             <label for="polling">Polling (Default)</label>
             <input id="polling" name="type" type="radio" value="poll" checked="checked"/>
             <br />
@@ -48,9 +49,9 @@
         </div>
     </div>
     <div id="metrics" style="width: 33%; display: inline-block">
-        <div style="margin-left: 15%; width: 300px;">
-            <h2 style="text-align: center;">Available Metrics</h2>
-            <div class="list-div">
+        <div style="margin-left: 15%; width: 400px; visibility: hidden" id="avail">
+            <h2 style="text-align: center;">3. Select From Available Metrics</h2>
+            <div class="list-div" style="visibility: hidden;">
                 <ul class="list">
                     {{#each metrics }}
                         <li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}</li>
@@ -62,7 +63,7 @@
     </div>
     <div id="selectedParent" style="float: right; width: 33%; display: inline-block;">
         <div class="dashboard">
-            <h2 style="text-align: center">Selected Metrics:</h2>
+            <h2 style="text-align: center; visibility: hidden;" id="select">Selected Metrics</h2>
         </div>
         <div class="dashboard">
             <div id="selectedMetrics" style="margin-left: 100px;">
@@ -91,6 +92,9 @@
        e.preventDefault();
        if(e.which === 13) {
            $('#run').prop('disabled', false);
+           $('.list-div').css('visibility', 'visible');
+           $('#select').css('visibility', 'visible');
+           $('#avail').css('visibility', 'visible');
            get_existing();
        }
    });
@@ -98,6 +102,9 @@
    $('#continue').on('click', function(e){
        e.preventDefault();
        $('#run').prop('disabled', false);
+       $('.list-div').css('visibility', 'visible');
+       $('#select').css('visibility', 'visible');
+       $('#avail').css('visibility', 'visible');
        get_existing();
    });
 
