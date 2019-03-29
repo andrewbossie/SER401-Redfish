@@ -99,7 +99,6 @@ exports.getMetric = function(req, res) {
       } else if (error) {
         console.log(error);
       } else {
-        console.log(body);
         res.json(body);
       }
     }
@@ -174,6 +173,10 @@ exports.generateMockData = function(req, res) {
   });
 };
 
+/*
+* Updates host in memory.
+* TODO: Update host before anything else happens.
+*/
 exports.postRedfishHost = function(req, res) {
   console.log(`Host POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let body = req.body;
@@ -189,16 +192,15 @@ exports.postRedfishHost = function(req, res) {
   }
 };
 
+// TODO - this isn't actually doing anything at the moment.
+// We need it to update some data so the app knows what to
+// get and send to Influx.
 exports.postSelectedMetrics = function(req, res) {
   console.log(`Metrics POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let selectedMetrics = req.body;
   if (!_.isEmpty(selectedMetrics.payload)) {
-    // let metricReport = selectedMetrics.from;
-    // let metrics = selectedMetrics.metrics;
     _.forOwn(selectedMetrics.payload, (val, key) => {
-      // TODO: Handle each key
-      // TODO: fix updateConfig to adhere
-      patchMetricToEnabled(key);
+      // patchMetricToEnabled(key);
     });
 
     // updateConfig(selectedMetrics.payload);
@@ -217,9 +219,6 @@ const updateConfig = newSelection => {
       throw err;
     } else {
       configData = JSON.parse(data);
-      // !configData.enabledReports.includes(newSelection.from) &&
-      //   configData.enabledReports.push(newSelection.from) &&
-      //   configData.selections.push(newSelection);
       _.forOwn(newSelection, (val, key) => {
         !configData.enabledReports.includes(key) &&
           configData.enabledReports.push(key) &&
@@ -242,20 +241,20 @@ const updateConfig = newSelection => {
   });
 };
 
+/*
+* Handler for front-end POST subscription type. If 'sub', it is set up
+* to run the subscription workflow, which is currently working.
+*/
 exports.postSubType = function(req, res) {
-  // console.log("Sub type POST: " + req.body.type);
   console.log(`Sub type POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let selectedSubType = req.body;
   if (
     selectedSubType.type &&
     ["sse", "sub", "poll"].includes(selectedSubType.type)
   ) {
-    // TODO: Set up connection to Redfish accordingly
     if (selectedSubType.type === "sub") {
-      // subscribeToEvents();
+      subscribeToEvents();
     }
-    // TODO: Update metrics_config.json
-    // updateSubType(selectedSubType.type);
     res.json(selectedSubType);
   } else {
     res.json({
@@ -265,6 +264,12 @@ exports.postSubType = function(req, res) {
   }
 };
 
+/*
+* This is the handler for events coming from Redfish service.
+* So far, no simulator has been able to send events to rfInsight.
+*
+* TODO test on Linux?
+*/
 exports.handleEventIn = function(req, res) {
   console.log("Received a metric report from Redfish service.");
   res.json(req.body);
@@ -282,9 +287,12 @@ const subscribeToEvents = () => {
       url: `${options.host}/redfish/v1/EventService/Subscriptions`,
       json: true,
       rejectUnauthorized: false,
+      /*
+      * See DMTF RMS github issue #53 for conversation regarding this format.
+      */
       body: {
         EventFormatType: "MetricReport",
-        SubscriptionType: "RedfishEvent",
+        EventTypes: ["MetricReport"],
         Destination: "http://localhost:8080/api/event_in"
       }
     },
@@ -292,7 +300,7 @@ const subscribeToEvents = () => {
       if (error) {
         console.log(error);
       }
-      console.log(response);
+      // console.log(response);
     }
   );
 };
@@ -362,7 +370,7 @@ const patchMetricToEnabled = report => {
       }
     },
     (error, response, body) => {
-      console.log(response);
+      // console.log(response);
     }
   );
 };
