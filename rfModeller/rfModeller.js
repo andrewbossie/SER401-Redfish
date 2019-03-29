@@ -91,7 +91,7 @@ function generate(){
 		//iterate over mockup patterns defined in configuration file
 		config.MockupData.MockupPatterns.forEach(function(mockup, index) {
 			//only do anything if the current iteration is on the approriate time
-			if (i % mockup.timedelay == 0) {
+			if (mockup.enabled && i % mockup.timedelay == 0) {
 				
 				//check if template has been parsed
 				let path = config.RedFishData.path + mockup.path + "index.json";
