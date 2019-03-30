@@ -1,6 +1,6 @@
 const Influx = require("influx");
 
-const config = JSON.parse(require("../metrics_config.json"));
+// const config = JSON.parse(require("../metrics_config.json"));
 
 const influx = new Influx.InfluxDB({
   host: "localhost:8086",
@@ -33,3 +33,7 @@ const influx = new Influx.InfluxDB({
     }
   ]
 });
+
+module.exports = {
+  influx
+};
