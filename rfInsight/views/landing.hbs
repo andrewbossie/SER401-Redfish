@@ -60,7 +60,7 @@
     </div>
     <div id="selectedParent" style="float: right; width: 33%; display: inline-block;">
         <div class="dashboard">
-            <h2 style="text-align: center; visibility: hidden;" id="select">Selected Metrics</h2>
+            <h2 style="text-align: center; visibility: hidden;" id="select">Preselected Metrics</h2>
         </div>
         <div class="dashboard">
             <div id="selectedMetrics" style="margin-left: 100px;">
@@ -224,6 +224,7 @@
             }
             updateDashboardList();
         }
+        $('#select').text("Selected Metrics");
     });
 
     // Ready to send top back end an move on to graphs page
