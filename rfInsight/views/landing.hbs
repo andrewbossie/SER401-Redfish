@@ -29,9 +29,14 @@
             <h2>1. Enter a Host</h2>
             <input id="ip" placeholder="http(s)://{host}:{port}" />
             <br />
-            <button id="continue">Continue</button>
+            <br />
+            <button id="continue">Step 2</button>
         </div>
-        <div style="margin-left: 20%; visibility: hidden;">
+        <br />
+        <br />
+        <br />
+        <br />
+        <div id="subs" style="margin-left: 20%; visibility: hidden;">
             <h2>2. Select Retrieval Method</h2>
             <label for="polling">Polling (Default)</label>
             <input id="polling" name="type" type="radio" value="poll" checked="checked"/>
@@ -42,7 +47,8 @@
             <label for="SSE">SSE Streaming</label>
             <input id="SSE" name="type" type="radio" value="sse" />
             <br />
-            <button id="continue_2">Continue</button>
+            <br />
+            <button id="continue_2">Step 3</button>
         </div>
     </div>
     <div id="metrics" style="width: 33%; display: inline-block">
@@ -67,7 +73,7 @@
                 <ul class="selected-parent"></ul>
             </div>
         </div>
-        <div id="buttons" style="margin-left: 20%; visibility: hidden;">
+        <div id="buttons" style="visibility: hidden; text-align: center;">
             <input type="button" value="Start" id="run" />
             <input type="button" value="View Graphs" id="view" />
         </div>
@@ -102,10 +108,15 @@
 
    $('#continue').on('click', function(e){
        e.preventDefault();
+       $('#subs').css('visibility', 'visible');
+   });
+
+   $('#continue_2').on('click', function(e){
        $('#run').prop('disabled', false);
        $('.list-div').css('visibility', 'visible');
        $('#select').css('visibility', 'visible');
        $('#avail').css('visibility', 'visible');
+       $('#buttons').css('visibility', 'visible');
        get_existing();
    });
 
