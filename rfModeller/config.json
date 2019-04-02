@@ -34,33 +34,33 @@
         }
       },
       {
-	    "enabled": false,
+	    "enabled": true,
         "name": "Random CPU(3) Percent",
-        "path": "/v1/TelemetryService/MetricReports/CPUMetrics/",
+        "path": "/v1/TelemetryService/MetricReportDefinitions/CPUSensor/",
         "timedelay": 10,
         "pattern": "fullrand",
         "min": 45,
         "max": 90,
         "MetricValueTemplate": {
-          "MemberID": "CPUPercentUtil",
+          "MemberID": "MinTemperature",
           "MetricValue": "#value",
           "TimeStamp": "#timestamp",
-          "MetricProperty": "/redfish/v1/Chassis/Tray_1/CPU/CPUControl/3/CPUUtil"
+          "MetricProperty": "/redfish/v1/Chassis/System.Embedded.1/CPU/{PWild}/CPUSensor/MinTemperature"
         }
       },
       {
-	    "enabled": false,
+	    "enabled": true,
         "name": "Rubberband Memory Util Tray 2",
-        "path": "/v1/TelemetryService/MetricReports/MemoryMetrics/",
+        "path": "/v1/TelemetryService/MetricReportDefinitions/CPUSensor/",
         "timedelay": 2,
         "pattern": "rubberband",
         "center": 70,
         "step": 5,
         "MetricValueTemplate": {
-          "MemberID": "MemoryPercentUtil",
+          "MemberID": "MaxTemperature",
           "MetricValue": "#value",
           "TimeStamp": "#timestamp",
-          "MetricProperty": "/redfish/v1/Chassis/Tray_2/Memory/MemoryControl/1/MemoryUtil"
+          "MetricProperty": "/redfish/v1/Chassis/System.Embedded.1/CPU/{PWild}/CPUSensor/MaxTemperature"
         }
       }
     ]
