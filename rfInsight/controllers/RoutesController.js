@@ -110,7 +110,7 @@ exports.getDataGenerator = function(req, res) {
   res.render("rfModeller.hbs", {
     configPath:
       "Config files located at: " +
-      fs.realpathSync("./resources/js/dataGenerator"),
+      fs.realpathSync("../rfModeller/"),
     currentYear: new Date().getFullYear(),
     pageTitle: "Redfish Modeler"
   });
@@ -135,7 +135,7 @@ exports.generateMockData = function(req, res) {
   if (req.query.config) q.push("-c", req.query.config);
   if (req.query.interval) q.push("-i", req.query.interval);
   function generate(path, callback) {
-    generatorProcess.process = childProcess.fork("rfmockdatacreator.js", q, {
+    generatorProcess.process = childProcess.fork("rfModeller.js", q, {
       cwd: path
     });
 
@@ -164,9 +164,9 @@ exports.generateMockData = function(req, res) {
     });
   }
 
-  generate("./resources/js/dataGenerator/", function(err) {
+  generate("../rfModeller/", function(err) {
     if (!err) {
-      res.download("./resources/js/dataGenerator/output.csv");
+      res.download("../rfModeller/output.csv");
     } else {
       console.log(err);
     }
@@ -327,10 +327,9 @@ exports.getRfModeller = function(req, res) {
 
 exports.getModellerConfig = function(req, res) {
   let modellerConfig;
-  //  let modellerConfig = require("resources/js/dataGenerator/config.json");
 
   fs.readFile(
-    "./resources/js/dataGenerator/config.json",
+    "../rfModeller/config.json",
     "utf8",
     (err, data) => {
       if (err) {
@@ -347,7 +346,7 @@ exports.postModellerConfig = function(req, res) {
   let modellerConfig = JSON.parse(data);
 
   fs.writeFile(
-    "./resources/js/dataGenerator/config.json",
+    "../rfModeller/config.json",
     modellerConfig,
     "utf8",
     (err, data) => {
