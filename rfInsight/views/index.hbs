@@ -21,9 +21,9 @@
       <h1 class="text">{{ pageTitle }}</h1>
       <form>
          <input type="radio" name="theme" value="dark" checked="checked" onclick="updateTheme(true /*isDark*/);" /><span
-            class="text">Dark Panels</span>
-         <input type="radio" name="theme" value="light" onclick="updateTheme(false /*isDark*/);" /><span class="text">Light
-            Panels</span>
+            class="text">Light Theme</span>
+         <input type="radio" name="theme" value="light" onclick="updateTheme(false /*isDark*/);" /><span class="text">Dark
+            Theme</span>
       </form>
       <div class="separator"></div>
    </div>
@@ -46,7 +46,7 @@
    </div>
 
    <!-- Main Content -->
-   <div>
+   <div class="table_container">
       <table class="main_container"></table>
    </div>
 
@@ -225,13 +225,13 @@
                "'><iframe src=\"" +
                urls[index] +
                '" class="panelFrame" frameborder="0"></iframe>';
-            html += '<div class="labelContainer text">';
+            html += '<div class="text">';
             html += "<span>";
             html +=
                "<i class='fa fa-trash del' aria-hidden='true' id='" +
                index +
                "'></i><i class='fa fa-expand expand' id='"+ index +"-expand'></i>";
-            html += "<h2>" + labels[index] + "</h2>";
+            html += "<h2  class='text'>" + labels[index] + "</h2>";
             html += "</span>";
             html += "</div>";
             html += "</td>";
