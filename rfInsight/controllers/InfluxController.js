@@ -30,6 +30,26 @@ const influx = new Influx.InfluxDB({
         target_power: Influx.FieldType.FLOAT
       },
       tags: ["report, interval"]
+    },
+    {
+      measurement: "ThermalStatus",
+      fields: {
+        Reading: Influx.FieldType.FLOAT,
+        Health: Influx.FieldType.STRING,
+        UpperCriticalThreshold: Influx.FieldType.FLOAT,
+        UpperNonCriticalThreshold: Influx.FieldType.FLOAT,
+        LowerCriticalThreshold: Influx.FieldType.FLOAT,
+        LowerNonCriticalThreshold: Influx.FieldType.FLOAT
+      },
+      tags: ["MetricDefinition"]
+    },
+    {
+      measurement: "SensorInfo",
+      fields: {
+        CurrentReading: Influx.FieldType.FLOAT,
+        HealthState: Influx.FieldType.STRING
+      },
+      tags: ["MetricDefinition"]
     }
   ]
 });

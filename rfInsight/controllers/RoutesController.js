@@ -6,6 +6,8 @@ const childProcess = require("child_process");
 const config = require("../config/config");
 var generatorProcess = { process: null, perc: 0 }; //Global reference to generator child process
 
+let influx = require("./InfluxController").influx;
+
 let options = {
   host: "http://127.0.0.1:8001",
   redfish_defs: "/redfish/v1/TelemetryService/MetricReportDefinitions"
@@ -108,9 +110,7 @@ exports.getMetric = function(req, res) {
 //Route handler for /dataGenerator
 exports.getDataGenerator = function(req, res) {
   res.render("rfModeller.hbs", {
-    configPath:
-      "Config files located at: " +
-      fs.realpathSync("../rfModeller/"),
+    configPath: "Config files located at: " + fs.realpathSync("../rfModeller/"),
     currentYear: new Date().getFullYear(),
     pageTitle: "Redfish Modeler"
   });
@@ -272,6 +272,7 @@ exports.postSubType = function(req, res) {
 */
 exports.handleEventIn = function(req, res) {
   console.log("Received a metric report from Redfish service.");
+  console.log(res.req.body);
   res.json(req.body);
 };
 
@@ -328,18 +329,14 @@ exports.getRfModeller = function(req, res) {
 exports.getModellerConfig = function(req, res) {
   let modellerConfig;
 
-  fs.readFile(
-    "../rfModeller/config.json",
-    "utf8",
-    (err, data) => {
-      if (err) {
-        throw err;
-      } else {
-        modellerConfig = JSON.parse(data);
-        res.json(modellerConfig);
-      }
+  fs.readFile("../rfModeller/config.json", "utf8", (err, data) => {
+    if (err) {
+      throw err;
+    } else {
+      modellerConfig = JSON.parse(data);
+      res.json(modellerConfig);
     }
-  );
+  });
 };
 
 exports.postModellerConfig = function(req, res) {
