@@ -42,10 +42,10 @@
             <input id="polling" name="type" type="radio" value="poll" checked="checked"/>
             <br />
             <label for="subscription">Subscription</label>
-            <input id="subscription" name="type" type="radio" value="sub" />
+            <input id="subscription" name="type" type="radio" value="sub" disabled="true"/>
             <br />
             <label for="SSE">SSE Streaming</label>
-            <input id="SSE" name="type" type="radio" value="sse" />
+            <input id="SSE" name="type" type="radio" value="sse" disabled="true"/>
             <br />
             <br />
             <button id="continue_2">Step 3</button>
@@ -97,12 +97,11 @@
 
    $('#ip').on('keyup', function(e){
        e.preventDefault();
-       if(e.which === 13) {
-           $('#run').prop('disabled', false);
-           $('.list-div').css('visibility', 'visible');
-           $('#select').css('visibility', 'visible');
-           $('#avail').css('visibility', 'visible');
-           get_existing();
+       var reg = /^(http|https):\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,4}$/;
+       if(reg.test($('#ip').val())){
+           $('#subs').css('visibility', 'visible');
+       } else{
+           alert('Invalid Host Format!!');
        }
    });
 
