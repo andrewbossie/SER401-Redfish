@@ -199,10 +199,11 @@ exports.postSelectedMetrics = function(req, res) {
   console.log(`Metrics POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let selectedMetrics = req.body;
   if (!_.isEmpty(selectedMetrics.payload)) {
+    console.log(selectedMetrics.payload);
     _.forOwn(selectedMetrics.payload, (val, key) => {
       // patchMetricToEnabled(key);
     });
-
+    // TODO FIX UPDATECONFIG
     // updateConfig(selectedMetrics.payload);
 
     res.json(selectedMetrics);
@@ -266,14 +267,33 @@ exports.postSubType = function(req, res) {
 
 /*
 * This is the handler for events coming from Redfish service.
-* So far, no simulator has been able to send events to rfInsight.
-*
-* TODO test on Linux?
 */
+let metrics = {};
 exports.handleEventIn = function(req, res) {
   console.log("Received a metric report from Redfish service.");
-  console.log(res.req.body);
-  res.json(req.body);
+  // console.log(res.req.body);
+  let mr = res.req.body;
+
+  for (var i = 0; i < values.length; i++) {
+    influx
+      .writePoints(
+        [
+          {
+            measurement: mr.Id,
+            tags: { MetricDefinition: mr.MetricDefinition },
+            fields: { [mr.MetricId]: mr.MetricValue },
+            timestamp: mr.Timestamp
+          }
+        ],
+        {
+          database: "metrics",
+          precision: "s"
+        }
+      )
+      .catch(err => {
+        console.error(`Error writing data to Influx. ${err.stack}`);
+      });
+  }
 };
 
 const subscribeToEvents = () => {
