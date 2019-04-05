@@ -120,23 +120,17 @@
    }
 
    var panel1URL =
-      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB" +
-      themeURLParam;
+      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB";
    var panel2URL =
-      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA" +
-      themeURLParam;
+      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA";
    var panel3URL =
-      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6" +
-      themeURLParam;
+      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6";
    var panel4URL =
-      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB" +
-      themeURLParam;
+      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB";
    var panel5URL =
-      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1" +
-      themeURLParam;
+      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1";
    var panel6URL =
-      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1" +
-      themeURLParam;
+      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1";
    var panel1Label = "Static Grafana Panel 1";
    var panel2Label = "Static Grafana Panel 2";
    var panel3Label = "Static Grafana Panel 3";
@@ -148,37 +142,37 @@
       switch (value) {
          case 0:
             return {
-               url: panel1URL,
+               url: panel1URL + themeURLParam,
                label: panel1Label
             }
          case 1:
             return {
-               url: panel2URL,
+               url: panel2URL + themeURLParam,
                label: panel2Label
             }
             
 
          case 2:
             return {
-               url: panel3URL,
+               url: panel3URL + themeURLParam,
                label: panel3Label
             }
 
          case 3:
             return {
-               url: panel4URL,
+               url: panel4URL + themeURLParam,
                label: panel4Label
             }
 
          case 4:
             return {
-               url: panel5URL,
+               url: panel5URL + themeURLParam,
                label: panel5Label
             }
 
          case 5:
             return {
-               url: panel6URL,
+               url: panel6URL + themeURLParam,
                label: panel6Label
             }
       }
@@ -198,12 +192,12 @@
 
       if (value == 6) {
          let urls = [
-            panel1URL,
-            panel2URL,
-            panel3URL,
-            panel4URL,
-            panel5URL,
-            panel6URL
+            panel1URL + themeURLParam,
+            panel2URL + themeURLParam,
+            panel3URL + themeURLParam,
+            panel4URL + themeURLParam,
+            panel5URL + themeURLParam,
+            panel6URL + themeURLParam
          ];
 
          let labels = [
