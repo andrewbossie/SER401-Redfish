@@ -269,7 +269,7 @@
       var index = displayed.indexOf(this.id);
       displayed.splice(index, 1);
       allAddedPanels.splice(index, 1);
-      $("#panel_area_" + this.id).remove();
+      $("#panel_area_" + this.id).parent().remove();
    });
 
    $("body").on("click", ".expand", function () {
