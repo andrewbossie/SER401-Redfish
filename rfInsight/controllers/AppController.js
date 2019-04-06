@@ -1,8 +1,9 @@
 // const keys = require("../config/keys");
 const request = require("request");
-const Influx = require("influx");
 const util = require("../resources/js/util");
 const rTools = require("../resources/js/redfishTools");
+
+const influx = require("./InfluxController").influx;
 
 // Get CPU data
 let metrics = {
@@ -75,25 +76,25 @@ exports.updateCPUUtil = () => {
 };
 
 // InfluxDB Connection
-const influx = new Influx.InfluxDB({
-  host: "localhost:8086",
-  database: "test",
-  username: "admin",
-  password: "admin",
-
-  schema: [
-    {
-      measurement: "CPUPercentUtil",
-      fields: { value: Influx.FieldType.FLOAT },
-      tags: ["host", "tray", "id"]
-    },
-    {
-      measurement: "temp",
-      fields: { value: Influx.FieldType.FLOAT },
-      tags: ["host"]
-    }
-  ]
-});
+// const influx = new Influx.InfluxDB({
+//   host: "localhost:8086",
+//   database: "test",
+//   username: "admin",
+//   password: "admin",
+//
+//   schema: [
+//     {
+//       measurement: "CPUPercentUtil",
+//       fields: { value: Influx.FieldType.FLOAT },
+//       tags: ["host", "tray", "id"]
+//     },
+//     {
+//       measurement: "temp",
+//       fields: { value: Influx.FieldType.FLOAT },
+//       tags: ["host"]
+//     }
+//   ]
+// });
 
 // Random test data (DEPRECATED)
 exports.writeDataTest = function() {

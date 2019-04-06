@@ -6,6 +6,8 @@ const childProcess = require("child_process");
 const config = require("../config/config");
 var generatorProcess = { process: null, perc: 0 }; //Global reference to generator child process
 
+let influx = require("./InfluxController").influx;
+
 let options = {
   host: "http://127.0.0.1:8001",
   redfish_defs: "/redfish/v1/TelemetryService/MetricReportDefinitions"
@@ -108,9 +110,7 @@ exports.getMetric = function(req, res) {
 //Route handler for /dataGenerator
 exports.getDataGenerator = function(req, res) {
   res.render("rfModeller.hbs", {
-    configPath:
-      "Config files located at: " +
-      fs.realpathSync("../rfModeller/"),
+    configPath: "Config files located at: " + fs.realpathSync("../rfModeller/"),
     currentYear: new Date().getFullYear(),
     pageTitle: "Redfish Modeler"
   });
@@ -199,10 +199,11 @@ exports.postSelectedMetrics = function(req, res) {
   console.log(`Metrics POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let selectedMetrics = req.body;
   if (!_.isEmpty(selectedMetrics.payload)) {
+    console.log(selectedMetrics.payload);
     _.forOwn(selectedMetrics.payload, (val, key) => {
       // patchMetricToEnabled(key);
     });
-
+    // TODO FIX UPDATECONFIG
     // updateConfig(selectedMetrics.payload);
 
     res.json(selectedMetrics);
@@ -266,13 +267,33 @@ exports.postSubType = function(req, res) {
 
 /*
 * This is the handler for events coming from Redfish service.
-* So far, no simulator has been able to send events to rfInsight.
-*
-* TODO test on Linux?
 */
+let metrics = {};
 exports.handleEventIn = function(req, res) {
   console.log("Received a metric report from Redfish service.");
-  res.json(req.body);
+  // console.log(res.req.body);
+  let mr = res.req.body;
+
+  for (var i = 0; i < values.length; i++) {
+    influx
+      .writePoints(
+        [
+          {
+            measurement: mr.Id,
+            tags: { MetricDefinition: mr.MetricDefinition },
+            fields: { [mr.MetricId]: mr.MetricValue },
+            timestamp: mr.Timestamp
+          }
+        ],
+        {
+          database: "metrics",
+          precision: "s"
+        }
+      )
+      .catch(err => {
+        console.error(`Error writing data to Influx. ${err.stack}`);
+      });
+  }
 };
 
 const subscribeToEvents = () => {
@@ -328,18 +349,14 @@ exports.getRfModeller = function(req, res) {
 exports.getModellerConfig = function(req, res) {
   let modellerConfig;
 
-  fs.readFile(
-    "../rfModeller/config.json",
-    "utf8",
-    (err, data) => {
-      if (err) {
-        throw err;
-      } else {
-        modellerConfig = JSON.parse(data);
-        res.json(modellerConfig);
-      }
+  fs.readFile("../rfModeller/config.json", "utf8", (err, data) => {
+    if (err) {
+      throw err;
+    } else {
+      modellerConfig = JSON.parse(data);
+      res.json(modellerConfig);
     }
-  );
+  });
 };
 
 exports.postModellerConfig = function(req, res) {
