@@ -5,11 +5,6 @@ const baseRoutes = require("./routes/baseRoutes");
 var app_controller = require("./controllers/AppController");
 
 let router = express.Router();
-/*
-* Influx data writes disabled while we work on the frontend service API
-*/
-// setInterval(app_controller.updateCPUUtil, 1000);
-// setInterval(app_controller.writeDataTest, 5000);
 
 const app = express();
 hbs.registerPartials(__dirname + "/views/partials");
