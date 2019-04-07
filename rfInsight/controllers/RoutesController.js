@@ -1,12 +1,14 @@
 const request = require("request");
 const fs = require("fs");
 const _ = require("lodash");
+const Influx = require("influx");
 
 const childProcess = require("child_process");
 const config = require("../config/config");
 var generatorProcess = { process: null, perc: 0 }; //Global reference to generator child process
 
 let influx = require("./InfluxController").influx;
+let util = require("../resources/js/util");
 
 let options = {
   host: "http://127.0.0.1:8001",
@@ -268,21 +270,26 @@ exports.postSubType = function(req, res) {
 /*
 * This is the handler for events coming from Redfish service.
 */
-let metrics = {};
+
 exports.handleEventIn = function(req, res) {
   console.log("Received a metric report from Redfish service.");
-  // console.log(res.req.body);
+  console.log(res.req.body);
   let mr = res.req.body;
-
+  let values = mr.MetricValues;
   for (var i = 0; i < values.length; i++) {
+    // let date = new Date(util.convertToIsoDate(values[i].Timestamp));
+    // d2 = new Date();
+    // now = d2.getSeconds();
+    // date.setMinutes(date.getMinutes() + now);
+
     influx
       .writePoints(
         [
           {
             measurement: mr.Id,
-            tags: { MetricDefinition: mr.MetricDefinition },
-            fields: { [mr.MetricId]: mr.MetricValue },
-            timestamp: mr.Timestamp
+            tags: { MetricDefinition: values[i].MetricDefinition },
+            fields: { [values[i].MetricId]: values[i].MetricValue }
+            // timestamp: Influx.toNanoDate(values[i].Timestamp)
           }
         ],
         {
