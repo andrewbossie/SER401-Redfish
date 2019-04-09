@@ -212,23 +212,7 @@
          let html = "";
 
          for (var index in urls) {
-            html += '<td class="panelCell">';
-            html +=
-               "<div id='panel_area_" +
-               index +
-               "'><iframe src=\"" +
-               urls[index] +
-               '" class="panelFrame" frameborder="0"></iframe>';
-            html += '<div class="text">';
-            html += "<span>";
-            html +=
-               "<i class='fa fa-trash del' aria-hidden='true' id='" +
-               index +
-               "'></i><i class='fa fa-expand expand' id='"+ index +"-expand'></i>";
-            html += "<h2  class='text'>" + labels[index] + "</h2>";
-            html += "</span>";
-            html += "</div>";
-            html += "</td>";
+            html += buildPanelHtml(urls[index], labels[index], index)
          }
 
          $(".main_container").empty();
@@ -243,21 +227,31 @@
          if (!allAddedPanels.includes(value)) {
             allAddedPanels.push(value);
          }
-         let html =
-            '<td class="panelCell"><div id=\'panel_area_' +
-            value +
-            "'><iframe src='" +
-            url +
-            "' class='panelFrame' frameborder='0'></iframe>";
-         html +=
-            "<br /><i class='fa fa-trash del' aria-hidden='true' id='" +
-            value +
-            "'></i><i class='fa fa-expand expand' id='"+ value +"-expand'></i><h2 class='text'>" +
-            label +
-            "</h2></div>";
-         $(".main_container").append(html);
+         $(".main_container").append(buildPanelHtml(url, label, value));
       }
    };
+
+   let buildPanelHtml = (url, label, index) => {
+      let html = "";
+      html += '<td class="panelCell">';
+      html +=
+         "<div id='panel_area_" +
+         index +
+         "'><iframe src=\"" +
+         url +
+         '" class="panelFrame" frameborder="0"></iframe>';
+      html += '<div class="text">';
+      html += "<span>";
+      html +=
+         "<i class='fa fa-trash del' aria-hidden='true' id='" +
+         index +
+         "'></i><i class='fa fa-expand expand' id='"+ index +"-expand'></i>";
+      html += "<h2  class='text'>" + label + "</h2>";
+      html += "</span>";
+      html += "</div>";
+      html += "</td>";
+      return html;
+   }
 
    $("body").on("click", ".del", function () {
       var index = displayed.indexOf(this.id);
