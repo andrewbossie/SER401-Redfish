@@ -19,18 +19,18 @@ const influx = new Influx.InfluxDB({
   * depending on the desired report.
   */
   schema: [
-    {
-      measurement: "CPUSensor",
-      fields: {
-        temperature: Influx.FieldType.FLOAT,
-        min_temperature: Influx.FieldType.FLOAT,
-        max_temperature: Influx.FieldType.FLOAT,
-        target_temperature: Influx.FieldType.FLOAT,
-        power_consumption: Influx.FieldType.FLOAT,
-        target_power: Influx.FieldType.FLOAT
-      },
-      tags: ["report, interval"]
-    },
+    // {
+    //   measurement: "CPUSensor",
+    //   fields: {
+    //     temperature: Influx.FieldType.FLOAT,
+    //     min_temperature: Influx.FieldType.FLOAT,
+    //     max_temperature: Influx.FieldType.FLOAT,
+    //     target_temperature: Influx.FieldType.FLOAT,
+    //     power_consumption: Influx.FieldType.FLOAT,
+    //     target_power: Influx.FieldType.FLOAT
+    //   },
+    //   tags: ["report, interval"]
+    // },
     {
       measurement: "ThermalStatus",
       fields: {
@@ -48,6 +48,29 @@ const influx = new Influx.InfluxDB({
       fields: {
         CurrentReading: Influx.FieldType.FLOAT,
         HealthState: Influx.FieldType.STRING
+      },
+      tags: ["MetricDefinition"]
+    },
+    {
+      measurement: "FanStatus",
+      fields: {
+        FQDD: Influx.FieldType.STRING,
+        Status: Influx.FieldType.STRING,
+        Type: Influx.FieldType.STRING,
+        LowerWarningThreshold: Influx.FieldType.FLOAT,
+        LowerCriticalThreshold: Influx.FieldType.FLOAT,
+        CurrentSpeedRPM: Influx.FieldType.FLOAT
+      },
+      tags: ["MetricDefinition"]
+    },
+    {
+      measurement: "FanInventory",
+      fields: {
+        FQDD: Influx.FieldType.STRING,
+        RedundancyStatus: Influx.FieldType.STRING,
+        RateUnits: Influx.FieldType.STRING,
+        PrimaryStatus: Influx.FieldType.STRING,
+        CurrentReading: Influx.FieldType.STRING
       },
       tags: ["MetricDefinition"]
     }

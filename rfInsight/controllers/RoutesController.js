@@ -289,7 +289,7 @@ exports.handleEventIn = function(req, res) {
             measurement: mr.Id,
             tags: { MetricDefinition: values[i].MetricDefinition },
             fields: { [values[i].MetricId]: values[i].MetricValue }
-            // timestamp: Influx.toNanoDate(values[i].Timestamp)
+            // timestamp: Influx.toNanoDate(new Date(values[i].Timestamp))
           }
         ],
         {
