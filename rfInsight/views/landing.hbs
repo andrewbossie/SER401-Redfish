@@ -92,17 +92,31 @@
     $('#view').prop('disabled', true);
     $('.metrics-indiv').hide();
 
+    $(document).ready(function(e){
+
+        var init_host = "{{ host }}";
+       if(init_host !== ""){
+         console.log("host set");
+         $('#ip')
+         $('#subs').css('visibility', 'visible');
+         $('#run').prop('disabled', false);
+         $('.list-div').css('visibility', 'visible');
+         $('#select').css('visibility', 'visible');
+         $('#avail').css('visibility', 'visible');
+         $('#buttons').css('visibility', 'visible');
+         get_existing();
+       } else{
+           console.log("host not set");
+        }
+    });
+
     //disable run until after hostname
    $('#run').prop('disabled', true);
 
    $('#ip').on('keyup', function(e){
-       e.preventDefault();
+
        if(e.which === 13) {
-           $('#run').prop('disabled', false);
-           $('.list-div').css('visibility', 'visible');
-           $('#select').css('visibility', 'visible');
-           $('#avail').css('visibility', 'visible');
-           get_existing();
+           e.preventDefault();
        }
    });
 
