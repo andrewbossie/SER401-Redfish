@@ -352,7 +352,19 @@
 
     //AJAX for saving config
    $('#save').on('click', function(e){
-       
+       e.preventDefault();
+       $.ajax({
+           method: "POST",
+           url: 'api/save',
+           data: {data: data},
+           success:  function(response){
+                console.log('saved');
+           },
+           error: function(error){
+               alert("Error saving existing config!");
+               console.log(error);
+           }
+       });
    });
 
     // AJAX for current config
