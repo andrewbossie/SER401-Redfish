@@ -114,9 +114,9 @@
    $('#run').prop('disabled', true);
 
    $('#ip').on('keyup', function(e){
-
+       e.preventDefault();
        if(e.which === 13) {
-           e.preventDefault();
+           $('#subs').css('visibility', 'visible');
        }
    });
 
