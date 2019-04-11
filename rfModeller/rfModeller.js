@@ -1,21 +1,25 @@
 "use strict";
 
+
 var util = require("util");
 var fs = require("fs");
 var PFuncs = require("./PatternFuncs");
 var config;
-var iterations = 60*60*10; //default to 10 hours unless specified otherwise
-var outputPath = "output.csv"; //default. override with -o switch
+var iterations = 60*60*10; 			//default to 10 hours unless specified otherwise
+var outputPath = "./output.csv"; 	//default. override with -o switch
+var interval = 10;					//number of seconds to wait before producing a report
+var newPerc = 0;
 
 //-c switch to specify config file
 if (process.argv.indexOf("-c") != -1) {
    if (process.argv[process.argv.indexOf("-c") + 1] != -1) {
       var configFile = "./" + process.argv[process.argv.indexOf("-c") + 1];
-      console.log("Using config file: " + configFile);
+		//console.log("Using config file: " + configFile);
       try {
          config = require(configFile);
       } catch (e) {
          console.log("Error opening " + configFile + ": " + e);
+		 process.exit(10);
       }
    }
 }
@@ -34,25 +38,42 @@ if (process.argv.indexOf("-o") != -1) {
    }
 }
 
+//look for -i interval switch
+if (process.argv.indexOf("-i") != -1) {
+   if (process.argv[process.argv.indexOf("-i") + 1] != -1) {
+      interval = process.argv[process.argv.indexOf("-i") + 1]
+   }
+}
+
 //import config 
 if (!config) {
-   config = require("./config");
+	try{
+		config = require("./config");
+	} catch(e){
+		console.log("Error opening default config: " + e);
+		process.exit(10);
+	}
 }
+
+ 
 
 generate();
 
+
+
+
 function generate(){
+	
 	var patternTimers = [];
 	var parsedPaths = [];		//cached json template paths
 	var parsedTemplates = [];	//cached json templates
 	var isoDTG = Date.now();
-	var str = "#\n";
+	var str = "#";
 	var gcd = 0;
 	var oldPerc = 0;
 	var percLen = 50;			//the length, in characters, of the percentage loading bar
 	var stream = fs.createWriteStream(outputPath);
 	stream.write("");
-	console.log("Generating " + secondsToString(iterations) + " of data... ");
 
 	//calculate GCD of iterations for iteration optimazation
 	config.MockupData.MockupPatterns.forEach(function(mockup, index) {
@@ -61,28 +82,35 @@ function generate(){
 		else
 			gcd = getGCD(gcd,mockup.timedelay);
 	});
-
+	
+	
+	gcd = getGCD(gcd, interval);	//need to ensure the loop checks on interval
 
 	(async() => {
 	for (var i = 0; i <= iterations; i+=gcd) {
 		
 		//draw the percent loading bar
-		let newPerc = Math.floor(i / iterations * 100)
-		if ( newPerc > oldPerc){
+		newPerc = Math.floor(i / iterations * 100);
+		if (newPerc > oldPerc){
 			oldPerc = newPerc;
-			process.stdout.cursorTo(0);
-			let percStr = "["
-			for(var x = 0; x  < Math.floor(newPerc / 100 * percLen); x++){
-				percStr += "█";
+			if(!(process.send === undefined)){
+				process.send(""+newPerc); //send percentage to parent process
+			}else{
+				process.stdout.cursorTo(0);
+				let percStr = "["
+				for(var x = 0; x  < Math.floor(newPerc / 100 * percLen); x++){
+					percStr += "█";
+				}
+				
+				for(var x = Math.floor(newPerc / 100 * percLen); x < percLen; x++){
+					percStr += " ";
+				}
+				percStr += "]";
+				percStr += (newPerc + "%");
+				
+				process.stdout.write(percStr);
 			}
 			
-			for(var x = Math.floor(newPerc / 100 * percLen); x < percLen; x++){
-				percStr += " ";
-			}
-			percStr += "]";
-			percStr += (newPerc + "%");
-			
-			//process.stdout.write(percStr);
 		}
 		
 		//start with a fresh line
@@ -94,11 +122,17 @@ function generate(){
 			if (i % mockup.timedelay == 0) {
 				
 				//check if template has been parsed
-				let path = config.RedFishData.path + mockup.path + "index.json";
+				let path = './' + config.RedFishData.path + mockup.path + "index.json";
 				
 				//if its not loaded yet, load and parse the template
 				if(parsedPaths.indexOf(path) < 0){
-					let file = fs.readFileSync(path,"utf-8")
+					try{
+						var file = fs.readFileSync(path,"utf-8")
+					}catch(e){
+						console.log("\nError opening template reports: " + e);
+						console.log("\nEnsure RedFishData.path property is correct in your specified config.js");
+						process.exit(11);
+					}
 					var currJSON = JSON.parse(file);
 					//push template to loaded templates
 					parsedTemplates.push(file);
@@ -151,14 +185,19 @@ function generate(){
 				line += template.MetricProperty + ",";
 			}
 		});
+		if(i % interval == 0){
+			str += "\n";
+			str += i+ ",Metric,";
+		}
 		
 		//if the line is not empty, add some boilerplate and add to master string
 		if (line != "") {
-			str += i + ",";
-			str += "Metric,";
+			//str += ",";
 			str += line;
-			str += "\n";
+			
 		}
+		
+		
 		
 		//write to stream periodically to prevent memory overflow
 		if (str.length > 1000000){
@@ -172,9 +211,10 @@ function generate(){
 
 	//wrap up
 	str += "0,END";
-	stream.write(str);
-	console.log("\nCompleted in " + (Date.now() - isoDTG) + "ms");
-
+	stream.write(str, function(){
+		process.exit();
+	});
+	
 	})();
 }
 
@@ -216,4 +256,5 @@ function write(stream, data) {
 	}
     return;
 }
+
 

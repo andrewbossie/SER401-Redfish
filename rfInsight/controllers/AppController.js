@@ -1,37 +1,38 @@
 // const keys = require("../config/keys");
 const request = require("request");
-const Influx = require("influx");
 const util = require("../resources/js/util");
 const rTools = require("../resources/js/redfishTools");
 
+const influx = require("./InfluxController").influx;
+
 // Get CPU data
-let metrics = {
-  cpuUtil_1: {
-    date: null,
-    timestamp: null,
-    metric: null
-  },
-  cpuUtil_2: {
-    date: null,
-    timestamp: null,
-    metric: null
-  },
-  cpuUtil_3: {
-    date: null,
-    timestamp: null,
-    metric: null
-  }
-};
-
-let updateMetric = (target, newMetric) => {
-  let date = new Date(util.convertToIsoDate(newMetric.TimeStamp));
-  d2 = new Date();
-  now = d2.getSeconds();
-  date.setMinutes(date.getMinutes() + now);
-
-  target.timestamp = Influx.toNanoDate(date);
-  target.metric = newMetric.MetricValue;
-};
+// let metrics = {
+//   cpuUtil_1: {
+//     date: null,
+//     timestamp: null,
+//     metric: null
+//   },
+//   cpuUtil_2: {
+//     date: null,
+//     timestamp: null,
+//     metric: null
+//   },
+//   cpuUtil_3: {
+//     date: null,
+//     timestamp: null,
+//     metric: null
+//   }
+// };
+//
+// let updateMetric = (target, newMetric) => {
+//   let date = new Date(util.convertToIsoDate(newMetric.TimeStamp));
+//   d2 = new Date();
+//   now = d2.getSeconds();
+//   date.setMinutes(date.getMinutes() + now);
+//
+//   target.timestamp = Influx.toNanoDate(date);
+//   target.metric = newMetric.MetricValue;
+// };
 
 // Update influx from API
 exports.updateCPUUtil = () => {
@@ -74,70 +75,49 @@ exports.updateCPUUtil = () => {
   );
 };
 
-// InfluxDB Connection
-const influx = new Influx.InfluxDB({
-  host: "localhost:8086",
-  database: "test",
-  username: "admin",
-  password: "admin",
-
-  schema: [
-    {
-      measurement: "CPUPercentUtil",
-      fields: { value: Influx.FieldType.FLOAT },
-      tags: ["host", "tray", "id"]
-    },
-    {
-      measurement: "temp",
-      fields: { value: Influx.FieldType.FLOAT },
-      tags: ["host"]
-    }
-  ]
-});
-
 // Random test data (DEPRECATED)
-exports.writeDataTest = function() {
-  influx
-    .writePoints(
-      [
-        {
-          measurement: "CPUPercentUtil",
-          tags: { host: "serverA", tray: 1, id: 1 },
-          fields: { value: metrics.cpuUtil_1.metric },
-          timestamp: metrics.cpuUtil_1.timestamp.getNanoTime()
-        },
-        {
-          measurement: "CPUPercentUtil",
-          tags: { host: "serverA", tray: 1, id: 2 },
-          fields: { value: metrics.cpuUtil_2.metric },
-          timestamp: metrics.cpuUtil_2.timestamp.getNanoTime()
-        },
-        {
-          measurement: "CPUPercentUtil",
-          tags: { host: "serverA", tray: 1, id: 3 },
-          fields: { value: metrics.cpuUtil_3.metric },
-          timestamp: metrics.cpuUtil_3.timestamp.getNanoTime()
-        },
-        {
-          measurement: "cpu",
-          tags: { host: "serverB" },
-          fields: { value: Math.random() * 75 }
-        },
-        {
-          measurement: "temp",
-          tags: { host: "serverA" },
-          fields: { value: Math.random() * 200 }
-        }
-      ],
-      {
-        database: "test",
-        precision: "s"
-      }
-    )
-    .catch(err => {
-      console.error(`Error writing data to Influx. ${err.stack}`);
-    });
-};
+// exports.writeDataTest = function() {
+//   influx
+//     .writePoints(
+//       [
+//         {
+//           measurement: "CPUPercentUtil",
+//           tags: { host: "serverA", tray: 1, id: 1 },
+//           fields: { value: metrics.cpuUtil_1.metric },
+//           timestamp: metrics.cpuUtil_1.timestamp.getNanoTime()
+//         },
+//         {
+//           measurement: "CPUPercentUtil",
+//           tags: { host: "serverA", tray: 1, id: 2 },
+//           fields: { value: metrics.cpuUtil_2.metric },
+//           timestamp: metrics.cpuUtil_2.timestamp.getNanoTime()
+//         },
+//         {
+//           measurement: "CPUPercentUtil",
+//           tags: { host: "serverA", tray: 1, id: 3 },
+//           fields: { value: metrics.cpuUtil_3.metric },
+//           timestamp: metrics.cpuUtil_3.timestamp.getNanoTime()
+//         },
+//         {
+//           measurement: "cpu",
+//           tags: { host: "serverB" },
+//           fields: { value: Math.random() * 75 }
+//         },
+//         {
+//           measurement: "temp",
+//           tags: { host: "serverA" },
+//           fields: { value: Math.random() * 200 }
+//         }
+//       ],
+//       {
+//         database: "test",
+//         precision: "s"
+//       }
+//     )
+//     .catch(err => {
+//       console.error(`Error writing data to Influx. ${err.stack}`);
+//     });
+// };
 
 // Grab Influx Data. Can we do this without nesting?
 exports.getInfluxData = function(req, res) {

@@ -21,9 +21,9 @@
       <h1 class="text">{{ pageTitle }}</h1>
       <form>
          <input type="radio" name="theme" value="dark" checked="checked" onclick="updateTheme(true /*isDark*/);" /><span
-            class="text">Dark Panels</span>
-         <input type="radio" name="theme" value="light" onclick="updateTheme(false /*isDark*/);" /><span class="text">Light
-            Panels</span>
+            class="text">Light Theme</span>
+         <input type="radio" name="theme" value="light" onclick="updateTheme(false /*isDark*/);" /><span class="text">Dark
+            Theme</span>
       </form>
       <div class="separator"></div>
    </div>
@@ -46,7 +46,7 @@
    </div>
 
    <!-- Main Content -->
-   <div>
+   <div class="table_container">
       <table class="main_container"></table>
    </div>
 
@@ -120,23 +120,17 @@
    }
 
    var panel1URL =
-      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB" +
-      themeURLParam;
+      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverB";
    var panel2URL =
-      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA" +
-      themeURLParam;
+      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=2&var-Host=serverA";
    var panel3URL =
-      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6" +
-      themeURLParam;
+      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&var-Host=serverA&panelId=6";
    var panel4URL =
-      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB" +
-      themeURLParam;
+      "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB";
    var panel5URL =
-      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1" +
-      themeURLParam;
+      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1";
    var panel6URL =
-      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1" +
-      themeURLParam;
+      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1";
    var panel1Label = "Static Grafana Panel 1";
    var panel2Label = "Static Grafana Panel 2";
    var panel3Label = "Static Grafana Panel 3";
@@ -148,37 +142,37 @@
       switch (value) {
          case 0:
             return {
-               url: panel1URL,
+               url: panel1URL + themeURLParam,
                label: panel1Label
             }
          case 1:
             return {
-               url: panel2URL,
+               url: panel2URL + themeURLParam,
                label: panel2Label
             }
             
 
          case 2:
             return {
-               url: panel3URL,
+               url: panel3URL + themeURLParam,
                label: panel3Label
             }
 
          case 3:
             return {
-               url: panel4URL,
+               url: panel4URL + themeURLParam,
                label: panel4Label
             }
 
          case 4:
             return {
-               url: panel5URL,
+               url: panel5URL + themeURLParam,
                label: panel5Label
             }
 
          case 5:
             return {
-               url: panel6URL,
+               url: panel6URL + themeURLParam,
                label: panel6Label
             }
       }
@@ -198,12 +192,12 @@
 
       if (value == 6) {
          let urls = [
-            panel1URL,
-            panel2URL,
-            panel3URL,
-            panel4URL,
-            panel5URL,
-            panel6URL
+            panel1URL + themeURLParam,
+            panel2URL + themeURLParam,
+            panel3URL + themeURLParam,
+            panel4URL + themeURLParam,
+            panel5URL + themeURLParam,
+            panel6URL + themeURLParam
          ];
 
          let labels = [
@@ -218,23 +212,7 @@
          let html = "";
 
          for (var index in urls) {
-            html += '<td class="panelCell">';
-            html +=
-               "<div id='panel_area_" +
-               index +
-               "'><iframe src=\"" +
-               urls[index] +
-               '" class="panelFrame" frameborder="0"></iframe>';
-            html += '<div class="labelContainer text">';
-            html += "<span>";
-            html +=
-               "<i class='fa fa-trash del' aria-hidden='true' id='" +
-               index +
-               "'></i><i class='fa fa-expand expand' id='"+ index +"-expand'></i>";
-            html += "<h2>" + labels[index] + "</h2>";
-            html += "</span>";
-            html += "</div>";
-            html += "</td>";
+            html += buildPanelHtml(urls[index], labels[index], index)
          }
 
          $(".main_container").empty();
@@ -249,27 +227,37 @@
          if (!allAddedPanels.includes(value)) {
             allAddedPanels.push(value);
          }
-         let html =
-            '<td class="panelCell"><div id=\'panel_area_' +
-            value +
-            "'><iframe src='" +
-            url +
-            "' class='panelFrame' frameborder='0'></iframe>";
-         html +=
-            "<br /><i class='fa fa-trash del' aria-hidden='true' id='" +
-            value +
-            "'></i><i class='fa fa-expand expand' id='"+ value +"-expand'></i><h2 class='text'>" +
-            label +
-            "</h2></div>";
-         $(".main_container").append(html);
+         $(".main_container").append(buildPanelHtml(url, label, value));
       }
    };
+
+   let buildPanelHtml = (url, label, index) => {
+      let html = "";
+      html += '<td class="panelCell">';
+      html +=
+         "<div id='panel_area_" +
+         index +
+         "'><iframe src=\"" +
+         url +
+         '" class="panelFrame" frameborder="0"></iframe>';
+      html += '<div class="text">';
+      html += "<span>";
+      html +=
+         "<i class='fa fa-trash del' aria-hidden='true' id='" +
+         index +
+         "'></i><i class='fa fa-expand expand' id='"+ index +"-expand'></i>";
+      html += "<h2  class='text'>" + label + "</h2>";
+      html += "</span>";
+      html += "</div>";
+      html += "</td>";
+      return html;
+   }
 
    $("body").on("click", ".del", function () {
       var index = displayed.indexOf(this.id);
       displayed.splice(index, 1);
       allAddedPanels.splice(index, 1);
-      $("#panel_area_" + this.id).remove();
+      $("#panel_area_" + this.id).parent().remove();
    });
 
    $("body").on("click", ".expand", function () {

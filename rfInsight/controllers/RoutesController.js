@@ -1,10 +1,14 @@
 const request = require("request");
 const fs = require("fs");
 const _ = require("lodash");
+const Influx = require("influx");
 
 const childProcess = require("child_process");
 const config = require("../config/config");
 var generatorProcess = { process: null, perc: 0 }; //Global reference to generator child process
+
+let influx = require("./InfluxController").influx;
+let util = require("../resources/js/util");
 
 let options = {
   host: "http://127.0.0.1:8001",
@@ -99,7 +103,6 @@ exports.getMetric = function(req, res) {
       } else if (error) {
         console.log(error);
       } else {
-        console.log(body);
         res.json(body);
       }
     }
@@ -109,9 +112,7 @@ exports.getMetric = function(req, res) {
 //Route handler for /dataGenerator
 exports.getDataGenerator = function(req, res) {
   res.render("rfModeller.hbs", {
-    configPath:
-      "Config files located at: " +
-      fs.realpathSync("./resources/js/dataGenerator"),
+    configPath: "Config files located at: " + fs.realpathSync("../rfModeller/"),
     currentYear: new Date().getFullYear(),
     pageTitle: "Redfish Modeler"
   });
@@ -136,7 +137,7 @@ exports.generateMockData = function(req, res) {
   if (req.query.config) q.push("-c", req.query.config);
   if (req.query.interval) q.push("-i", req.query.interval);
   function generate(path, callback) {
-    generatorProcess.process = childProcess.fork("rfmockdatacreator.js", q, {
+    generatorProcess.process = childProcess.fork("rfModeller.js", q, {
       cwd: path
     });
 
@@ -165,15 +166,19 @@ exports.generateMockData = function(req, res) {
     });
   }
 
-  generate("./resources/js/dataGenerator/", function(err) {
+  generate("../rfModeller/", function(err) {
     if (!err) {
-      res.download("./resources/js/dataGenerator/output.csv");
+      res.download("../rfModeller/output.csv");
     } else {
       console.log(err);
     }
   });
 };
 
+/*
+* Updates host in memory.
+* TODO: Update host before anything else happens.
+*/
 exports.postRedfishHost = function(req, res) {
   console.log(`Host POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let body = req.body;
@@ -189,18 +194,18 @@ exports.postRedfishHost = function(req, res) {
   }
 };
 
+// TODO - this isn't actually doing anything at the moment.
+// We need it to update some data so the app knows what to
+// get and send to Influx.
 exports.postSelectedMetrics = function(req, res) {
   console.log(`Metrics POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let selectedMetrics = req.body;
   if (!_.isEmpty(selectedMetrics.payload)) {
-    // let metricReport = selectedMetrics.from;
-    // let metrics = selectedMetrics.metrics;
+    console.log(selectedMetrics.payload);
     _.forOwn(selectedMetrics.payload, (val, key) => {
-      // TODO: Handle each key
-      // TODO: fix updateConfig to adhere
-      patchMetricToEnabled(key);
+      // patchMetricToEnabled(key);
     });
-
+    // TODO FIX UPDATECONFIG
     // updateConfig(selectedMetrics.payload);
 
     res.json(selectedMetrics);
@@ -217,9 +222,6 @@ const updateConfig = newSelection => {
       throw err;
     } else {
       configData = JSON.parse(data);
-      // !configData.enabledReports.includes(newSelection.from) &&
-      //   configData.enabledReports.push(newSelection.from) &&
-      //   configData.selections.push(newSelection);
       _.forOwn(newSelection, (val, key) => {
         !configData.enabledReports.includes(key) &&
           configData.enabledReports.push(key) &&
@@ -242,20 +244,20 @@ const updateConfig = newSelection => {
   });
 };
 
+/*
+* Handler for front-end POST subscription type. If 'sub', it is set up
+* to run the subscription workflow, which is currently working.
+*/
 exports.postSubType = function(req, res) {
-  // console.log("Sub type POST: " + req.body.type);
   console.log(`Sub type POST: ${JSON.stringify(req.body, undefined, 3)}`);
   let selectedSubType = req.body;
   if (
     selectedSubType.type &&
     ["sse", "sub", "poll"].includes(selectedSubType.type)
   ) {
-    // TODO: Set up connection to Redfish accordingly
     if (selectedSubType.type === "sub") {
-      // subscribeToEvents();
+      subscribeToEvents();
     }
-    // TODO: Update metrics_config.json
-    // updateSubType(selectedSubType.type);
     res.json(selectedSubType);
   } else {
     res.json({
@@ -265,9 +267,40 @@ exports.postSubType = function(req, res) {
   }
 };
 
+/*
+* This is the handler for events coming from Redfish service.
+*/
+
 exports.handleEventIn = function(req, res) {
   console.log("Received a metric report from Redfish service.");
-  res.json(req.body);
+  console.log(res.req.body);
+  let mr = res.req.body;
+  let values = mr.MetricValues;
+  for (var i = 0; i < values.length; i++) {
+    // This date arithmetic needs to be then + (now - then)
+    now = new Date();
+    then = new Date(values[i].Timestamp);
+    offset = Math.abs(now.getTime() - then.getTime());
+    input = new Date(then.getTime() + offset);
+    influx
+      .writePoints(
+        [
+          {
+            measurement: mr.Id,
+            tags: { MetricDefinition: values[i].MetricDefinition },
+            fields: { [values[i].MetricId]: values[i].MetricValue },
+            timestamp: input
+          }
+        ],
+        {
+          database: "metrics",
+          precision: "s"
+        }
+      )
+      .catch(err => {
+        console.error(`Error writing data to Influx. ${err.stack}`);
+      });
+  }
 };
 
 const subscribeToEvents = () => {
@@ -282,9 +315,12 @@ const subscribeToEvents = () => {
       url: `${options.host}/redfish/v1/EventService/Subscriptions`,
       json: true,
       rejectUnauthorized: false,
+      /*
+      * See DMTF RMS github issue #53 for conversation regarding this format.
+      */
       body: {
         EventFormatType: "MetricReport",
-        SubscriptionType: "RedfishEvent",
+        EventTypes: ["MetricReport"],
         Destination: "http://localhost:8080/api/event_in"
       }
     },
@@ -292,7 +328,7 @@ const subscribeToEvents = () => {
       if (error) {
         console.log(error);
       }
-      console.log(response);
+      // console.log(response);
     }
   );
 };
@@ -319,27 +355,22 @@ exports.getRfModeller = function(req, res) {
 
 exports.getModellerConfig = function(req, res) {
   let modellerConfig;
-  //  let modellerConfig = require("resources/js/dataGenerator/config.json");
 
-  fs.readFile(
-    "./resources/js/dataGenerator/config.json",
-    "utf8",
-    (err, data) => {
-      if (err) {
-        throw err;
-      } else {
-        modellerConfig = JSON.parse(data);
-        res.json(modellerConfig);
-      }
+  fs.readFile("../rfModeller/config.json", "utf8", (err, data) => {
+    if (err) {
+      throw err;
+    } else {
+      modellerConfig = JSON.parse(data);
+      res.json(modellerConfig);
     }
-  );
+  });
 };
 
 exports.postModellerConfig = function(req, res) {
   let modellerConfig = JSON.parse(data);
 
   fs.writeFile(
-    "./resources/js/dataGenerator/config.json",
+    "../rfModeller/config.json",
     modellerConfig,
     "utf8",
     (err, data) => {
@@ -362,7 +393,7 @@ const patchMetricToEnabled = report => {
       }
     },
     (error, response, body) => {
-      console.log(response);
+      // console.log(response);
     }
   );
 };
