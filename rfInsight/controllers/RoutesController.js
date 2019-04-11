@@ -277,19 +277,19 @@ exports.handleEventIn = function(req, res) {
   let mr = res.req.body;
   let values = mr.MetricValues;
   for (var i = 0; i < values.length; i++) {
-    // let date = new Date(util.convertToIsoDate(values[i].Timestamp));
-    // d2 = new Date();
-    // now = d2.getSeconds();
-    // date.setMinutes(date.getMinutes() + now);
-
+    // This date arithmetic needs to be then + (now - then)
+    now = new Date();
+    then = new Date(values[i].Timestamp);
+    offset = Math.abs(now.getTime() - then.getTime());
+    input = new Date(then.getTime() + offset);
     influx
       .writePoints(
         [
           {
             measurement: mr.Id,
             tags: { MetricDefinition: values[i].MetricDefinition },
-            fields: { [values[i].MetricId]: values[i].MetricValue }
-            // timestamp: Influx.toNanoDate(new Date(values[i].Timestamp))
+            fields: { [values[i].MetricId]: values[i].MetricValue },
+            timestamp: input
           }
         ],
         {

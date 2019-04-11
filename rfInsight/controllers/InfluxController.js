@@ -19,18 +19,6 @@ const influx = new Influx.InfluxDB({
   * depending on the desired report.
   */
   schema: [
-    // {
-    //   measurement: "CPUSensor",
-    //   fields: {
-    //     temperature: Influx.FieldType.FLOAT,
-    //     min_temperature: Influx.FieldType.FLOAT,
-    //     max_temperature: Influx.FieldType.FLOAT,
-    //     target_temperature: Influx.FieldType.FLOAT,
-    //     power_consumption: Influx.FieldType.FLOAT,
-    //     target_power: Influx.FieldType.FLOAT
-    //   },
-    //   tags: ["report, interval"]
-    // },
     {
       measurement: "ThermalStatus",
       fields: {
