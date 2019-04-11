@@ -76,6 +76,7 @@
         <div id="buttons" style="visibility: hidden; text-align: center;">
             <input type="button" value="Start" id="run" />
             <input type="button" value="View Graphs" id="view" />
+            <input type="button" value="Save Config" id="save" />
         </div>
     </div>
 </body>
@@ -349,9 +350,10 @@
         window.location.replace("/graphs");
             });
 
-   /*$(document).ready(function(){
-       get_existing();
-   });*/
+    //AJAX for saving config
+   $('#save').on('click', function(e){
+       
+   });
 
     // AJAX for current config
     function get_existing(){
