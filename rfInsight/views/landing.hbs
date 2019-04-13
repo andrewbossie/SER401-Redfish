@@ -352,6 +352,24 @@
 
     //AJAX for saving config
    $('#save').on('click', function(e){
+       var s = JSON.stringify(sub_type);
+       console.log(sub_type['type']);
+
+       // Build Metrics
+       var p = new Object();
+       for (var key in selected) {
+           p[key] = selected[key];
+       }
+
+       // POST ip
+       var payload = [];
+       var ip = $('#ip').val();
+       payload['host'] = ip;
+       payload['sub'] = s;
+       payload['metrics'] = p;
+
+       data = JSON.stringify(payload);
+
        e.preventDefault();
        $.ajax({
            method: "POST",
