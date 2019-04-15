@@ -133,6 +133,7 @@
        $('#avail').css('visibility', 'visible');
        $('#buttons').css('visibility', 'visible');
        get_existing();
+       getDefs();
    });
 
     // Open Menu on CLick
@@ -257,10 +258,7 @@
     $('#run').on('click', function(e){
         e.preventDefault();
 
-        // var valid = false;
-
         if($('#ip').val())
-
 
         // if(valid) {
             sub_type["type"] = $('input[name=type]:checked').val();
@@ -386,28 +384,28 @@
    });
 
     // AJAX for current config
-    function get_existing(){
+    function get_existing() {
         $.ajax({
             method: "GET",
             url: 'api/config',
-            success:  function(response){
+            success: function (response) {
 
                 // For each response selection
-                for(var i = 0; i < response['selections'].length; i++){
+                for (var i = 0; i < response['selections'].length; i++) {
 
                     // Add parent node (from)
-                    $('.selected-parent').append('<li>'+response['selections'][i]['from']+'</li>');
-                    $('.selected-parent').append('<ul class="selected_' +response['selections'][i]['from']+ '"></ul>');
+                    $('.selected-parent').append('<li>' + response['selections'][i]['from'] + '</li>');
+                    $('.selected-parent').append('<ul class="selected_' + response['selections'][i]['from'] + '"></ul>');
 
                     // Make each parent node an array
                     selected[response['selections'][i]['from']] = [];
                     size++;
 
                     // For each metric (metrics)
-                    for(var j = 0; j < response['selections'][i]['metrics'].length; j++){
+                    for (var j = 0; j < response['selections'][i]['metrics'].length; j++) {
 
                         // Append metrics to the parent UL in the html
-                        $('.selected_' + response['selections'][i]['from'] + '').append('<li>'+response['selections'][i]['metrics'][j]+'</li>');
+                        $('.selected_' + response['selections'][i]['from'] + '').append('<li>' + response['selections'][i]['metrics'][j] + '</li>');
                         preselected.push(response['selections'][i]['metrics'][j]);
 
                         // Add to selected array
@@ -417,12 +415,51 @@
                 // console.log(preselected);
                 // console.log(selected);
             },
-            error: function(error){
+            error: function (error) {
                 alert("Error getting existing config!");
                 console.log(error);
             }
         });
     }
+
+
+   function getDefs(){
+       $.ajax({
+           method: "GET",
+           url: '/getDefs',
+           success:  function(response){
+
+               // For each response selection
+               for(var i = 0; i < response['selections'].length; i++){
+
+                   // Add parent node (from)
+                   $('.selected-parent').append('<li>'+response['selections'][i]['from']+'</li>');
+                   $('.selected-parent').append('<ul class="selected_' +response['selections'][i]['from']+ '"></ul>');
+
+                   // Make each parent node an array
+                   selected[response['selections'][i]['from']] = [];
+                   size++;
+
+                   // For each metric (metrics)
+                   for(var j = 0; j < response['selections'][i]['metrics'].length; j++){
+
+                       // Append metrics to the parent UL in the html
+                       $('.selected_' + response['selections'][i]['from'] + '').append('<li>'+response['selections'][i]['metrics'][j]+'</li>');
+                       preselected.push(response['selections'][i]['metrics'][j]);
+
+                       // Add to selected array
+                       selected[response['selections'][i]['from']][j] = response['selections'][i]['metrics'][j];
+                   }
+               }
+               // console.log(preselected);
+               // console.log(selected);
+           },
+           error: function(error){
+               alert("Error getting existing config!");
+               console.log(error);
+           }
+       });
+   }
 
     // Update dashboard on select of individual metrics
     let updateDashboardList = () => {
