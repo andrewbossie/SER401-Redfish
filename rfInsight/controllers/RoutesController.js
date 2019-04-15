@@ -51,6 +51,12 @@ exports.getDefinitionCollection = function(req, res) {
   );
 };
 
+exports.getLanding = function(req, res){
+    res.render("landing.hbs", {
+        pageTitle: "Redfish Insight",
+    });
+};
+
 // Currently being used for the landing page.
 exports.getAvailableMetrics = function(req, res) {
   request(
@@ -73,10 +79,6 @@ exports.getAvailableMetrics = function(req, res) {
           metrics.push(uri.substr(53, uri.length));
         }
         // console.log(metrics);
-        res.render("landing.hbs", {
-          pageTitle: "Redfish Insight",
-          metrics: metrics
-        });
       }
     }
   );

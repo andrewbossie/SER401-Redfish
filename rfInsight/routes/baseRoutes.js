@@ -34,7 +34,8 @@ module.exports = (app, router) => {
   app.get("/datagenerator", routes_controller.getDataGenerator);
   app.get("/generateMockData", routes_controller.generateMockData);
   app.get("/rfModeller", routes_controller.getRfModeller);
-  app.get("/", routes_controller.getAvailableMetrics);
+  app.get("/", routes_controller.getLanding);
+  app.get("/getDefs", routes_controller.getAvailableMetrics);
   app.get("/:metric", routes_controller.getMetric);
 
   // This is a catchall for any bad request.
