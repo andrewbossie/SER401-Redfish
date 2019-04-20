@@ -61,9 +61,11 @@ exports.getLanding = function(req, res){
 
 // Currently being used for the landing page.
 exports.getAvailableMetrics = function(req, res) {
+
+  var host = req.params.host;
   request(
     {
-      url: def_path,
+      url:`${host}${options.redfish_defs}`,
       json: true
     },
     (error, response, body) => {
@@ -80,7 +82,7 @@ exports.getAvailableMetrics = function(req, res) {
           let uri = body.Members[i]["@odata.id"];
           metrics.push(uri.substr(53, uri.length));
         }
-        // console.log(metrics);
+        console.log(metrics);
       }
     }
   );

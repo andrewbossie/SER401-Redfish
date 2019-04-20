@@ -98,7 +98,7 @@
         var init_host = "{{ host }}";
        if(init_host !== ""){
          console.log("host set");
-         $('#ip')
+         $('#ip');
          $('#subs').css('visibility', 'visible');
          $('#run').prop('disabled', false);
          $('.list-div').css('visibility', 'visible');
@@ -424,38 +424,39 @@
 
 
    function getDefs(){
+
+        //Get host value
+       var host = $('#ip').val();
        $.ajax({
            method: "GET",
-           url: '/getDefs',
+           url: '/getDefs/' + host,
            success:  function(response){
-
+                console.log(response);
                // For each response selection
-               for(var i = 0; i < response['selections'].length; i++){
-
-                   // Add parent node (from)
-                   $('.selected-parent').append('<li>'+response['selections'][i]['from']+'</li>');
-                   $('.selected-parent').append('<ul class="selected_' +response['selections'][i]['from']+ '"></ul>');
-
-                   // Make each parent node an array
-                   selected[response['selections'][i]['from']] = [];
-                   size++;
-
-                   // For each metric (metrics)
-                   for(var j = 0; j < response['selections'][i]['metrics'].length; j++){
-
-                       // Append metrics to the parent UL in the html
-                       $('.selected_' + response['selections'][i]['from'] + '').append('<li>'+response['selections'][i]['metrics'][j]+'</li>');
-                       preselected.push(response['selections'][i]['metrics'][j]);
-
-                       // Add to selected array
-                       selected[response['selections'][i]['from']][j] = response['selections'][i]['metrics'][j];
-                   }
-               }
-               // console.log(preselected);
-               // console.log(selected);
+               // for(var i = 0; i < response['selections'].length; i++){
+               //
+               //     // Add parent node (from)
+               //     $('.selected-parent').append('<li>'+response['selections'][i]['from']+'</li>');
+               //     $('.selected-parent').append('<ul class="selected_' +response['selections'][i]['from']+ '"></ul>');
+               //
+               //     // Make each parent node an array
+               //     selected[response['selections'][i]['from']] = [];
+               //     size++;
+               //
+               //     // For each metric (metrics)
+               //     for(var j = 0; j < response['selections'][i]['metrics'].length; j++){
+               //
+               //         // Append metrics to the parent UL in the html
+               //         $('.selected_' + response['selections'][i]['from'] + '').append('<li>'+response['selections'][i]['metrics'][j]+'</li>');
+               //         preselected.push(response['selections'][i]['metrics'][j]);
+               //
+               //         // Add to selected array
+               //         selected[response['selections'][i]['from']][j] = response['selections'][i]['metrics'][j];
+               //     }
+               // }
            },
            error: function(error){
-               alert("Error getting existing config!");
+               alert("Error getting definitions!");
                console.log(error);
            }
        });

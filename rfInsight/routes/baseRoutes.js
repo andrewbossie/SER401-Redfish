@@ -19,7 +19,7 @@ module.exports = (app, router) => {
   router.route("/event_in").post(routes_controller.handleEventIn);
   router.route("/sub_type").post(routes_controller.postSubType);
   router.route("/redfish_host").post(routes_controller.postRedfishHost);
-  router.route("/save").post(routes_controller.postSaveConfig);
+  // router.route("/save").post(routes_controller.postSaveConfig);
   router.route("/metrics/:metric").get(routes_controller.getMetric);
   router.route("/config").get(routes_controller.getCurrentConfig);
   router.route("/test").get(test_controller.testGo);
@@ -35,7 +35,7 @@ module.exports = (app, router) => {
   app.get("/generateMockData", routes_controller.generateMockData);
   app.get("/rfModeller", routes_controller.getRfModeller);
   app.get("/", routes_controller.getLanding);
-  app.get("/getDefs", routes_controller.getAvailableMetrics);
+  app.get("/getDefs/:host", routes_controller.getAvailableMetrics);
   app.get("/:metric", routes_controller.getMetric);
 
   // This is a catchall for any bad request.
