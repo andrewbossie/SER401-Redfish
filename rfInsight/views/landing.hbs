@@ -56,10 +56,6 @@
             <h2 style="text-align: center;">3. Select From Available Metrics</h2>
             <div class="list-div" style="visibility: hidden;">
                 <ul class="list">
-                    <!--{{#each metrics }}-->
-                        <!--<li class="metrics-defs" value="{{this}}" data-opened="closed">{{ this }}</li>-->
-                        <!--<ul class="metrics-indiv" data-parent="{{this}}"></ul>-->
-                    <!--{{/each}}-->
                 </ul>
             </div>
         </div>
@@ -427,36 +423,20 @@
 
         //Get host value
        var host = $('#ip').val();
+
        $.ajax({
            method: "GET",
-           url: '/getDefs/' + host,
+           url: '/getDefs/' + encodeURIComponent(encodeURIComponent(host)),
            success:  function(response){
                 console.log(response);
                // For each response selection
-               // for(var i = 0; i < response['selections'].length; i++){
-               //
-               //     // Add parent node (from)
-               //     $('.selected-parent').append('<li>'+response['selections'][i]['from']+'</li>');
-               //     $('.selected-parent').append('<ul class="selected_' +response['selections'][i]['from']+ '"></ul>');
-               //
-               //     // Make each parent node an array
-               //     selected[response['selections'][i]['from']] = [];
-               //     size++;
-               //
-               //     // For each metric (metrics)
-               //     for(var j = 0; j < response['selections'][i]['metrics'].length; j++){
-               //
-               //         // Append metrics to the parent UL in the html
-               //         $('.selected_' + response['selections'][i]['from'] + '').append('<li>'+response['selections'][i]['metrics'][j]+'</li>');
-               //         preselected.push(response['selections'][i]['metrics'][j]);
-               //
-               //         // Add to selected array
-               //         selected[response['selections'][i]['from']][j] = response['selections'][i]['metrics'][j];
-               //     }
-               // }
+               for(var i = 0; i < response.length; i++){
+                   $('.list').append("<li class='metrics-defs' value='"+response[i]+"' data-opened='closed'>"+response[i]+" </li><ul class='metrics-indiv' data-parent='"+response[i]+"'></ul>");
+
+               }
            },
            error: function(error){
-               alert("Error getting definitions!");
+               alert("Error getting definitions! Check your host!");
                console.log(error);
            }
        });
