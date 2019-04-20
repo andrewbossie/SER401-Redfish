@@ -10,6 +10,8 @@ var generatorProcess = { process: null, perc: 0 }; //Global reference to generat
 let influx = require("./InfluxController").influx;
 let util = require("../resources/js/util");
 
+let selections = require("../metrics_config.json");
+
 let options = {
   host: "http://127.0.0.1:8001",
   redfish_defs: "/redfish/v1/TelemetryService/MetricReportDefinitions"
@@ -278,31 +280,50 @@ exports.handleEventIn = function(req, res) {
   console.log(res.req.body);
   let mr = res.req.body;
   let values = mr.MetricValues;
+
   for (var i = 0; i < values.length; i++) {
     // This date arithmetic needs to be then + (now - then)
     now = new Date();
     then = new Date(values[i].Timestamp);
     offset = Math.abs(now.getTime() - then.getTime());
     input = new Date(then.getTime() + offset);
-    influx
-      .writePoints(
-        [
+
+    // If the user has selected a particular metric, write it to Influx.
+    if (isSelected(mr.Id, values[i].MetricId)) {
+      influx
+        .writePoints(
+          [
+            {
+              measurement: mr.Id,
+              tags: { MetricDefinition: values[i].MetricDefinition },
+              fields: { [values[i].MetricId]: values[i].MetricValue },
+              timestamp: input
+            }
+          ],
           {
-            measurement: mr.Id,
-            tags: { MetricDefinition: values[i].MetricDefinition },
-            fields: { [values[i].MetricId]: values[i].MetricValue },
-            timestamp: input
+            database: "metrics",
+            precision: "s"
           }
-        ],
-        {
-          database: "metrics",
-          precision: "s"
-        }
-      )
-      .catch(err => {
-        console.error(`Error writing data to Influx. ${err.stack}`);
-      });
+        )
+        .catch(err => {
+          console.error(`Error writing data to Influx. ${err.stack}`);
+        });
+    }
   }
+};
+
+const isSelected = (definition, metric) => {
+  report_enabled = selections.enabledReports.includes(definition);
+  metric_selected = null;
+  allSelections = selections.selections;
+  for (var i = 0; i < allSelections.length; i++) {
+    if (allSelections[i].from == definition) {
+      if (allSelections[i].metrics.includes(metric)) {
+        metric_selected = true;
+      }
+    }
+  }
+  return report_enabled && metric_selected;
 };
 
 const subscribeToEvents = () => {

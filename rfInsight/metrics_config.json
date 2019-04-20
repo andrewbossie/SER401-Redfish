@@ -1,5 +1,5 @@
 {
-  "enabledReports": ["ThermalStatus"],
+  "enabledReports": ["ThermalStatus", "FanInventory"],
   "selections": [
     {
       "from": "ThermalStatus",
@@ -11,6 +11,10 @@
         "LowerCriticalThreshold",
         "LowerNonCriticalThreshold"
       ]
+    },
+    {
+      "from": "FanInventory",
+      "metrics": ["CurrentReading"]
     }
   ],
   "sub_method": "sub",
