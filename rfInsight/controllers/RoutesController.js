@@ -63,7 +63,7 @@ exports.getLanding = function(req, res){
 exports.getAvailableMetrics = function(req, res) {
 
   var host = decodeURIComponent(req.params.host);
-  console.log(host);
+  // console.log(host);
   request(
     {
       url:`${host}${options.redfish_defs}`,

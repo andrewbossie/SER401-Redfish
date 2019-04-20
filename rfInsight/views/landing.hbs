@@ -163,7 +163,7 @@
    $(".menuIcon").on("click", onMenuClick);
 
     // Change the colors on the selection list
-    $('.metrics-defs').on('click', function(){
+    $(document.body).on('click', '.metrics-defs', function(){
 
         var metric = $(this).attr('value');
         // console.log(metric);
@@ -181,7 +181,6 @@
                     // console.log(response['MetricProperties']);
                     newData = response['MetricProperties'];
                     for(var i = 0; i < newData.length; i++){
-                        // console.log(newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length).toString());
                         if( $.inArray(newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length).toString(), preselected) === -1 ){
                             console.log("false");
                             // $(this).next().append('<li class="data" id="'+newData[i].substr(60, newData[i].length)+'" data-selected="no" style="color: red;">' + newData[i].substr(60, newData[i].length) + '</li>');
@@ -206,10 +205,12 @@
     });
 
     // After select of individual metrics
-    $('.metrics-indiv').on('click', '.data', function(e){
+    // $('.metrics-indiv').on('click', '.data', function(e){
+    $(document.body).on('click', '.data', function(e){
 
         e.preventDefault();
         var parent = $(this).parent().attr('data-parent');
+        console.log(parent);
         var individual = $(this).text();
 
         if($(this).attr('data-selected') === 'no'){
@@ -256,7 +257,6 @@
 
         if($('#ip').val())
 
-        // if(valid) {
             sub_type["type"] = $('input[name=type]:checked').val();
 
             $('.metrics-list').each(function () {
@@ -328,10 +328,6 @@
                     console.log(error);
                 }
             });
-        // }
-        // else{
-        //     alert('Destination IP invalid!');
-        // }
 
         $('#run').val('Running');
         $('#run').prop('disabled', true);
@@ -408,8 +404,8 @@
                         selected[response['selections'][i]['from']][j] = response['selections'][i]['metrics'][j];
                     }
                 }
-                // console.log(preselected);
-                // console.log(selected);
+                console.log(preselected);
+                console.log(selected);
             },
             error: function (error) {
                 alert("Error getting existing config!");
@@ -428,7 +424,7 @@
            method: "GET",
            url: '/getDefs/' + encodeURIComponent(encodeURIComponent(host)),
            success:  function(response){
-                console.log(response);
+                // console.log(response);
                // For each response selection
                for(var i = 0; i < response.length; i++){
                    $('.list').append("<li class='metrics-defs' value='"+response[i]+"' data-opened='closed'>"+response[i]+" </li><ul class='metrics-indiv' data-parent='"+response[i]+"'></ul>");
