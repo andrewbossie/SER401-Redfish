@@ -1,7 +1,5 @@
 const Influx = require("influx");
 
-// const config = JSON.parse(require("../metrics_config.json"));
-
 const influx = new Influx.InfluxDB({
   host: "52.37.217.87:8086",
   database: "metrics",
