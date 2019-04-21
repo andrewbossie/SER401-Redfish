@@ -47,5 +47,5 @@ to install other packages used by the application.
 - NOTE (Temporary) - to change target host, navigate to rfInsight/controllers/RoutesController
   - In RoutesController.js, change options.host to desired host (line 9-10)
 - Start up the Redfish Mockup Server and ensure it's running on port 8001.
-- Navigate to Node project root directory and run `node index.js`.
+- Navigate to rfInsight directory and run `node index.js`.
 - Navigate to `http://localhost:8080` in browser.
