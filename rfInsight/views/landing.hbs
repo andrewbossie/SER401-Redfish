@@ -120,6 +120,20 @@
    $('#continue').on('click', function(e){
        e.preventDefault();
        $('#subs').css('visibility', 'visible');
+       var ip = $('#ip').val();
+
+       $.ajax({
+           url: "./api/redfish_host",
+           method: "POST",
+           data: {'host': ip},
+           async: false,
+           success: function (response) {
+               // console.log(response);
+           },
+           error: function (error) {
+               alert('Could not post ip!');
+           }
+       });
    });
 
    $('#continue_2').on('click', function(e){
