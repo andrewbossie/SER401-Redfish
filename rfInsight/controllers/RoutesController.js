@@ -225,6 +225,24 @@ exports.postSelectedMetrics = function(req, res) {
   }
 };
 
+exports.save = function(req, res) {
+    console.log(`Metrics POST: ${JSON.stringify(req.body, undefined, 3)}`);
+    let selectedMetrics = req.body;
+    if (!_.isEmpty(selectedMetrics.payload)) {
+        console.log(selectedMetrics.payload);
+        _.forOwn(selectedMetrics.payload, (val, key) => {
+            // patchMetricToEnabled(key);
+        });
+        updateConfig(selectedMetrics.payload);
+
+        res.json(selectedMetrics);
+    } else {
+        res.json({
+            error: "Bad Format"
+        });
+    }
+};
+
 const updateConfig = newSelection => {
   let requested = JSON.parse(newSelection);
   fs.readFile("metrics_config.json", "utf8", (err, data) => {

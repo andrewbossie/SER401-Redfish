@@ -120,6 +120,20 @@
    $('#continue').on('click', function(e){
        e.preventDefault();
        $('#subs').css('visibility', 'visible');
+       var ip = $('#ip').val();
+
+       $.ajax({
+           url: "./api/redfish_host",
+           method: "POST",
+           data: {'host': ip},
+           async: false,
+           success: function (response) {
+               // console.log(response);
+           },
+           error: function (error) {
+               alert('Could not post ip!');
+           }
+       });
    });
 
    $('#continue_2').on('click', function(e){
@@ -355,7 +369,7 @@
            url: 'api/save',
            data: {payload: JSON.stringify(p)},
            success:  function(response){
-                console.log('saved');
+                alert('Current Configuration Saved!');
            },
            error: function(error){
                alert("Error saving existing config!");
