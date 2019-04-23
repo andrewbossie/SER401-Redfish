@@ -131,3 +131,36 @@ function buildJSONFromForm() {
   });
 }
 
+function addNewPattern() {
+  var index = findNextAvailableIndex();
+  var prevPat = $("#" + "patternDiv" + (index - 1));
+  var newPatID = "patternDiv" + index;
+
+  $(prevPat)
+    .clone(true, true)
+    .prop('id', newPatID)
+    .appendTo("#patternContainer");
+
+  $("#" + newPatID).find('select[name="patPatt"]').prop('id', "patternSelect" + index);
+
+  var select = document.getElementById("patternSelect" + index);
+  $(select).val($(prevPat).find('select[name="patPatt"]').val());
+
+  var parentDiv = $(select).parent().parent();
+
+  checkPatternProperties(select, parentDiv);
+
+  select.addEventListener('change', (event, select, parentDiv) => {
+    checkPatternProperties(select, parentDiv);
+  });
+}
+
+function findNextAvailableIndex() {
+  var index = 0;
+  var patternsDiv = document.getElementById('patterns');
+  while($("#" + "patternDiv" + index).length > 0) {
+    index++;
+  }
+
+  return index;
+}

@@ -418,7 +418,7 @@ exports.postModellerConfig = function(req, res) {
   let modellerConfig = req.body;
 
   fs.writeFile(
-    "../rfModeller/configTest.json",
+    "../rfModeller/config.json",
     JSON.stringify(modellerConfig, null, 2),
     "utf8",
     (err, data) => {
