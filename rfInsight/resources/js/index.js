@@ -54,15 +54,12 @@ let updatePanel = panelElement => {
    var panel5URL =
       "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1" +
       themeURLParam;
-   var panel6URL =
-      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1" +
-      themeURLParam;
-   var panel1Label = "Static Grafana Panel 1";
-   var panel2Label = "Static Grafana Panel 2";
-   var panel3Label = "Static Grafana Panel 3";
-   var panel4Label = "Static Grafana Panel 4";
-   var panel5Label = "TestDash Custom Panel 1 (New Plugin)";
-   var panel6Label = "TestDash Custom Panel 2 (New Plugin)";
+
+   var panel1Label = "Thermal Status";
+   var panel2Label = "Fan Status";
+   var panel3Label = "Fan Inventory";
+   var panel4Label = "PSU Inventory";
+   var panel5Label = "PSU Primary Status";
 
    switch (value) {
       case 0:
@@ -91,18 +88,12 @@ let updatePanel = panelElement => {
          break;
 
       case 5:
-         url = panel6URL;
-         label = panel6Label;
-         break;
-
-      case 6:
          let urls = [
             panel1URL,
             panel2URL,
             panel3URL,
             panel4URL,
-            panel5URL,
-            panel6URL
+            panel5URL
          ];
 
          let labels = [
@@ -110,8 +101,7 @@ let updatePanel = panelElement => {
             panel2Label,
             panel3Label,
             panel4Label,
-            panel5Label,
-            panel6Label
+            panel5Label
          ];
 
          // let html = "<table class=\"panelTable\">";

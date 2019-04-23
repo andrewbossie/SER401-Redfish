@@ -35,13 +35,12 @@
             &nbsp;View panel(s)...</a>
       </h4>
       <ul class="dropdown">
-         <li value="panel1">Thermal Status</li>
-         <li value="panel2">System Board Inlet Temp</li>
-         <li value="panel3">Fan Inventory</li>
-         <li value="panel4">PSU Inventory</li>
-         <li value="panel5">PSU Primary Status</li>
-         <li value="panel6">Panel 6</li>
-         <li value="showAll">Show All</li>
+         <li class="dropdownText" value="panel1">Thermal Status</li>
+         <li class="dropdownText" value="panel2">System Board Inlet Temp</li>
+         <li class="dropdownText" value="panel3">Fan Inventory</li>
+         <li class="dropdownText" value="panel4">PSU Inventory</li>
+         <li class="dropdownText" value="panel5">PSU Primary Status</li>
+         <li class="dropdownText" value="showAll">Show All</li>
       </ul>
    </div>
 
@@ -129,14 +128,11 @@
       "http://52.37.217.87:3000/d-solo/uiNmWixmz/randomdata?refresh=5s&orgId=1&panelId=4&var-Host=serverB";
    var panel5URL =
       "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=4&fullscreen&orgId=1";
-   var panel6URL =
-      "http://52.37.217.87:3000/d-solo/uwmb0iBmz/testdash?refresh=5s&panelId=2&fullscreen&orgId=1";
-   var panel1Label = "CPU 1 Temp vs Thresholds";
+   var panel1Label = "Thermal Status";
    var panel2Label = "System Board Inlet Temp";
-   var panel3Label = "Static Grafana Panel 3";
-   var panel4Label = "Static Grafana Panel 4";
-   var panel5Label = "TestDash Custom Panel 1 (New Plugin)";
-   var panel6Label = "TestDash Custom Panel 2 (New Plugin)";
+   var panel3Label = "Fan Inventory";
+   var panel4Label = "PSU Inventory";
+   var panel5Label = "PSU Primary Status";
 
    let getPanelData = (value) => {
       switch (value) {
@@ -169,12 +165,6 @@
                url: panel5URL + themeURLParam,
                label: panel5Label
             }
-
-         case 5:
-            return {
-               url: panel6URL + themeURLParam,
-               label: panel6Label
-            }
       }
       return {};
    }
@@ -190,14 +180,13 @@
       var url = panelData.url;
       var label = panelData.label;
 
-      if (value == 6) {
+      if (value == 5) {
          let urls = [
             panel1URL + themeURLParam,
             panel2URL + themeURLParam,
             panel3URL + themeURLParam,
             panel4URL + themeURLParam,
-            panel5URL + themeURLParam,
-            panel6URL + themeURLParam
+            panel5URL + themeURLParam
          ];
 
          let labels = [
@@ -205,10 +194,9 @@
             panel2Label,
             panel3Label,
             panel4Label,
-            panel5Label,
-            panel6Label
+            panel5Label
          ];
-         allAddedPanels = [0,1,2,3,4,5];
+         allAddedPanels = [0,1,2,3,4];
          let html = "";
 
          for (var index in urls) {
@@ -301,8 +289,8 @@
                "<h2 class='text'>" + panelData.label + "</h2>" +
                "<i class='fa fa-expand expand' id='"+ fullScreenPanel +"-expand'></i>" +
             "</div>";
-      html += '<div class="leftArrow"><i class="fa fa-3x fa-arrow-left arrow" id="'+ fullScreenPanel +'-arrow-left"></i></div>';
-      html += '<div class="rightArrow"><i class="fa fa-3x fa-arrow-right arrow" id="'+ fullScreenPanel +'-arrow-right"></i></div>'
+      html += '<div class="leftArrow arrow-' + themeClass + '"><i class="fa fa-3x fa-arrow-left arrow" id="'+ fullScreenPanel +'-arrow-left"></i></div>';
+      html += '<div class="rightArrow arrow-' + themeClass + '"><i class="fa fa-3x fa-arrow-right arrow" id="'+ fullScreenPanel +'-arrow-right"></i></div>'
       $(".main_container").append(html);
       $('body').addClass('noScroll');
    }
