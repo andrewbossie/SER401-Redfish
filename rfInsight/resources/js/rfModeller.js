@@ -22,6 +22,7 @@ function populatePatterns() {
   $.each(patternData["MockupData"]["MockupPatterns"], function(index, value) {
     console.log(value);
     html += `<div class="pattern" id="pattern` + index + `">`;
+    html += `  <div class="pattFormRow"><label>Enabled</label><input name="patEnabled" value="enabled" type="checkbox" ` + (typeof value["enabled"] === "undefined" ? "" : (value["enabled"] == true ? "checked" : "")) + ` size=80/></div>`;
     html += `  <div class="pattFormRow"><label>Name</label><input name="patName" value="` + value["name"] + `" type="text" required=true size=80 unique/></div>`;
     html += `  <div class="pattFormRow"><label>Path</label><input name="patPath" value="` + value["path"] + `" type="text" required=true size=80 /></div>`;
     html += `  <div class="pattFormRow"><label>Pattern</label><input name="patPatt" value="` + value["pattern"] + `" type="text" required=true size=80 /></div>`;
