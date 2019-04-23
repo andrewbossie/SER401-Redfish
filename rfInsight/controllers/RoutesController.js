@@ -10,6 +10,8 @@ var generatorProcess = { process: null, perc: 0 }; //Global reference to generat
 let influx = require("./InfluxController").influx;
 let util = require("../resources/js/util");
 
+let selections = require("../metrics_config.json");
+
 let options = {
   host: "http://127.0.0.1:8001",
   redfish_defs: "/redfish/v1/TelemetryService/MetricReportDefinitions"
@@ -51,11 +53,21 @@ exports.getDefinitionCollection = function(req, res) {
   );
 };
 
+exports.getLanding = function(req, res){
+    res.render("landing.hbs", {
+        pageTitle: "Redfish Insight",
+    });
+};
+
 // Currently being used for the landing page.
 exports.getAvailableMetrics = function(req, res) {
+
+  var host = decodeURIComponent(req.params.host);
+  // console.log(host);
   request(
     {
-      url: def_path,
+      url:`${host}${options.redfish_defs}`,
+      //   url: def_path,
       json: true
     },
     (error, response, body) => {
@@ -73,10 +85,7 @@ exports.getAvailableMetrics = function(req, res) {
           metrics.push(uri.substr(53, uri.length));
         }
         // console.log(metrics);
-        res.render("landing.hbs", {
-          pageTitle: "Redfish Insight",
-          metrics: metrics
-        });
+          res.json(metrics);
       }
     }
   );
@@ -206,7 +215,7 @@ exports.postSelectedMetrics = function(req, res) {
       // patchMetricToEnabled(key);
     });
     // TODO FIX UPDATECONFIG
-    // updateConfig(selectedMetrics.payload);
+    updateConfig(selectedMetrics.payload);
 
     res.json(selectedMetrics);
   } else {
@@ -217,19 +226,30 @@ exports.postSelectedMetrics = function(req, res) {
 };
 
 const updateConfig = newSelection => {
+  let requested = JSON.parse(newSelection);
   fs.readFile("metrics_config.json", "utf8", (err, data) => {
     if (err) {
       throw err;
     } else {
       configData = JSON.parse(data);
-      _.forOwn(newSelection, (val, key) => {
-        !configData.enabledReports.includes(key) &&
-          configData.enabledReports.push(key) &&
-          configData.selections.push({
-            from: key,
-            metrics: val
-          });
-      });
+      configData.enabledReports = [];
+      configData.selections = [];
+      for (var key in requested) {
+        if (requested.hasOwnProperty(key)) {
+          temp_obj = {
+            from: "",
+            metrics: []
+          };
+          // Update enabled reports
+          configData.enabledReports.push(key);
+          temp_obj.from = key;
+          for (var i = 0; i < requested[key].length; i++) {
+            temp_obj.metrics.push(requested[key][i]);
+          }
+          configData.selections.push(temp_obj);
+        }
+      }
+
       fs.writeFile(
         "metrics_config.json",
         JSON.stringify(configData, undefined, 3),
@@ -276,31 +296,52 @@ exports.handleEventIn = function(req, res) {
   console.log(res.req.body);
   let mr = res.req.body;
   let values = mr.MetricValues;
+
   for (var i = 0; i < values.length; i++) {
     // This date arithmetic needs to be then + (now - then)
     now = new Date();
     then = new Date(values[i].Timestamp);
     offset = Math.abs(now.getTime() - then.getTime());
     input = new Date(then.getTime() + offset);
-    influx
-      .writePoints(
-        [
+
+    // If the user has selected a particular metric, write it to Influx.
+    if (isSelected(mr.Id, values[i].MetricId)) {
+      influx
+        .writePoints(
+          [
+            {
+              measurement: mr.Id,
+              tags: { MetricDefinition: values[i].MetricDefinition },
+              fields: { [values[i].MetricId]: values[i].MetricValue },
+              timestamp: input
+            }
+          ],
           {
-            measurement: mr.Id,
-            tags: { MetricDefinition: values[i].MetricDefinition },
-            fields: { [values[i].MetricId]: values[i].MetricValue },
-            timestamp: input
+            database: "metrics",
+            precision: "s"
           }
-        ],
-        {
-          database: "metrics",
-          precision: "s"
-        }
-      )
-      .catch(err => {
-        console.error(`Error writing data to Influx. ${err.stack}`);
-      });
+        )
+        .catch(err => {
+          console.error(`Error writing data to Influx. ${err.stack}`);
+        });
+    }
   }
+};
+
+const isSelected = (definition, metric) => {
+  delete require.cache[require.resolve("../metrics_config.json")];
+  selections = require("../metrics_config.json");
+  report_enabled = selections.enabledReports.includes(definition);
+  metric_selected = null;
+  allSelections = selections.selections;
+  for (var i = 0; i < allSelections.length; i++) {
+    if (allSelections[i].from == definition) {
+      if (allSelections[i].metrics.includes(metric)) {
+        metric_selected = true;
+      }
+    }
+  }
+  return report_enabled && metric_selected;
 };
 
 const subscribeToEvents = () => {
