@@ -53,11 +53,21 @@ exports.getDefinitionCollection = function(req, res) {
   );
 };
 
+exports.getLanding = function(req, res){
+    res.render("landing.hbs", {
+        pageTitle: "Redfish Insight",
+    });
+};
+
 // Currently being used for the landing page.
 exports.getAvailableMetrics = function(req, res) {
+
+  var host = decodeURIComponent(req.params.host);
+  // console.log(host);
   request(
     {
-      url: def_path,
+      url:`${host}${options.redfish_defs}`,
+      //   url: def_path,
       json: true
     },
     (error, response, body) => {
@@ -75,10 +85,7 @@ exports.getAvailableMetrics = function(req, res) {
           metrics.push(uri.substr(53, uri.length));
         }
         // console.log(metrics);
-        res.render("landing.hbs", {
-          pageTitle: "Redfish Insight",
-          metrics: metrics
-        });
+          res.json(metrics);
       }
     }
   );
