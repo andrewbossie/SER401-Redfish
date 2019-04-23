@@ -66,5 +66,52 @@ function populatePatterns() {
     for (index in patternList) {
       select.options[select.options.length] = new Option(patternList[index], index);
     }
+
+    $(select).val(value["pattern"]);
+  });
+
+}
+
+function buildJSONFromForm() {
+  var config = patternData;
+  config["MockupData"]["MockupPatterns"] = [];
+
+  $.each(document.getElementsByClassName("pattern"), function(index, value) {
+    var pattern = {
+      "enabled": $(this).find('input[name="patEnabled"]').prop('checked') ? true : false,
+      "name": $(this).find('input[name="patName"]').val(),
+      "path": $(this).find('input[name="patPath"]').val(),
+      "timedelay": $(this).find('input[name="patDelay"]').val(),
+      "pattern": $(this).find('select[name="patPatt"]').val(),
+      "min": $(this).find('input[name="patMin"]').val(),
+      "step": $(this).find('input[name="patStep"]').val(),
+      "max": $(this).find('input[name="patMax"]').val(),
+      "MetricValueTemplate": {
+        "MemberID": $(this).find('input[name="patMemberID"]').val(),
+        "MetricValue": "#value",
+        "TimeStamp": "#timestamp",
+        "MetricProperty": $(this).find('input[name="patMetricProp"]').val()
+      }
+    }
+
+    config["MockupData"]["MockupPatterns"].push(pattern);
+  });
+
+  console.log("Saving config:\n" + JSON.stringify(config, null, 2));
+
+  $.ajax({
+    url: "/api/modeller_config",
+    type: "POST",
+    data: JSON.stringify(config),
+    contentType: 'application/json; charset=utf-8',
+    dataType: 'json',
+    success: function (response) {
+      alert("Save Successful!");
+    },
+    error: function (error) {
+      alert("Error saving modeller config!");
+      console.log(error);
+    }
   });
 }
+

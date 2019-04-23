@@ -408,27 +408,26 @@ exports.getModellerPatterns = function(req, res) {
 
   let p = new PFuncs;
 
-  console.log("here 2");
-
   modellerPatterns = p.patternList;
-
-  console.log("here");
-
-  console.log(p.patternList);
 
   res.json(modellerPatterns);
 };
 
 exports.postModellerConfig = function(req, res) {
-  let modellerConfig = JSON.parse(data);
+  console.log(`Modeller Config: ${JSON.stringify(req.body, undefined, 2)}`);
+  let modellerConfig = req.body;
 
   fs.writeFile(
-    "../rfModeller/config.json",
-    modellerConfig,
+    "../rfModeller/configTest.json",
+    JSON.stringify(modellerConfig, null, 2),
     "utf8",
     (err, data) => {
       if (err) {
-        console.log(err);
+        res.json({
+          error: "Could not retrieve metrics: err"
+        });
+      } else {
+        res.json(modellerConfig);
       }
     }
   );
