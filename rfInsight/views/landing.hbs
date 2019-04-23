@@ -72,7 +72,7 @@
         <div id="buttons" style="visibility: hidden; text-align: center;">
             <input type="button" value="Start" id="run" />
             <input type="button" value="View Graphs" id="view" />
-            <!--<input type="button" value="Save Config" id="save" />-->
+            <input type="button" value="Save Config" id="save" />
         </div>
     </div>
 </body>
@@ -341,39 +341,28 @@
             });
 
     //AJAX for saving config
-   // $('#save').on('click', function(e){
-   //     var s = JSON.stringify(sub_type);
-   //     console.log(sub_type['type']);
-   //
-   //     // Build Metrics
-   //     var p = new Object();
-   //     for (var key in selected) {
-   //         p[key] = selected[key];
-   //     }
-   //
-   //     // POST ip
-   //     var payload = [];
-   //     var ip = $('#ip').val();
-   //     payload['host'] = ip;
-   //     payload['sub'] = s;
-   //     payload['metrics'] = p;
-   //
-   //     data = JSON.stringify(payload);
-   //
-   //     e.preventDefault();
-   //     $.ajax({
-   //         method: "POST",
-   //         url: 'api/save',
-   //         data: {data: data},
-   //         success:  function(response){
-   //              console.log('saved');
-   //         },
-   //         error: function(error){
-   //             alert("Error saving existing config!");
-   //             console.log(error);
-   //         }
-   //     });
-   // });
+   $('#save').on('click', function(e){
+
+       // Build Metrics
+       var p = new Object();
+       for (var key in selected) {
+           p[key] = selected[key];
+       }
+
+       e.preventDefault();
+       $.ajax({
+           method: "POST",
+           url: 'api/save',
+           data: {payload: JSON.stringify(p)},
+           success:  function(response){
+                console.log('saved');
+           },
+           error: function(error){
+               alert("Error saving existing config!");
+               console.log(error);
+           }
+       });
+   });
 
     // AJAX for current config
     function get_existing() {
