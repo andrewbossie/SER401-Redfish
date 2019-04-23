@@ -1,12 +1,45 @@
 {
    "enabledReports": [
-      "ThermalStatus"
+      "ThermalStatus",
+      "FanStatus",
+      "FanInventory",
+      "PSUInventory",
+      "PSUStatus"
    ],
    "selections": [
       {
          "from": "ThermalStatus",
          "metrics": [
-            "Reading"
+            "Reading",
+            "LowerNonCriticalThreshold",
+            "LowerCriticalThreshold",
+            "UpperCriticalThreshold",
+            "UpperNonCriticalThreshold"
+         ]
+      },
+      {
+         "from": "FanStatus",
+         "metrics": [
+            "CurrentSpeedRPM"
+         ]
+      },
+      {
+         "from": "FanInventory",
+         "metrics": [
+            "PrimaryStatus"
+         ]
+      },
+      {
+         "from": "PSUInventory",
+         "metrics": [
+            "EffectiveCapacity",
+            "TotalOutputPower"
+         ]
+      },
+      {
+         "from": "PSUStatus",
+         "metrics": [
+            "PrimaryStatus"
          ]
       }
    ],
