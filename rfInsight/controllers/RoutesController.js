@@ -5,6 +5,9 @@ const Influx = require("influx");
 
 const childProcess = require("child_process");
 const config = require("../config/config");
+
+const PFuncs = require("../../rfModeller/PatternFuncs");
+
 var generatorProcess = { process: null, perc: 0 }; //Global reference to generator child process
 
 let influx = require("./InfluxController").influx;
@@ -398,6 +401,22 @@ exports.getModellerConfig = function(req, res) {
       res.json(modellerConfig);
     }
   });
+};
+
+exports.getModellerPatterns = function(req, res) {
+  let modellerPatterns;
+
+  let p = new PFuncs;
+
+  console.log("here 2");
+
+  modellerPatterns = p.patternList;
+
+  console.log("here");
+
+  console.log(p.patternList);
+
+  res.json(modellerPatterns);
 };
 
 exports.postModellerConfig = function(req, res) {
