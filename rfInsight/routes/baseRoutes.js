@@ -25,6 +25,7 @@ module.exports = (app, router) => {
   router.route("/test").get(test_controller.testGo);
   router.route("/modeller_config").get(routes_controller.getModellerConfig);
   router.route("/modeller_config").post(routes_controller.postModellerConfig);
+  router.route("/modeller_patterns").get(routes_controller.getModellerPatterns);
   app.use("/api", router);
 
   /*

@@ -14,7 +14,15 @@ function PatternFuncs({
 
   this.value = this.center;
   this.isRev = false;
-}
+
+  this.patternList = {
+    sawtooth: 'Sawtooth',
+    pingpong: 'Ping Pong',
+    steprand: 'Stepwise Random',
+    fullrand: 'Full Random',
+    rubberband: 'Rubberband'
+  };
+};
 
 PatternFuncs.prototype.setStep = function(step) {
   this.step = step;

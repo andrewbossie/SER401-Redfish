@@ -5,6 +5,9 @@ const Influx = require("influx");
 
 const childProcess = require("child_process");
 const config = require("../config/config");
+
+const PFuncs = require("../../rfModeller/PatternFuncs");
+
 var generatorProcess = { process: null, perc: 0 }; //Global reference to generator child process
 
 let influx = require("./InfluxController").influx;
@@ -425,16 +428,31 @@ exports.getModellerConfig = function(req, res) {
   });
 };
 
+exports.getModellerPatterns = function(req, res) {
+  let modellerPatterns;
+
+  let p = new PFuncs;
+
+  modellerPatterns = p.patternList;
+
+  res.json(modellerPatterns);
+};
+
 exports.postModellerConfig = function(req, res) {
-  let modellerConfig = JSON.parse(data);
+  console.log(`Modeller Config: ${JSON.stringify(req.body, undefined, 2)}`);
+  let modellerConfig = req.body;
 
   fs.writeFile(
     "../rfModeller/config.json",
-    modellerConfig,
+    JSON.stringify(modellerConfig, null, 2),
     "utf8",
     (err, data) => {
       if (err) {
-        console.log(err);
+        res.json({
+          error: "Could not retrieve metrics: err"
+        });
+      } else {
+        res.json(modellerConfig);
       }
     }
   );
