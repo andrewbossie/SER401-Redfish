@@ -19,11 +19,13 @@ module.exports = (app, router) => {
   router.route("/event_in").post(routes_controller.handleEventIn);
   router.route("/sub_type").post(routes_controller.postSubType);
   router.route("/redfish_host").post(routes_controller.postRedfishHost);
+  router.route("/save").post(routes_controller.save);
   router.route("/metrics/:metric").get(routes_controller.getMetric);
   router.route("/config").get(routes_controller.getCurrentConfig);
   router.route("/test").get(test_controller.testGo);
   router.route("/modeller_config").get(routes_controller.getModellerConfig);
   router.route("/modeller_config").post(routes_controller.postModellerConfig);
+  router.route("/modeller_patterns").get(routes_controller.getModellerPatterns);
   app.use("/api", router);
 
   /*
@@ -33,7 +35,8 @@ module.exports = (app, router) => {
   app.get("/datagenerator", routes_controller.getDataGenerator);
   app.get("/generateMockData", routes_controller.generateMockData);
   app.get("/rfModeller", routes_controller.getRfModeller);
-  app.get("/", routes_controller.getAvailableMetrics);
+  app.get("/", routes_controller.getLanding);
+  app.get("/getDefs/:host", routes_controller.getAvailableMetrics);
   app.get("/:metric", routes_controller.getMetric);
 
   // This is a catchall for any bad request.

@@ -18,6 +18,28 @@
       line-height: 20px; /* To center it vertically */
       color: white; 
     }
+
+    #patterns label {
+      display: inline-block;
+      background-color: #acccfc;
+      border-width: 1px;
+      border-color: #75aafa;
+      border-style: solid;
+      font-weight: bold;
+      margin: .2em;
+      padding: .1em .5em;
+      width: 8em;
+      text-align: right;
+    }
+
+    .pattern {
+      background-color: #cbddf8;
+      padding: .5em;
+      border-width: 1px;
+      border-color: #75aafa;
+      border-style: solid;
+      margin: 1em;
+    }
     </style>
   </head>
   <body>
@@ -35,10 +57,10 @@
         <div id="patternContainer">
         </div>
         <div id="newPattern">
-          <input type="button" value="+" id="newPattern" />
+          <input type="button" value="Add" id="newPattern" onClick="addNewPattern()"/>
         </div>
         <div id="savePattern">
-          <input type="button" value="Save" id="savePattern" />
+          <input type="button" value="Save" id="savePattern" onclick="buildJSONFromForm()"/>
         </div>
       </div>
     </div>

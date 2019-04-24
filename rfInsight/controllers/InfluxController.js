@@ -1,7 +1,5 @@
 const Influx = require("influx");
 
-// const config = JSON.parse(require("../metrics_config.json"));
-
 const influx = new Influx.InfluxDB({
   host: "52.37.217.87:8086",
   database: "metrics",
@@ -58,7 +56,37 @@ const influx = new Influx.InfluxDB({
         RedundancyStatus: Influx.FieldType.STRING,
         RateUnits: Influx.FieldType.STRING,
         PrimaryStatus: Influx.FieldType.STRING,
-        CurrentReading: Influx.FieldType.STRING
+        CurrentReading: Influx.FieldType.FLOAT
+      },
+      tags: ["MetricDefinition"]
+    },
+    {
+      measurement: "PSUInventory",
+      fields: {
+        FQDD: Influx.FieldType.STRING,
+        EffectiveCapacity: Influx.FieldType.FLOAT,
+        RedundancyStatus: Influx.FieldType.STRING,
+        Type: Influx.FieldType.STRING,
+        PrimaryStatus: Influx.FieldType.STRING,
+        TotalOutputPower: Influx.FieldType.FLOAT,
+        DetailedState: Influx.FieldType.STRING,
+        PartNumber: Influx.FieldType.STRING,
+        SerialNumber: Influx.FieldType.STRING,
+        Model: Influx.FieldType.STRING,
+        LineInputVoltageType: Influx.FieldType.STRING,
+        Name: Influx.FieldType.STRING,
+        SparePartNumber: Influx.FieldType.STRING,
+        LastPowerOutputWatts: Influx.FieldType.STRING
+      },
+      tags: ["MetricDefinition"]
+    },
+    {
+      measurement: "PSUStatus",
+      fields: {
+        Present: Influx.FieldType.STRING,
+        PrimaryStatus: Influx.FieldType.STRING,
+        RedundancyStatus: Influx.FieldType.STRING,
+        TotalOutputPower: Influx.FieldType.FLOAT
       },
       tags: ["MetricDefinition"]
     }
