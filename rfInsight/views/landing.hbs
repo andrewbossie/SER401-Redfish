@@ -179,6 +179,8 @@
     // Change the colors on the selection list
     $(document.body).on('click', '.metrics-defs', function(){
 
+        console.log(preselected);
+
         var metric = $(this).attr('value');
         // console.log(metric);
         if($(this).attr('data-opened') === 'closed') {
@@ -195,12 +197,12 @@
                     // console.log(response['MetricProperties']);
                     newData = response['MetricProperties'];
                     for(var i = 0; i < newData.length; i++){
-                        if( $.inArray(newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length).toString(), preselected) === -1 ){
-                            console.log("false");
+                        if( $.inArray(newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length).toString(), preselected[metric]) === -1 ){
+                            // console.log("false");
                             // $(this).next().append('<li class="data" id="'+newData[i].substr(60, newData[i].length)+'" data-selected="no" style="color: red;">' + newData[i].substr(60, newData[i].length) + '</li>');
                             $(this).next().append('<li class="data" id="'+newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length)+'" data-selected="no" style="color: red;">' + newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length) + '</li>');
                         } else{
-                            console.log("true");
+                            // console.log("true");
                             // $(this).next().append('<li class="data" id="'+newData[i].substr(60, newData[i].length)+'" data-selected="yes" style="color: green;">' + newData[i].substr(60, newData[i].length) + '</li>');
                             $(this).next().append('<li class="data" id="'+newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length)+'" data-selected="yes" style="color: green;">' + newData[i].substr(newData[i].lastIndexOf('/') + 1, newData[i].length) + '</li>');
                         }
@@ -394,6 +396,7 @@
 
                     // Make each parent node an array
                     selected[response['selections'][i]['from']] = [];
+                    preselected[response['selections'][i]['from']] = [];
                     size++;
 
                     // For each metric (metrics)
@@ -401,14 +404,15 @@
 
                         // Append metrics to the parent UL in the html
                         $('.selected_' + response['selections'][i]['from'] + '').append('<li>' + response['selections'][i]['metrics'][j] + '</li>');
-                        preselected.push(response['selections'][i]['metrics'][j]);
+                        // preselected.push(response['selections'][i]['metrics'][j]);
 
                         // Add to selected array
                         selected[response['selections'][i]['from']][j] = response['selections'][i]['metrics'][j];
+                        preselected[response['selections'][i]['from']][j] = response['selections'][i]['metrics'][j];
                     }
                 }
-                console.log(preselected);
-                console.log(selected);
+                // console.log(preselected);
+                // console.log(selected);
             },
             error: function (error) {
                 alert("Error getting existing config!");
