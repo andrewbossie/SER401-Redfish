@@ -26,6 +26,11 @@ within Grafana, setting up queries to Influx is simple.
 
 When you install Grafana and run the service, it runs by default on port 3000.
 
+NOTE: The panels within the app currently are sourced from a specific AWS IP address.
+These panel links will need to be changed when a new Grafana instance is configured.
+The location of the links is in `/views/index.hbs` lines 120 - 130. The embed links can
+be obtained within Grafana by selecting the panel dropdown and selecting 'Share'.
+
 ## Running the application (development)
 
 ### 1. Install Node.js
