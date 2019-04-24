@@ -26,7 +26,8 @@
       {
          "from": "FanInventory",
          "metrics": [
-            "PrimaryStatus"
+            "PrimaryStatus",
+            "CurrentReading"
          ]
       },
       {
