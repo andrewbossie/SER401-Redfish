@@ -1,6 +1,7 @@
 MIT License
 
-Copyright (c) 2019 Andrew Bossie
+Copyright (c) 2018, 2019 Andrew Antes, Andrew Bossie, Justin Kistler,
+Wyatt Draggoo, Maigan Sedate
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
