@@ -1,3 +1,26 @@
+/*
+* Copyright 2018, 2019 Andrew Antes, Andrew Bossie, Justin Kistler,
+* Wyatt Draggoo, Maigan Sedate
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
+
 const request = require("request");
 const fs = require("fs");
 const _ = require("lodash");
@@ -56,20 +79,19 @@ exports.getDefinitionCollection = function(req, res) {
   );
 };
 
-exports.getLanding = function(req, res){
-    res.render("landing.hbs", {
-        pageTitle: "Redfish Insight",
-    });
+exports.getLanding = function(req, res) {
+  res.render("landing.hbs", {
+    pageTitle: "Redfish Insight"
+  });
 };
 
 // Currently being used for the landing page.
 exports.getAvailableMetrics = function(req, res) {
-
   var host = decodeURIComponent(req.params.host);
   // console.log(host);
   request(
     {
-      url:`${host}${options.redfish_defs}`,
+      url: `${host}${options.redfish_defs}`,
       //   url: def_path,
       json: true
     },
@@ -88,7 +110,7 @@ exports.getAvailableMetrics = function(req, res) {
           metrics.push(uri.substr(53, uri.length));
         }
         // console.log(metrics);
-          res.json(metrics);
+        res.json(metrics);
       }
     }
   );
@@ -229,21 +251,21 @@ exports.postSelectedMetrics = function(req, res) {
 };
 
 exports.save = function(req, res) {
-    console.log(`Metrics POST: ${JSON.stringify(req.body, undefined, 3)}`);
-    let selectedMetrics = req.body;
-    if (!_.isEmpty(selectedMetrics.payload)) {
-        console.log(selectedMetrics.payload);
-        _.forOwn(selectedMetrics.payload, (val, key) => {
-            // patchMetricToEnabled(key);
-        });
-        updateConfig(selectedMetrics.payload);
+  console.log(`Metrics POST: ${JSON.stringify(req.body, undefined, 3)}`);
+  let selectedMetrics = req.body;
+  if (!_.isEmpty(selectedMetrics.payload)) {
+    console.log(selectedMetrics.payload);
+    _.forOwn(selectedMetrics.payload, (val, key) => {
+      // patchMetricToEnabled(key);
+    });
+    updateConfig(selectedMetrics.payload);
 
-        res.json(selectedMetrics);
-    } else {
-        res.json({
-            error: "Bad Format"
-        });
-    }
+    res.json(selectedMetrics);
+  } else {
+    res.json({
+      error: "Bad Format"
+    });
+  }
 };
 
 const updateConfig = newSelection => {
@@ -431,7 +453,7 @@ exports.getModellerConfig = function(req, res) {
 exports.getModellerPatterns = function(req, res) {
   let modellerPatterns;
 
-  let p = new PFuncs;
+  let p = new PFuncs();
 
   modellerPatterns = p.patternList;
 
