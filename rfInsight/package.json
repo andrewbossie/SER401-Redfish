@@ -19,7 +19,7 @@
    "dependencies": {
       "body-parser": "^1.18.3",
       "config": "^2.0.2",
-      "express": "^4.16.4",
+      "express": "^4.17.3",
       "hbs": "^4.0.3",
       "influx": "^5.0.7",
       "jquery": "^3.3.1",
