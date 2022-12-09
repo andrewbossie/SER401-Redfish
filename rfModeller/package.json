@@ -9,7 +9,7 @@
    "author": "Wyatt Draggoo",
    "license": "ISC",
    "dependencies": {
-      "express": "^4.16.4"
+      "express": "^4.17.3"
    },
    "devDependencies": {
       "jest": "^23.6.0"
